@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: agarang
+
+---
+
+spring:
+  datasource:
+    url: ${MYSQL_URL} #jdbc:mysql://localhost:3306/agarang ( or jdbc:mysql://ec2-...:3306/agarang )
+    username: ${MYSQL_USERNAME} #agarang
+    password: ${MYSQL_PASSWORD} #agarang
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+---
+
+spring:
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
