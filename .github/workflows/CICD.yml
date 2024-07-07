@@ -26,12 +26,13 @@ jobs:
       - name: Decoding Secret yml File
         run: echo ${{secrets.APPLICATION_SECRET}} | base64 --decode > ./src/main/resources/application-secret.yml
 
-      # Gradle
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-      
+      # Gradle chmod
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # Gradle build
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew clean build
 
       # Docker
       - name: Login to Docker Hub
