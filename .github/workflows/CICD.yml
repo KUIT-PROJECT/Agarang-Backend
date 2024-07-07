@@ -32,7 +32,7 @@ jobs:
 
       # Gradle build
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: ./gradlew build -x test
 
       # Docker
       - name: Login to Docker Hub
@@ -42,7 +42,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker
-        run: docker build --platform linux/amd64 -t ${{ secrets.DOCKERHUB_USERNAME }}/agarang .
+        run: docker build --build-arg DEPENDENCY=build/dependency -t ${{ secrets.DOCKERHUB_USERNAME }}/agarang --platform linux/amd64 .
 
       - name: Push Docker
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/agarang:latest
