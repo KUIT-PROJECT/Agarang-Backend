@@ -41,7 +41,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker
-        run: docker build --build-arg -t ${{ secrets.DOCKERHUB_USERNAME }}/agarang --platform linux/amd64 .
+        run: docker build --platform linux/amd64 -t ${{ secrets.DOCKERHUB_USERNAME }}/agarang .
 
       - name: Push Docker
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/agarang:latest
