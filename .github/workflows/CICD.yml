@@ -22,15 +22,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # Setup Secret yml File
+      # YML
       - name: Decoding Secret yml File
         run: echo ${{secrets.APPLICATION_SECRET}} | base64 --decode > ./src/main/resources/application-secret.yml
 
-      # Gradle chmod
+      # Gradle
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # Gradle build
       - name: Build with Gradle
         run: ./gradlew build -x test
 
@@ -42,7 +41,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker
-        run: docker build --build-arg DEPENDENCY=build/dependency -t ${{ secrets.DOCKERHUB_USERNAME }}/agarang --platform linux/amd64 .
+        run: docker build --build-arg -t ${{ secrets.DOCKERHUB_USERNAME }}/agarang --platform linux/amd64 .
 
       - name: Push Docker
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/agarang:latest
@@ -56,18 +55,18 @@ jobs:
           STATUS=$(curl -o /dev/null -w "%{http_code}" "http://${{ secrets.AGARANG_SERVER_IP }}/env")
           echo $STATUS
           if [ $STATUS = 200 ]; then
-            CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.AGARANG_SERVER_IP }}/env")
+            CURRENT_UPSTREAM=blue
           else
             CURRENT_UPSTREAM=green
           fi
           echo CURRENT_UPSTREAM=$CURRENT_UPSTREAM >> $GITHUB_ENV
           if [ $CURRENT_UPSTREAM = blue ]; then
             echo "CURRENT_PORT=8080" >> $GITHUB_ENV
-            echo "STOPPED_PORT=8081" >> $GITHUB_ENV
+            echo "TARGET_PORT=8081" >> $GITHUB_ENV
             echo "TARGET_UPSTREAM=green" >> $GITHUB_ENV
           else
             echo "CURRENT_PORT=8081" >> $GITHUB_ENV
-            echo "STOPPED_PORT=8080" >> $GITHUB_ENV
+            echo "TARGET_PORT=8080" >> $GITHUB_ENV
             echo "TARGET_UPSTREAM=blue" >> $GITHUB_ENV
           fi
           
@@ -86,7 +85,7 @@ jobs:
       - name: Check deploy server URL
         uses: jtalk/url-health-check-action@v4
         with:
-          url: http://${{ secrets.AGARANG_SERVER_IP }}:${{env.STOPPED_PORT}}/env
+          url: http://${{ secrets.AGARANG_SERVER_IP }}:${{env.TARGET_PORT}}/env
           max-attempts: 5
           retry-delay: 10s
 
@@ -110,4 +109,3 @@ jobs:
           script: |
             sudo docker stop ${{env.CURRENT_UPSTREAM}}
             sudo docker rm ${{env.CURRENT_UPSTREAM}}
-            
