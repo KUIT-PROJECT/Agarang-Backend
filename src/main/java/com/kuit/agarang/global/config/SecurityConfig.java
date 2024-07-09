@@ -21,7 +21,10 @@ public class SecurityConfig {
 
     http
       .authorizeHttpRequests((auth) -> auth
-        .requestMatchers("/hc", "/env").permitAll());
+        .requestMatchers(
+          "/hc", "/env")
+        .permitAll()
+        .anyRequest().permitAll());
 
     return http.build();
   }
