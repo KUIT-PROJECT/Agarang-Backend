@@ -1,6 +1,6 @@
-package com.kuit.agarang.deploy.controller;
+package com.kuit.agarang.common.deploy.controller;
 
-import com.kuit.agarang.deploy.dto.ServerInfo;
+import com.kuit.agarang.common.deploy.dto.ServerInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +17,6 @@ public class HealthCheckController {
   private String serverAddress;
   @Value("${serverName}")
   private String serverName;
-
-  // TODO: "/hc", "/env" -> security permit-all
 
   @GetMapping("/hc")
   public ResponseEntity<ServerInfo> healthCheck() {
