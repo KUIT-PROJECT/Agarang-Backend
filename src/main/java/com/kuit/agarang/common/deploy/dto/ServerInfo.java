@@ -1,4 +1,4 @@
-package com.kuit.agarang.deploy.dto;
+package com.kuit.agarang.common.deploy.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
