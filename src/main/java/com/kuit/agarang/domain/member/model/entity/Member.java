@@ -3,16 +3,11 @@ package com.kuit.agarang.domain.member.model.entity;
 import com.kuit.agarang.common.model.entity.BaseEntity;
 import com.kuit.agarang.domain.baby.model.entity.Baby;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
-@SuperBuilder
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntity {
 
@@ -21,12 +16,17 @@ public class Member extends BaseEntity {
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn
+  @JoinColumn(name = "baby_id")
   private Baby baby;
 
   @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn
+  @JoinColumn(name = "refresh_token_id")
   private RefreshToken refreshToken;
 
   private String role;
+
+  @Builder
+  public Member(String role) {
+    this.role = role;
+  }
 }

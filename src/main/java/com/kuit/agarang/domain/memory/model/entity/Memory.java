@@ -4,17 +4,15 @@ package com.kuit.agarang.domain.memory.model.entity;
 import com.kuit.agarang.common.model.entity.BaseEntity;
 import com.kuit.agarang.domain.baby.model.entity.Baby;
 import com.kuit.agarang.domain.member.model.entity.Member;
+import com.kuit.agarang.domain.memory.model.entity.enums.Genre;
+import com.kuit.agarang.domain.memory.model.entity.enums.Instrument;
+import com.kuit.agarang.domain.memory.model.entity.enums.Mood;
+import com.kuit.agarang.domain.memory.model.entity.enums.Tempo;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.*;
 
 @Entity
 @Getter
-@SuperBuilder
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Memory extends BaseEntity {
 
@@ -23,17 +21,36 @@ public class Memory extends BaseEntity {
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn
+  @JoinColumn(name = "member_id")
   private Member member;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn
+  @JoinColumn(name = "baby_id")
   private Baby baby;
 
   private String imageUrl;
   private String text;
-  private String genre;
-  private String mood;
-  private String tempo;
-  private String instrumentType;
+
+  @Enumerated(EnumType.STRING)
+  private Genre genre;
+
+  @Enumerated(EnumType.STRING)
+  private Mood mood;
+
+  @Enumerated(EnumType.STRING)
+  private Tempo tempo;
+
+  @Enumerated(EnumType.STRING)
+  private Instrument instrument;
+
+  @Builder
+  public Memory(String imageUrl, String text, Genre genre,
+                Mood mood, Tempo tempo, Instrument instrument) {
+    this.imageUrl = imageUrl;
+    this.text = text;
+    this.genre = genre;
+    this.mood = mood;
+    this.tempo = tempo;
+    this.instrument = instrument;
+  }
 }

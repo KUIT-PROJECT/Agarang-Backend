@@ -2,16 +2,10 @@ package com.kuit.agarang.domain.memory.model.entity;
 
 import com.kuit.agarang.common.model.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.*;
 
 @Entity
 @Getter
-@SuperBuilder
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Hashtag extends BaseEntity {
 
@@ -20,8 +14,13 @@ public class Hashtag extends BaseEntity {
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn
+  @JoinColumn(name = "memory_id")
   private Memory memory;
 
   private String name; // 해시태그 명
+
+  @Builder
+  public Hashtag(String name) {
+    this.name = name;
+  }
 }

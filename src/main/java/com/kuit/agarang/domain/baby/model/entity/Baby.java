@@ -2,18 +2,12 @@ package com.kuit.agarang.domain.baby.model.entity;
 
 import com.kuit.agarang.common.model.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
 @Getter
-@SuperBuilder
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Baby extends BaseEntity {
 
@@ -22,11 +16,19 @@ public class Baby extends BaseEntity {
   private Long id;
 
   @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn
+  @JoinColumn(name = "character_id")
   private Character character;
 
   private String code;
   private String name;
-  private LocalDate date; // 출산 예정일
+  private LocalDate expectedDueAt; // 출산 예정일
   private Double weight;
+
+  @Builder
+  public Baby(String code, String name, LocalDate expectedDueAt, Double weight) {
+    this.code = code;
+    this.name = name;
+    this.expectedDueAt = expectedDueAt;
+    this.weight = weight;
+  }
 }
