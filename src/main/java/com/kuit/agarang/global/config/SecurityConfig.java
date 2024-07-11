@@ -1,4 +1,4 @@
-package com.kuit.agarang.common.config;
+package com.kuit.agarang.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +21,10 @@ public class SecurityConfig {
 
     http
       .authorizeHttpRequests((auth) -> auth
-        .requestMatchers("/hc", "/env").permitAll());
+        .requestMatchers(
+          "/hc", "/env")
+        .permitAll()
+        .anyRequest().permitAll());
 
     return http.build();
   }
