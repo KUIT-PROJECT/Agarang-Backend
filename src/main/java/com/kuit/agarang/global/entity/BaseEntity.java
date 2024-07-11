@@ -1,4 +1,4 @@
-package com.kuit.agarang.common.model.entity;
+package com.kuit.agarang.global.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

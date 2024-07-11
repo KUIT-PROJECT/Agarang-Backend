@@ -1,6 +1,6 @@
-package com.kuit.agarang.domain.memory.utils;
+package com.kuit.agarang.domain.ai.utils;
 
-import com.kuit.agarang.domain.memory.config.WebClientConfig;
+import com.kuit.agarang.domain.ai.config.WebClientConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
