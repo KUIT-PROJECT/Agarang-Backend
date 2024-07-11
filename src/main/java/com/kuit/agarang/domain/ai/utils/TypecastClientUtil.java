@@ -1,6 +1,6 @@
 package com.kuit.agarang.domain.ai.utils;
 
-import com.kuit.agarang.domain.ai.dto.TypecastRequest;
+import com.kuit.agarang.domain.ai.model.dto.TypecastRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
