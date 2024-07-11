@@ -18,7 +18,7 @@ public class TypecastService {
     TypecastResponse typecastResponse =
       typeCastClientUtil.post("/api/speak", TypecastRequest.create(request), TypecastResponse.class);
 
-    Thread.sleep(1500); // TODO : sleep 외의 더 좋은 방법 생각해보기
+    Thread.sleep(1500); // TODO : Tread 삭제 후 call-back url 로 구현하기
 
     TypecastAudioResponse typecastAudioResponse =
       typeCastClientUtil.get(typecastResponse.getResult().getSpeakV2Url(), TypecastAudioResponse.class);
