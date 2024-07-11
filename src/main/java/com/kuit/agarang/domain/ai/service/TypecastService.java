@@ -1,10 +1,10 @@
-package com.kuit.agarang.domain.memory.service;
+package com.kuit.agarang.domain.ai.service;
 
-import com.kuit.agarang.domain.memory.dto.MessageRequest;
-import com.kuit.agarang.domain.memory.dto.TypecastAudioResponse;
-import com.kuit.agarang.domain.memory.dto.TypecastRequest;
-import com.kuit.agarang.domain.memory.dto.TypecastResponse;
-import com.kuit.agarang.domain.memory.utils.TypecastClientUtil;
+import com.kuit.agarang.domain.ai.dto.MessageRequest;
+import com.kuit.agarang.domain.ai.dto.TypecastAudioResponse;
+import com.kuit.agarang.domain.ai.dto.TypecastRequest;
+import com.kuit.agarang.domain.ai.dto.TypecastResponse;
+import com.kuit.agarang.domain.ai.utils.TypecastClientUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

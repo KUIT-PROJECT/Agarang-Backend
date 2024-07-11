@@ -1,10 +1,9 @@
 package com.kuit.agarang.domain.member.model.entity;
 
-import com.kuit.agarang.common.model.entity.BaseEntity;
+import com.kuit.agarang.global.entity.BaseEntity;
 import com.kuit.agarang.domain.baby.model.entity.Baby;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
