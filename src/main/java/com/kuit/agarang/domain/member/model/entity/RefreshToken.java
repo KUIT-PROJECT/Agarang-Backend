@@ -1,17 +1,14 @@
 package com.kuit.agarang.domain.member.model.entity;
 
 import com.kuit.agarang.common.model.entity.BaseEntity;
-import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.*;
 
 @Entity
 @Getter
-@SuperBuilder
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RefreshToken extends BaseEntity {
 
@@ -20,4 +17,9 @@ public class RefreshToken extends BaseEntity {
   private Long id;
 
   private String value;
+
+  @Builder
+  public RefreshToken(String value) {
+    this.value = value;
+  }
 }

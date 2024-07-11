@@ -3,16 +3,10 @@ package com.kuit.agarang.domain.playlist.model.entity;
 import com.kuit.agarang.common.model.entity.BaseEntity;
 import com.kuit.agarang.domain.memory.model.entity.Memory;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.*;
 
 @Entity
 @Getter
-@SuperBuilder
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemoryPlaylist extends BaseEntity {
 
@@ -21,10 +15,10 @@ public class MemoryPlaylist extends BaseEntity {
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn
+  @JoinColumn(name = "playlist_id")
   private Playlist playlist;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn
+  @JoinColumn(name = "memory_id")
   private Memory memory;
 }
