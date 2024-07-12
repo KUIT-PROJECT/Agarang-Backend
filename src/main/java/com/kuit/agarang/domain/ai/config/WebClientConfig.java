@@ -1,4 +1,4 @@
-package com.kuit.agarang.domain.memory.config;
+package com.kuit.agarang.domain.ai.config;
 
 import io.netty.channel.ChannelOption;
 import org.springframework.context.annotation.Bean;
