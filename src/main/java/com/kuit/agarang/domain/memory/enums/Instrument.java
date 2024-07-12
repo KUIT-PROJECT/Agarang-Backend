@@ -1,4 +1,4 @@
-package com.kuit.agarang.domain.memory.model.enums;
+package com.kuit.agarang.domain.memory.enums;
 
 public enum Instrument {
   PIANO, VIOLIN, FLUTE, CLARINET, BASE_GUITAR, ELECTRIC_GUITAR,
