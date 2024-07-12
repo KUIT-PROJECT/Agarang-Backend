@@ -1,13 +1,13 @@
 package com.kuit.agarang.domain.memory.model.entity;
 
 
-import com.kuit.agarang.common.model.entity.BaseEntity;
+import com.kuit.agarang.global.entity.BaseEntity;
 import com.kuit.agarang.domain.baby.model.entity.Baby;
 import com.kuit.agarang.domain.member.model.entity.Member;
-import com.kuit.agarang.domain.memory.model.entity.enums.Genre;
-import com.kuit.agarang.domain.memory.model.entity.enums.Instrument;
-import com.kuit.agarang.domain.memory.model.entity.enums.Mood;
-import com.kuit.agarang.domain.memory.model.entity.enums.Tempo;
+import com.kuit.agarang.domain.memory.enums.Genre;
+import com.kuit.agarang.domain.memory.enums.Instrument;
+import com.kuit.agarang.domain.memory.enums.Mood;
+import com.kuit.agarang.domain.memory.enums.Tempo;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,4 +1,4 @@
-package com.kuit.agarang.domain.memory.dto;
+package com.kuit.agarang.domain.ai.model.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

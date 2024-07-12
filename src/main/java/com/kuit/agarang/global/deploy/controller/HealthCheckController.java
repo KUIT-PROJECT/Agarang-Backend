@@ -1,6 +1,6 @@
 package com.kuit.agarang.global.deploy.controller;
 
-import com.kuit.agarang.global.deploy.dto.ServerInfo;
+import com.kuit.agarang.global.deploy.model.dto.ServerInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

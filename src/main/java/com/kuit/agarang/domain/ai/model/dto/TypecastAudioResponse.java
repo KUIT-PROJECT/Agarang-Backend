@@ -1,4 +1,4 @@
-package com.kuit.agarang.domain.memory.dto;
+package com.kuit.agarang.domain.ai.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -6,13 +6,13 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class TypecastResponse {
+public class TypecastAudioResponse {
   private Result result;
 
   @Getter
   @NoArgsConstructor
   public static class Result {
-    @JsonProperty("speak_v2_url")
-    private String speakV2Url;
+    @JsonProperty("audio_download_url")
+    private String audioDownloadUrl;
   }
 }

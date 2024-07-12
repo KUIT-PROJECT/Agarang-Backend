@@ -1,4 +1,4 @@
-package com.kuit.agarang.domain.memory.dto;
+package com.kuit.agarang.domain.ai.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
@@ -39,10 +39,9 @@ public class TypecastRequest {
     this.xapiAudioFormat = xapiAudioFormat;
   }
 
-  public static TypecastRequest create(MessageRequest request) {
+  public static TypecastRequest create(MessageRequest request, String actorId) {
     return TypecastRequest.builder()
-      // TODO : 전체 고정값인지 확인하기
-      .actorId("5ffda49bcba8f6d3d46fc447")
+      .actorId(actorId)
       .text(request.getText())
       .lang("auto")
       .tempo(1.0)
