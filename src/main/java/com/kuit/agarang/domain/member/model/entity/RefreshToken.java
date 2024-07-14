@@ -1,6 +1,6 @@
 package com.kuit.agarang.domain.member.model.entity;
 
-import com.kuit.agarang.global.entity.BaseEntity;
+import com.kuit.agarang.global.common.model.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
