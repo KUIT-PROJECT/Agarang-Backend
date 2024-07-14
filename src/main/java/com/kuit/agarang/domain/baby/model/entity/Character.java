@@ -1,6 +1,6 @@
 package com.kuit.agarang.domain.baby.model.entity;
 
-import com.kuit.agarang.global.entity.BaseEntity;
+import com.kuit.agarang.global.common.model.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

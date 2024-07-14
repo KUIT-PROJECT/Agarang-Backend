@@ -1,7 +1,7 @@
 package com.kuit.agarang.domain.memory.model.entity;
 
 
-import com.kuit.agarang.global.entity.BaseEntity;
+import com.kuit.agarang.global.common.model.entity.BaseEntity;
 import com.kuit.agarang.domain.baby.model.entity.Baby;
 import com.kuit.agarang.domain.member.model.entity.Member;
 import com.kuit.agarang.domain.memory.enums.Genre;
