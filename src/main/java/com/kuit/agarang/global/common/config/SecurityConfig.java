@@ -1,4 +1,4 @@
-package com.kuit.agarang.global.config;
+package com.kuit.agarang.global.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
