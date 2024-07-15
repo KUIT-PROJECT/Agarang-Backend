@@ -1,5 +1,6 @@
-package com.kuit.agarang.global.entity;
+package com.kuit.agarang.global.common.model.entity;
 
+import com.kuit.agarang.global.common.model.enums.Status;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
