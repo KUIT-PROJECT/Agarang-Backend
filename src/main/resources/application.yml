@@ -5,11 +5,11 @@ spring:
 ---
 spring:
   profiles:
-    active: blue
+    active: local
     group:
       local: local, common, secret
-      blue: blue, common, secret
-      green: green, common, secret
+      blue: blue, common, secret, server-common
+      green: green, common, secret, server-common
 
 server:
   env: blue
@@ -26,6 +26,11 @@ server:
 serverAddress: localhost
 serverName: local_server
 
+aws:
+  s3:
+    upload:
+      tmpPath: ./s3-uploads/
+
 ---
 spring:
   config:
@@ -35,7 +40,6 @@ spring:
 server:
   port: 8080
 
-serverAddress: 43.200.109.115
 serverName: blue_server
 
 ---
@@ -47,8 +51,20 @@ spring:
 server:
   port: 8081
 
-serverAddress: 43.200.109.115
 serverName: green_server
+
+---
+spring:
+  config:
+    activate:
+      on-profile: server-common
+
+serverAddress: 43.200.109.115
+
+aws:
+  s3:
+    upload:
+      tmpPath: /var/app/s3-uploads/
 
 ---
 spring:
@@ -64,3 +80,7 @@ spring:
         show_sql: true
         format_sql: true
     open-in-view: true
+  servlet:
+    multipart: # TODO: Exception Handler 추가하기
+      max-file-size: 5MB
+      max-request-size: 10MB
