@@ -12,6 +12,7 @@ public class S3File {
   private ContentType contentType;
   private Long contentLength;
   private byte[] bytes;
+  private String objectUrl;
 
   @Builder
   public S3File(String filename, ContentType contentType, Long contentLength, byte[] bytes) {
@@ -19,5 +20,10 @@ public class S3File {
     this.contentType = contentType;
     this.contentLength = contentLength;
     this.bytes = bytes;
+  }
+
+  public S3File putObjectUrl(String objectUrl) {
+    this.objectUrl = objectUrl;
+    return this;
   }
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetUrlRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
@@ -29,7 +30,7 @@ public class S3Util {
     return upload(s3File);
   }
 
-  private S3File upload(S3File s3File) throws Exception {
+  private S3File upload(S3File s3File) {
     try {
       PutObjectRequest request = PutObjectRequest.builder()
         .bucket(bucket)
@@ -40,12 +41,25 @@ public class S3Util {
 
       s3Client.putObject(request, RequestBody.fromBytes(s3File.getBytes()));
       log.info("S3 파일 업로드가 완료되었습니다. [{}]", s3File.getFilename());
-      return s3File;
+      return s3File.putObjectUrl(getUrl(s3File.getFilename()));
     } catch (S3Exception e) {
-      log.error("AWS S3 통신에 문제가 발생했습니다.");
+      log.error("요청된 객체가 존재하지 않거나 접근 권한이 없습니다.");
       throw new RuntimeException(e.getMessage());
     } finally {
       s3FileUtil.deleteTempFile(s3File);
+    }
+  }
+
+  private String getUrl(String filename) {
+    try {
+      GetUrlRequest request = GetUrlRequest.builder()
+        .bucket(bucket)
+        .key(filename)
+        .build();
+      return s3Client.utilities().getUrl(request).toString();
+    } catch (S3Exception e) {
+      log.error("요청된 객체가 존재하지 않거나 접근 권한이 없습니다.");
+      throw new RuntimeException(e.getMessage());
     }
   }
 }
