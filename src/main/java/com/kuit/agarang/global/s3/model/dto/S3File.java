@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class S3File {
-  private String fileName;
+  private String filename;
   private ContentType contentType;
   private Long contentLength;
   private byte[] bytes;
 
   @Builder
-  public S3File(String fileName, ContentType contentType, Long contentLength, byte[] bytes) {
-    this.fileName = fileName;
+  public S3File(String filename, ContentType contentType, Long contentLength, byte[] bytes) {
+    this.filename = filename;
     this.contentType = contentType;
     this.contentLength = contentLength;
     this.bytes = bytes;
