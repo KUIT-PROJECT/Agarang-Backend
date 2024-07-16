@@ -1,7 +1,6 @@
 package com.kuit.agarang.global.s3.utils;
 
 import com.kuit.agarang.global.s3.model.dto.S3File;
-import com.kuit.agarang.global.s3.model.enums.FileCategory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,27 +21,25 @@ public class S3Util {
   @Value("${aws.s3.bucket}")
   private String bucket;
 
-  public S3File upload(MultipartFile file, FileCategory category) throws Exception {
-    log.info("S3 파일 업로드가 시작되었습니다. [{} of {}]", file.getOriginalFilename(), category);
-
-    S3File s3File = s3FileUtil.convert(file, category)
+  public S3File upload(MultipartFile file) throws Exception {
+    log.info("S3 파일 업로드가 시작되었습니다. [{} of {}]", file.getOriginalFilename(), file.getContentType());
+    S3File s3File = s3FileUtil.convert(file)
       .orElseThrow(() -> new RuntimeException("파일 변환에 실패했습니다."));
+    s3FileUtil.uploadTempFile(s3File);
     return upload(s3File);
   }
 
   private S3File upload(S3File s3File) throws Exception {
     try {
-      s3FileUtil.uploadTempFile(s3File);
-
       PutObjectRequest request = PutObjectRequest.builder()
         .bucket(bucket)
-        .key(s3File.getFileName())
+        .key(s3File.getFilename())
         .contentType(s3File.getContentType().getMimeType())
         .contentLength(s3File.getContentLength())
         .build();
 
       s3Client.putObject(request, RequestBody.fromBytes(s3File.getBytes()));
-      log.info("S3 파일 업로드가 완료되었습니다. [{}]", s3File.getFileName());
+      log.info("S3 파일 업로드가 완료되었습니다. [{}]", s3File.getFilename());
       return s3File;
     } catch (S3Exception e) {
       log.error("AWS S3 통신에 문제가 발생했습니다.");
