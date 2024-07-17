@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 
-@Repository
 public interface MemoryRepository extends JpaRepository<Memory,Long> {
 //  @Query("SELECT mm FROM Memory mm JOIN MemoryBookmark mbm WHERE Date(mm.createdAt) = :date AND mm.baby.id = :babyId")
   @Query("SELECT mm, " +
