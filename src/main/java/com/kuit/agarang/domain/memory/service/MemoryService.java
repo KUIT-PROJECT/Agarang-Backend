@@ -47,10 +47,18 @@ public class MemoryService {
     List<MemoryDTO> memoryDTOS = memoriesByDateAndBaby.stream()
             .map(result -> MemoryDTO.of((Memory) result[0], (boolean) result[1]))
             .toList();
-    LocalDate startDate = DateUtil.findDate(selectedDate, -3);
-    LocalDate endDate = DateUtil.findDate(selectedDate, 3);
-    List<String> imageUrlsByDate = memoryRepository.findImageUrlsByDate(startDate, endDate);
+    List<String> imageUrlsByDate = getImageThumbnails(selectedDate);
     return new DailyMemoryResponse(imageUrlsByDate, memoryDTOS);
+  }
+
+  private List<String> getImageThumbnails(LocalDate selectedDate) {
+    final int beforeRange = -3;
+    final int afterRange = 3;
+
+    LocalDate startDate = DateUtil.findDate(selectedDate, beforeRange);
+    LocalDate endDate = DateUtil.findDate(selectedDate, afterRange);
+    List<String> imageUrlsByDate = memoryRepository.findImageUrlsByDate(startDate, endDate);
+    return imageUrlsByDate;
   }
 
   public DailyMemoriesResponse findDailyMemories() {
