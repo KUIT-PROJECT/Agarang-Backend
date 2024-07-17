@@ -10,7 +10,6 @@ public class MemoryImageDTO {
   private long id;
   private String imageUrl;
 
-
   @Builder
   public MemoryImageDTO(long id, String imageUrl) {
     this.id = id;
