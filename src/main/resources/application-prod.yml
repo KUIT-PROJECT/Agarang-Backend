@@ -1,0 +1,27 @@
+server:
+  port: 8080
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: blue
+
+server:
+  port: 8080
+deploy:
+  env: blue
+  name: blue_server
+
+---
+spring:
+  config:
+    activate:
+      on-profile: green
+
+server:
+  port: 8081
+deploy:
+  env: green
+  name: green_server
