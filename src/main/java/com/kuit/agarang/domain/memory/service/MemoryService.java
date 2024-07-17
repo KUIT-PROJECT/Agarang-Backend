@@ -94,7 +94,7 @@ public class MemoryService {
               .max(Comparator.comparing(Memory::getCreatedAt))
               .orElse(null);
       if (latestMemory != null) {
-        monthlyMemories.add(new MonthlyMemoryDTO(month, latestMemory.getImageUrl()));
+        monthlyMemories.add(MonthlyMemoryDTO.of(month, latestMemory.getImageUrl()));
       }
     });
 
