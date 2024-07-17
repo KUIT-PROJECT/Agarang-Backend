@@ -44,7 +44,6 @@ public class MemoryService {
     LocalDate selectedDate = DateUtil.convertStringToLocalDate(date);
 
     List<Object[]> memoriesByDateAndBaby = memoryRepository.findByMemoriesByDateAndBabyOrderByCreatedAtDesc(selectedDate, baby);
-    log.info("memoriesByDateAndBaby: " + memoriesByDateAndBaby);
     List<MemoryDTO> memoryDTOS = memoriesByDateAndBaby.stream()
             .map(result -> MemoryDTO.of((Memory) result[0], (boolean) result[1]))
             .toList();
