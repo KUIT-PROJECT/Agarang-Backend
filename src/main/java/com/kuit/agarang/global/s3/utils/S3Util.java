@@ -74,7 +74,7 @@ public class S3Util {
     }
   }
 
-  public String getUrl(String filename) {
+  private String getUrl(String filename) {
     try {
       GetUrlRequest request = GetUrlRequest.builder()
         .bucket(bucket)
