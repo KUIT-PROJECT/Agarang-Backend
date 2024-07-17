@@ -8,9 +8,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3Uri;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetUrlRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
+
+import java.net.URI;
 
 @Component
 @RequiredArgsConstructor
@@ -50,7 +54,27 @@ public class S3Util {
     }
   }
 
-  private String getUrl(String filename) {
+  public void delete(String objectUrl) {
+    S3Uri s3Uri = s3Client.utilities().parseUri(URI.create(objectUrl));
+    String filename = s3Uri.key()
+      .orElseThrow(() -> new RuntimeException("이미지 URL 이 유효하지 않습니다."));
+    deleteObject(filename);
+  }
+
+  private void deleteObject(String filename) {
+    try {
+      DeleteObjectRequest request = DeleteObjectRequest.builder()
+        .bucket(bucket)
+        .key(filename)
+        .build();
+      s3Client.deleteObject(request);
+    } catch (S3Exception e) {
+      log.error("요청된 객체가 존재하지 않거나 접근 권한이 없습니다.");
+      throw new RuntimeException(e.getMessage());
+    }
+  }
+
+  public String getUrl(String filename) {
     try {
       GetUrlRequest request = GetUrlRequest.builder()
         .bucket(bucket)
