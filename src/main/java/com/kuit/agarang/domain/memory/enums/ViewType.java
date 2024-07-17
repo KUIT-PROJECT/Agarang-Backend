@@ -2,7 +2,7 @@ package com.kuit.agarang.domain.memory.enums;
 
 public enum ViewType {
   CARD("card"),
-  FAVORITE("favorite"),
+  BOOKMARK("bookmark"),
   MONTHLY("monthly"),
   DAILY("daily");
 

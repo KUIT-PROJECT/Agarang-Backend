@@ -4,7 +4,6 @@ import com.kuit.agarang.domain.memory.enums.ViewType;
 import com.kuit.agarang.domain.memory.model.dto.FavoriteMemoriesResponse;
 import com.kuit.agarang.domain.memory.model.dto.MemoryRequest;
 import com.kuit.agarang.domain.memory.model.dto.MonthlyMemoryResponse;
-import com.kuit.agarang.domain.memory.model.dto.DailyMemoryRequest;
 import com.kuit.agarang.domain.memory.model.dto.DailyMemoryResponse;
 import com.kuit.agarang.domain.memory.model.dto.DailyMemoriesResponse;
 import com.kuit.agarang.domain.memory.service.MemoryService;
@@ -47,7 +46,7 @@ public class MemoryController {
       return ResponseEntity.ok(new BaseResponse<>(monthlyMemoryResponse));
     }
 
-    if (viewType.equals(ViewType.FAVORITE)) {
+    if (viewType.equals(ViewType.BOOKMARK)) {
       FavoriteMemoriesResponse favoriteMemoriesResponse = memoryService.findFavoriteMemories();
       return ResponseEntity.ok(new BaseResponse(favoriteMemoriesResponse));
     }
