@@ -21,13 +21,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -45,7 +43,7 @@ public class MemoryService {
     String date = memoryRequest.getDate();
     LocalDate selectedDate = DateUtil.convertStringToLocalDate(date);
 
-    List<Object[]> memoriesByDateAndBaby = memoryRepository.findByMemoriesByDateAndBabyOrdeOrderByCreatedAtDesc(selectedDate, baby);
+    List<Object[]> memoriesByDateAndBaby = memoryRepository.findByMemoriesByDateAndBabyOrderByCreatedAtDesc(selectedDate, baby);
     log.info("memoriesByDateAndBaby: " + memoriesByDateAndBaby);
     List<MemoryDTO> memoryDTOS = memoriesByDateAndBaby.stream()
             .map(result -> MemoryDTO.of((Memory) result[0], (boolean) result[1]))

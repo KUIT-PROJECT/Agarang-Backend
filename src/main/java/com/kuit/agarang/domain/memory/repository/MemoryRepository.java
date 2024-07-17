@@ -18,7 +18,7 @@ public interface MemoryRepository extends JpaRepository<Memory,Long> {
           "LEFT JOIN MemoryBookmark mbm ON mm.id = mbm.memory.id " +
           "WHERE DATE(mm.createdAt) = :date AND mm.baby = :baby " +
           "ORDER BY mm.createdAt DESC")
-  List<Object[]> findByMemoriesByDateAndBabyOrdeOrderByCreatedAtDesc(LocalDate date, Baby baby);
+  List<Object[]> findByMemoriesByDateAndBabyOrderByCreatedAtDesc(LocalDate date, Baby baby);
 
   @Query("SELECT m.imageUrl FROM Memory m WHERE Date(m.createdAt) >= :startDate AND Date(m.createdAt) <= :endDate")
   List<String> findImageUrlsByDate(LocalDate startDate, LocalDate endDate);

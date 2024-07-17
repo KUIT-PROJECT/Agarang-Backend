@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @Transactional
 class MemoryRepositoryTest {
@@ -26,7 +24,7 @@ class MemoryRepositoryTest {
     LocalDate localDate = LocalDate.of(2024, 7, 1);
     Baby baby = new Baby(1L, "DXW1234", "아가", LocalDate.of(2025, 1, 1), 1.8D);
     //when
-    List<Object[]> memories = repository.findByMemoriesByDateAndBabyOrdeOrderByCreatedAtDesc(localDate, baby);
+    List<Object[]> memories = repository.findByMemoriesByDateAndBabyOrderByCreatedAtDesc(localDate, baby);
     System.out.println(memories);
     //then
     Assertions.assertThat(memories.size())
