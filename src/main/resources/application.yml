@@ -26,11 +26,6 @@ server:
 serverAddress: localhost
 serverName: local_server
 
-aws:
-  s3:
-    upload:
-      tmpPath: ./s3-uploads/
-
 ---
 spring:
   config:
@@ -61,11 +56,6 @@ spring:
 
 serverAddress: 43.200.109.115
 
-aws:
-  s3:
-    upload:
-      tmpPath: /var/app/s3-uploads/
-
 ---
 spring:
   config:
@@ -89,3 +79,8 @@ spring:
     init:
       mode: always
       data-locations: classpath:data.sql
+
+aws:
+  s3:
+    upload:
+      tempPath: ./temp/
