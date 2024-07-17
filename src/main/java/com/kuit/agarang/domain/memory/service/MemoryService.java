@@ -6,6 +6,7 @@ import com.kuit.agarang.domain.memory.model.dto.DailyMemoryDTO;
 import com.kuit.agarang.domain.memory.model.dto.FavoriteMemoriesResponse;
 import com.kuit.agarang.domain.memory.model.dto.DailyMemoryResponse;
 import com.kuit.agarang.domain.memory.model.dto.DailyMemoriesResponse;
+import com.kuit.agarang.domain.memory.model.dto.MemoryBookmarkedDTO;
 import com.kuit.agarang.domain.memory.model.dto.MemoryDTO;
 import com.kuit.agarang.domain.memory.model.dto.MemoryImageDTO;
 import com.kuit.agarang.domain.memory.model.dto.MemoryRequest;
@@ -37,18 +38,23 @@ public class MemoryService {
   private final MemoryBookmarkRepository memoryBookmarkRepository;
 
   public DailyMemoryResponse findMemory(MemoryRequest memoryRequest) {
-    //TODO : 회원 JWT -> 아기 조회 로직 추가 필요
-    Baby baby = new Baby(1L, "DXW1234", "아가", LocalDate.of(2025, 1, 1), 1.8D);
-
     String date = memoryRequest.getDate();
     LocalDate selectedDate = DateUtil.convertStringToLocalDate(date);
 
-    List<Object[]> memoriesByDateAndBaby = memoryRepository.findByMemoriesByDateAndBabyOrderByCreatedAtDesc(selectedDate, baby);
-    List<MemoryDTO> memoryDTOS = memoriesByDateAndBaby.stream()
-            .map(result -> MemoryDTO.of((Memory) result[0], (boolean) result[1]))
-            .toList();
+    List<MemoryDTO> memoryDTOS = getMemoriesByDateAndBaby(selectedDate);
     List<String> imageUrlsByDate = getImageThumbnails(selectedDate);
+
     return new DailyMemoryResponse(imageUrlsByDate, memoryDTOS);
+  }
+
+  private List<MemoryDTO> getMemoriesByDateAndBaby(LocalDate selectedDate) {
+    //TODO : 회원 JWT -> 아기 조회 로직 추가 필요
+    Baby baby = new Baby(1L, "DXW1234", "아가", LocalDate.of(2025, 1, 1), 1.8D);
+
+    List<MemoryBookmarkedDTO> memoriesByDateAndBaby = memoryRepository.findByDateAndBabyForMemoryCard(selectedDate, baby);
+    return memoriesByDateAndBaby.stream()
+            .map(result -> MemoryDTO.of(result.getMemory(), result.isBookmarked()))
+            .toList();
   }
 
   private List<String> getImageThumbnails(LocalDate selectedDate) {

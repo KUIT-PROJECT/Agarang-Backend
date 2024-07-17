@@ -16,18 +16,18 @@ public class MemoryDTO {
   private String date;
   private String content;
   private List<String> hashTags;
-  private boolean isFavorite;
+  private boolean isBookmarked;
 
   @Builder
-  public MemoryDTO(String content, String date, List<String> hashTags, boolean isFavorite, String writer) {
+  public MemoryDTO(String content, String date, List<String> hashTags, boolean isBookmarked, String writer) {
     this.content = content;
     date = date;
     this.hashTags = hashTags;
-    this.isFavorite = isFavorite;
+    this.isBookmarked = isBookmarked;
     this.writer = writer;
   }
 
-  public static MemoryDTO of(Memory memory, boolean isFavorite) {
+  public static MemoryDTO of(Memory memory, boolean isBookmarked) {
     return MemoryDTO.builder()
             .writer(memory.getMember().getRole())
             .date(DateUtil.formatLocalDateTime(memory.getCreatedAt(), "yyyy. MM. dd"))
@@ -35,7 +35,7 @@ public class MemoryDTO {
             .hashTags(memory.getHashtag().stream()
                     .map(Hashtag::getName)
                     .toList())
-            .isFavorite(isFavorite)
+            .isBookmarked(isBookmarked)
             .build();
   }
 }
