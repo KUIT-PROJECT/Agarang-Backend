@@ -25,7 +25,6 @@ class MemoryRepositoryTest {
     Baby baby = new Baby(1L, "DXW1234", "아가", LocalDate.of(2025, 1, 1), 1.8D);
     //when
     List<Object[]> memories = repository.findByMemoriesByDateAndBabyOrderByCreatedAtDesc(localDate, baby);
-    System.out.println(memories);
     //then
     Assertions.assertThat(memories.size())
             .isEqualTo(1);
