@@ -3,11 +3,9 @@ package com.kuit.agarang.domain.memory.model.dto;
 import com.kuit.agarang.domain.memory.model.entity.Hashtag;
 import com.kuit.agarang.domain.memory.model.entity.Memory;
 import com.kuit.agarang.global.common.utils.DateUtil;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 
@@ -15,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class MemoryDTO {
   private String writer;
-  private String Date;
+  private String date;
   private String content;
   private List<String> hashTags;
   private boolean isFavorite;
@@ -23,7 +21,7 @@ public class MemoryDTO {
   @Builder
   public MemoryDTO(String content, String date, List<String> hashTags, boolean isFavorite, String writer) {
     this.content = content;
-    Date = date;
+    date = date;
     this.hashTags = hashTags;
     this.isFavorite = isFavorite;
     this.writer = writer;
