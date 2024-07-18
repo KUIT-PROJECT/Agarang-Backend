@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -17,9 +18,11 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
+  @Value("${app.baseUrl}")
+  private String baseUrl;
   private final JwtProvider jwtProvider;
-  @Override
 
+  @Override
   public void onAuthenticationSuccess(
       HttpServletRequest request,
       HttpServletResponse response,
@@ -31,7 +34,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     String userId = oAuth2User.getName();
     String token = jwtProvider.createToken(userId);
 
-    response.sendRedirect("http://localhost:8080/auth/oauth-response/" + token + "/3600"); // 3600초
-
+    response.sendRedirect(baseUrl + "/auth/oauth-response/" + token + "/3600"); // 3600초
   }
 }

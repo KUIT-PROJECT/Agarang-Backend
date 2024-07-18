@@ -26,8 +26,9 @@ public class JwtProvider {
     log.info("JWT key={}", JWT_SECRET_KEY);
 
     Claims claims = Jwts.claims();
+
     Date now = new Date();
-    Date validity = new Date(now.getTime() + JWT_EXPIRED_IN);
+    Date validity = new Date(System.currentTimeMillis() + JWT_EXPIRED_IN);
 
     return Jwts.builder()
         .setClaims(claims)
