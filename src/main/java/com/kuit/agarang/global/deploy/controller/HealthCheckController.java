@@ -18,15 +18,6 @@ public class HealthCheckController {
   @Value("${deploy.name}")
   private String serverName;
 
-  @GetMapping("/hc")
-  public ResponseEntity<ServerInfo> healthCheck() {
-    return ResponseEntity.ok(ServerInfo.builder()
-      .port(serverPort)
-      .address(serverAddress)
-      .name(serverName)
-      .build());
-  }
-
   @GetMapping("/env")
   public ResponseEntity<String> getEnv() {
     return ResponseEntity.ok(env);
