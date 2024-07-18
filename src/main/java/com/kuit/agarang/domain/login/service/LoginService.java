@@ -1,6 +1,7 @@
 package com.kuit.agarang.domain.login.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kuit.agarang.domain.login.enums.AuthProvider;
 import com.kuit.agarang.domain.login.model.entitiy.CustomOAuth2User;
 import com.kuit.agarang.domain.member.model.entity.Member;
 import com.kuit.agarang.domain.member.repository.MemberRepository;
@@ -11,6 +12,8 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+
+import static com.kuit.agarang.domain.login.enums.AuthProvider.*;
 
 @Slf4j
 @Service
@@ -35,7 +38,7 @@ public class LoginService extends DefaultOAuth2UserService {
     String oauthId = null;
 
     if (oauthClientName.equals("kakao")) {
-      oauthId = "kakao_" + oAuth2Member.getAttributes().get("id");
+      oauthId = KAKAO.getPrefix() + oAuth2Member.getAttributes().get("id");
       member = Member.builder()
           .oauthId(oauthId)
           .build();
