@@ -9,23 +9,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HealthCheckController {
 
-  @Value("${server.env}")
+  @Value("${deploy.env}")
   private String env;
   @Value("${server.port}")
   private String serverPort;
-  @Value("${serverAddress}")
+  @Value("${deploy.address}")
   private String serverAddress;
-  @Value("${serverName}")
+  @Value("${deploy.name}")
   private String serverName;
-
-  @GetMapping("/hc")
-  public ResponseEntity<ServerInfo> healthCheck() {
-    return ResponseEntity.ok(ServerInfo.builder()
-      .port(serverPort)
-      .address(serverAddress)
-      .name(serverName)
-      .build());
-  }
 
   @GetMapping("/env")
   public ResponseEntity<String> getEnv() {
