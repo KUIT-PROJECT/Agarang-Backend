@@ -80,7 +80,7 @@ jobs:
           script_stop: true
           script: |
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/agarang:latest
-            sudo docker-compose -f docker-compose-${{env.TARGET_UPSTREAM}}.yml -p ${{ TARGET_UPSTREAM }} up -d
+            sudo docker-compose -f docker-compose-${{env.TARGET_UPSTREAM}}.yml -p ${{env.TARGET_UPSTREAM}} up -d
       
       - name: Check deploy server URL
         uses: jtalk/url-health-check-action@v4
