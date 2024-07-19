@@ -52,10 +52,10 @@ jobs:
     steps:
       - name: Set Target IP
         run: |
-          STATUS=$(curl -L -o /dev/null -w "%{http_code}" "http://${{ secrets.AGARANG_SERVER_IP }}:8080/env")
+          STATUS=$(curl -L -o /dev/null -w "%{http_code}" "http://${{ secrets.AGARANG_SERVER_IP }}/env")
           echo $STATUS
           if [ $STATUS = 200 ]; then
-            CURRENT_UPSTREAM=$(curl -L -s "http://${{ secrets.AGARANG_SERVER_IP }}:8080/env")
+            CURRENT_UPSTREAM=$(curl -L -s "http://${{ secrets.AGARANG_SERVER_IP }}/env")
           else
             CURRENT_UPSTREAM=green
           fi
