@@ -50,12 +50,12 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Set Target PORT
+      - name: Set Target Port
         run: |
-          STATUS=$(curl -L -o /dev/null -w "%{http_code}" "http://${{ secrets.AGARANG_SERVER_IP }}/env")
+          STATUS=$(curl -L -o /dev/null -w "%{http_code}" "https://agarang.site/env")
           echo $STATUS
           if [ $STATUS = 200 ]; then
-            CURRENT_UPSTREAM=$(curl -L -s "http://${{ secrets.AGARANG_SERVER_IP }}/env")
+            CURRENT_UPSTREAM=$(curl -L -s "https://agarang.site/env")
           else
             CURRENT_UPSTREAM=green
           fi
