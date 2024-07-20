@@ -28,4 +28,8 @@ public class Member extends BaseEntity {
   public Member(String role) {
     this.role = role;
   }
+
+  public Member(Long id) {
+    this.id = id;
+  }
 }

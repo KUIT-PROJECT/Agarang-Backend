@@ -31,4 +31,12 @@ public class Baby extends BaseEntity {
     this.expectedDueAt = expectedDueAt;
     this.weight = weight;
   }
+
+  public Baby(Long id, String code, String name, LocalDate expectedDueAt, Double weight) {
+    this.id = id;
+    this.code = code;
+    this.name = name;
+    this.expectedDueAt = expectedDueAt;
+    this.weight = weight;
+  }
 }

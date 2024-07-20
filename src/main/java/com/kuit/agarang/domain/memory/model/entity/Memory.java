@@ -11,6 +11,8 @@ import com.kuit.agarang.domain.memory.enums.Tempo;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -42,6 +44,9 @@ public class Memory extends BaseEntity {
 
   @Enumerated(EnumType.STRING)
   private Instrument instrument;
+
+  @OneToMany(mappedBy = "memory")
+  private List<Hashtag> hashtag;
 
   @Builder
   public Memory(String imageUrl, String text, Genre genre,
