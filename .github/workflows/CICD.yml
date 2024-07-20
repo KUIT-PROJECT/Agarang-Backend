@@ -60,7 +60,7 @@ jobs:
           script: |
             BLUE_STATUS=$(sudo docker ps --filter "name=blue" --format "{{.Names}}")
             echo CURRENT_UPSTREAM=$BLUE_STATUS >> $GITHUB_ENV
-            if [ $BLUE_STATUS = blue ]; then
+            if [ $CURRENT_UPSTREAM = blue ]; then
               echo "CURRENT_PORT=8080" >> $GITHUB_ENV
               echo "TARGET_PORT=8081" >> $GITHUB_ENV
               echo "TARGET_UPSTREAM=green" >> $GITHUB_ENV
