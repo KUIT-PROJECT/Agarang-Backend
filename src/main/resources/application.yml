@@ -19,7 +19,17 @@ spring:
         show_sql: true
         format_sql: true
     open-in-view: true
+    defer-datasource-initialization: true # Sql auto init after jpa ddl-auto operation
   servlet:
     multipart: # TODO: Exception Handler 추가하기
       max-file-size: 5MB
       max-request-size: 10MB
+  sql: # Set src/main/resources/data.sql auto init
+    init:
+      mode: always
+      data-locations: classpath:data.sql
+
+aws:
+  s3:
+    upload:
+      tempPath: ./temp/
