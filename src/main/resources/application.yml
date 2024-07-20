@@ -1,66 +1,15 @@
 spring:
   application:
     name: agarang
-
----
-spring:
+  config:
+    import: classpath:application-prod.yml
   profiles:
     active: local
     group:
-      local: local, common, secret
-      blue: blue, common, secret, server-common
-      green: green, common, secret, server-common
+      local: local, secret
+      blue: blue, secret
+      green: green, secret
 
-server:
-  env: blue
-
----
-spring:
-  config:
-    activate:
-      on-profile: local
-
-server:
-  port: 8080
-
-serverAddress: localhost
-serverName: local_server
-
----
-spring:
-  config:
-    activate:
-      on-profile: blue
-
-server:
-  port: 8080
-
-serverName: blue_server
-
----
-spring:
-  config:
-    activate:
-      on-profile: green
-
-server:
-  port: 8081
-
-serverName: green_server
-
----
-spring:
-  config:
-    activate:
-      on-profile: server-common
-
-serverAddress: 43.200.109.115
-
----
-spring:
-  config:
-    activate:
-      on-profile: common
   jpa:
     generate-ddl: true
     hibernate:
