@@ -33,3 +33,12 @@ aws:
   s3:
     upload:
       tempPath: ./temp/
+
+springdoc:
+  api-docs:
+    path: /api-json
+  swagger-ui:
+    path: /api-docs # 302 /swagger-ui/index.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  paths-to-exclude: /env
