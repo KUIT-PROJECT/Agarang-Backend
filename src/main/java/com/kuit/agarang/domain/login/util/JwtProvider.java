@@ -4,10 +4,12 @@ import com.kuit.agarang.global.common.exception.jwt.bad_request.JwtUnsupportedTo
 import com.kuit.agarang.global.common.exception.jwt.unauthorized.JwtInvalidTokenException;
 import com.kuit.agarang.global.common.exception.jwt.unauthorized.JwtMalformedTokenException;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.security.Key;
 import java.util.Date;
 
 import static com.kuit.agarang.global.common.response.status.BaseExceptionResponseStatus.*;
@@ -23,19 +25,20 @@ public class JwtProvider {
   private long JWT_EXPIRED_IN;
 
   public String createToken(String userId) {
-    log.info("JWT key={}", JWT_SECRET_KEY);
 
     Claims claims = Jwts.claims();
 
     Date now = new Date();
     Date validity = new Date(System.currentTimeMillis() + JWT_EXPIRED_IN);
 
+    Key key = Keys.hmacShaKeyFor(JWT_SECRET_KEY.getBytes());
+
     return Jwts.builder()
         .setClaims(claims)
         .setIssuedAt(now)
         .setExpiration(validity)
         .claim("userId", userId)
-        .signWith(SignatureAlgorithm.HS256, JWT_SECRET_KEY)
+        .signWith(key, SignatureAlgorithm.HS256)
         .compact();
   }
 
