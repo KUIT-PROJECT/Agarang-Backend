@@ -29,9 +29,10 @@ public class SecurityConfig {
     http
         .authorizeHttpRequests((auth) -> auth
             .requestMatchers(
-                "/hc", "/env", "/oauth2/**")
+              "/env", "/api-json/**", "/api-docs", "/swagger-ui/**",
+              "/oauth2/**")
             .permitAll()
-            .anyRequest().permitAll()
+            .anyRequest().permitAll() // TODO : 인가 구현 후 수정
         )
         .oauth2Login(oauth2 -> oauth2
             .userInfoEndpoint(endpoint -> endpoint.userService(oAuth2UserService))
