@@ -31,6 +31,7 @@ public class Memory extends BaseEntity {
   private Baby baby;
 
   private String imageUrl;
+  private String musicUrl;
   private String text;
 
   @Enumerated(EnumType.STRING)
@@ -49,9 +50,10 @@ public class Memory extends BaseEntity {
   private List<Hashtag> hashtag;
 
   @Builder
-  public Memory(String imageUrl, String text, Genre genre,
+  public Memory(String imageUrl, String musicUrl, String text, Genre genre,
                 Mood mood, Tempo tempo, Instrument instrument) {
     this.imageUrl = imageUrl;
+    this.musicUrl = musicUrl;
     this.text = text;
     this.genre = genre;
     this.mood = mood;
