@@ -21,7 +21,7 @@ public class ProdErrorInterceptor implements HandlerInterceptor {
       MDC.put("host", headerInfo.getHost());
       MDC.put("cookie", headerInfo.getCookie());
       MDC.put("method", headerInfo.getMethod());
-      MDC.put("url", headerInfo.getUrl());
+      MDC.put("uri", headerInfo.getUri());
       MDC.put("query", headerInfo.getQueryString());
     }
   }

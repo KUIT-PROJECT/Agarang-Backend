@@ -16,15 +16,15 @@ public class HeaderInfo {
   private String host;
   private String cookie;
   private String method;
-  private String url;
+  private String uri;
   private String queryString;
 
   @Builder
-  public HeaderInfo(String host, String cookie, String method, String url, String queryString) {
+  public HeaderInfo(String host, String cookie, String method, String uri, String queryString) {
     this.host = host;
     this.cookie = cookie;
     this.method = method;
-    this.url = url;
+    this.uri = uri;
     this.queryString = queryString;
   }
 
@@ -33,7 +33,7 @@ public class HeaderInfo {
       .host(request.getHeader("host"))
       .cookie(request.getHeader("cookie"))
       .method(request.getMethod())
-      .url(request.getRequestURL().toString())
+      .uri(request.getRequestURI())
       .queryString(request.getQueryString() == null ? null : QUERY_PREFIX + request.getQueryString())
       .build();
   }
