@@ -10,7 +10,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
       # JDK
       - name: Install JDK 17
@@ -22,6 +22,9 @@ jobs:
       # YML
       - name: Decoding Secret yml File
         run: echo ${{secrets.APPLICATION_SECRET}} | base64 --decode > ./src/main/resources/application-secret.yml
+
+      - name: Verify Decoded YML File
+        run: cat ./src/main/resources/application-secret.yml
 
       # Gradle (Test Build)
       - name: Grant execute permission for gradlew
