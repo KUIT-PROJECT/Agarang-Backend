@@ -20,7 +20,7 @@ public class S3FileUtil {
   @Value("${aws.s3.upload.tempPath}")
   private String tempPath;
 
-  public Optional<S3File> convert(MultipartFile file) throws Exception {
+  private Optional<S3File> convert(MultipartFile file) throws Exception {
     ContentType contentType = getContentType(file)
       .orElseThrow(() -> new RuntimeException("지원하지 않는 파일확장자입니다."));
     return Optional.of(S3File.builder()
@@ -31,7 +31,14 @@ public class S3FileUtil {
       .build());
   }
 
-  public void uploadTempFile(S3File s3File) throws IOException {
+  public S3File uploadTempFile(MultipartFile file) throws Exception {
+    S3File s3File = convert(file)
+      .orElseThrow(() -> new RuntimeException("파일 변환에 실패했습니다."));
+    uploadTempFile(s3File);
+    return s3File;
+  }
+
+  private void uploadTempFile(S3File s3File) throws IOException {
     File directory = new File(tempPath + s3File.getContentType().getPath());
     if (!directory.exists()) directory.mkdirs();
 
