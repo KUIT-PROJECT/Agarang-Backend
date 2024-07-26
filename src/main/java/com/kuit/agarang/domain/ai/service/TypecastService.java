@@ -1,9 +1,9 @@
 package com.kuit.agarang.domain.ai.service;
 
-import com.kuit.agarang.domain.ai.model.dto.MessageRequest;
-import com.kuit.agarang.domain.ai.model.dto.TypecastRequest;
-import com.kuit.agarang.domain.ai.model.dto.TypecastResponse;
-import com.kuit.agarang.domain.ai.model.dto.TypecastWebhookResponse;
+import com.kuit.agarang.domain.ai.model.dto.typecast.TypecastMessageRequest;
+import com.kuit.agarang.domain.ai.model.dto.typecast.TypecastRequest;
+import com.kuit.agarang.domain.ai.model.dto.typecast.TypecastResponse;
+import com.kuit.agarang.domain.ai.model.dto.typecast.TypecastWebhookResponse;
 import com.kuit.agarang.domain.ai.model.entity.TypecastAudio;
 import com.kuit.agarang.domain.ai.model.repository.TypecastAudioRepository;
 import com.kuit.agarang.domain.ai.utils.TypecastClientUtil;
@@ -20,7 +20,7 @@ public class TypecastService {
   private final TypecastClientUtil typeCastClientUtil;
   private final TypecastAudioRepository typecastAudioRepository;
 
-  public void getAudioDownloadUrl(MessageRequest request) {
+  public void getAudioDownloadUrl(TypecastMessageRequest request) {
     typeCastClientUtil.post("/api/speak", TypecastRequest.create(request, actorId), TypecastResponse.class);
   }
 

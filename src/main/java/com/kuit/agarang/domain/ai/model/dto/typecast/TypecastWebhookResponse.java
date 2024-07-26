@@ -1,4 +1,4 @@
-package com.kuit.agarang.domain.ai.model.dto;
+package com.kuit.agarang.domain.ai.model.dto.typecast;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

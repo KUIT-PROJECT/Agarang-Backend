@@ -1,4 +1,4 @@
-package com.kuit.agarang.domain.ai.model.dto;
+package com.kuit.agarang.domain.ai.model.dto.typecast;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
