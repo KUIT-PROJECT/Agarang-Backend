@@ -5,7 +5,7 @@ import com.kuit.agarang.domain.ai.model.dto.typecast.TypecastRequest;
 import com.kuit.agarang.domain.ai.model.dto.typecast.TypecastResponse;
 import com.kuit.agarang.domain.ai.model.dto.typecast.TypecastWebhookResponse;
 import com.kuit.agarang.domain.ai.model.entity.TypecastAudio;
-import com.kuit.agarang.domain.ai.model.repository.TypecastAudioRepository;
+import com.kuit.agarang.domain.ai.repository.TypecastAudioRepository;
 import com.kuit.agarang.domain.ai.utils.TypecastClientUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
