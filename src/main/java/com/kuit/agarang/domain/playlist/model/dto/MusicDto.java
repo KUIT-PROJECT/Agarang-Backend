@@ -1,6 +1,5 @@
 package com.kuit.agarang.domain.playlist.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kuit.agarang.domain.memory.model.entity.Memory;
 import lombok.*;
 
