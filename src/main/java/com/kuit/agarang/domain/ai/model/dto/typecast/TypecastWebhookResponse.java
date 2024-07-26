@@ -10,4 +10,6 @@ public class TypecastWebhookResponse {
   private String status;
   @JsonProperty("audio_download_url")
   private String audioDownloadUrl;
+  @JsonProperty("speak_url")
+  private String speakUrl;
 }

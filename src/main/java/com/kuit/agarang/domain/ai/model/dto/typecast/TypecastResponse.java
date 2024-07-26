@@ -12,7 +12,7 @@ public class TypecastResponse {
   @Getter
   @NoArgsConstructor
   public static class Result {
-    @JsonProperty("speak_v2_url")
-    private String speakV2Url;
+    @JsonProperty("speak_url")
+    private String speakUrl;
   }
 }

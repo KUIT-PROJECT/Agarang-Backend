@@ -20,8 +20,10 @@ public class TypecastService {
   private final TypecastClientUtil typeCastClientUtil;
   private final TypecastAudioRepository typecastAudioRepository;
 
-  public void getAudioDownloadUrl(TypecastMessageRequest request) {
-    typeCastClientUtil.post("/api/speak", TypecastRequest.create(request, actorId), TypecastResponse.class);
+  public String getAudioDownloadUrl(TypecastMessageRequest request) {
+    TypecastResponse response
+      = typeCastClientUtil.post("/api/speak", TypecastRequest.create(request, actorId), TypecastResponse.class);
+    return response.getResult().getSpeakUrl();
   }
 
   public void saveAudio(TypecastWebhookResponse response) {
@@ -29,6 +31,9 @@ public class TypecastService {
       // TODO : 예외처리 (done or failed)
     }
     // TODO : redis cache 저장으로 변경 (일회성 데이터)
-    typecastAudioRepository.save(new TypecastAudio(response.getAudioDownloadUrl()));
+    typecastAudioRepository.save(TypecastAudio.builder()
+      .id(response.getSpeakUrl())
+      .audioDownloadUrl(response.getAudioDownloadUrl())
+      .build());
   }
 }
