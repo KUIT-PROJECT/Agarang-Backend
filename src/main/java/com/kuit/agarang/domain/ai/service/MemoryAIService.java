@@ -80,7 +80,7 @@ public class MemoryAIService {
         return true;
       } else {
         log.info("2차 대기");
-        Thread.sleep(1500);
+        Thread.sleep(2000);
         return typecastAudioRepository.existsById(entityId);
       }
     } catch (InterruptedException e) {
