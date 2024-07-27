@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.ArrayList;
+
 import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.SUCCESS;
 
 @Getter
@@ -33,5 +35,12 @@ public class BaseResponse<T> {//BaseResponse 객체를 사용할때 성공, 실�
     this.isSuccess = status.isSuccess();
     this.message = status.getMessage();
     this.code = status.getCode();
+  }
+
+  public BaseResponse() {
+    this.isSuccess = SUCCESS.isSuccess();
+    this.message = SUCCESS.getMessage();
+    this.code = SUCCESS.getCode();
+    this.result = (T) new ArrayList<>();
   }
 }
