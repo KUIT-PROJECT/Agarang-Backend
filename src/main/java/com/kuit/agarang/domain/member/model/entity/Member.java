@@ -22,16 +22,34 @@ public class Member extends BaseEntity {
   @JoinColumn(name = "refresh_token_id")
   private RefreshToken refreshToken;
 
-  private String oauthId;
+  private String providerId;
+
+  private String name;
+  private String email;
+  private String familyRole;
+
   private String role;
 
+
   @Builder
-  public Member(String oauthId, String role) {
-    this.oauthId = oauthId;
+  public Member(String providerId, String name, String email, String role, String familyRole) {
+    this.providerId = providerId;
+    this.name = name;
+    this.email = email;
     this.role = role;
+    this.familyRole = familyRole;
   }
 
   public Member(Long id) {
     this.id = id;
+  }
+
+  public Member changeInfo(String name, String email) {
+    return Member.builder()
+        .providerId(this.providerId)
+        .name(name)
+        .email(email)
+        .role(this.role)
+        .build();
   }
 }

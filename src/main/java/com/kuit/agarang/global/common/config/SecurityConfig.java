@@ -1,6 +1,9 @@
 package com.kuit.agarang.global.common.config;
 
-import com.kuit.agarang.domain.login.handler.OAuth2SuccessHandler;
+import com.kuit.agarang.domain.login.handler.CustomSuccessHandler;
+import com.kuit.agarang.domain.login.jwt.JWTFilter;
+import com.kuit.agarang.domain.login.jwt.JWTUtil;
+import com.kuit.agarang.domain.login.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,14 +11,16 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-  private final DefaultOAuth2UserService oAuth2UserService;
-  private final OAuth2SuccessHandler oAuth2SuccessHandler;
+  private final CustomOAuth2UserService customOAuth2UserService;
+  private final CustomSuccessHandler customSuccessHandler;
+  private final JWTUtil jwtUtil;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -27,16 +32,20 @@ public class SecurityConfig {
       .httpBasic((auth) -> auth.disable()); // HTTP 헤더 인증 방식 비활성화
 
     http
+        .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
+    //oauth2
+    http
+        .oauth2Login((oauth2) -> oauth2
+            .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig
+                .userService(customOAuth2UserService)))
+            .successHandler(customSuccessHandler));
+
+    http
         .authorizeHttpRequests((auth) -> auth
-            .requestMatchers(
-                "/hc", "/env", "/oauth2/**")
-            .permitAll()
-            .anyRequest().permitAll()
-        )
-        .oauth2Login(oauth2 -> oauth2
-            .userInfoEndpoint(endpoint -> endpoint.userService(oAuth2UserService))
-            .successHandler(oAuth2SuccessHandler)
-        );
+            .requestMatchers("/hc", "/env", "/oauth2/**").permitAll()
+            .requestMatchers("/reissue").permitAll()
+            .anyRequest().permitAll());
 
     return http.build();
   }

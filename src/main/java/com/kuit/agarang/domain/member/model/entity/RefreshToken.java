@@ -16,10 +16,22 @@ public class RefreshToken extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  private String providerId;
   private String value;
+  private String expiration;
 
   @Builder
-  public RefreshToken(String value) {
+  public RefreshToken(String providerId, String value, String expiration) {
+    this.providerId = providerId;
     this.value = value;
+    this.expiration = expiration;
+  }
+
+  public static RefreshToken of(String providerId, String value, String expiration) {
+    return RefreshToken.builder()
+        .providerId(providerId)
+        .value(value)
+        .expiration(expiration)
+        .build();
   }
 }
