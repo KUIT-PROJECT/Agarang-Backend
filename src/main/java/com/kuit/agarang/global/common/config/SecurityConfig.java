@@ -42,9 +42,17 @@ public class SecurityConfig {
 
     http
         .authorizeHttpRequests((auth) -> auth
-            .requestMatchers("/hc", "/env", "/oauth2/**").permitAll()
+            .requestMatchers(
+              "/env", "/api-json/**", "/api-docs", "/swagger-ui/**",
+              "/oauth2/**")
+            .permitAll()
             .requestMatchers("/reissue").permitAll()
-            .anyRequest().permitAll());
+            .anyRequest().permitAll() // TODO : 인가 구현 후 수정
+        )
+        .oauth2Login(oauth2 -> oauth2
+            .userInfoEndpoint(endpoint -> endpoint.userService(customOAuth2UserService))
+            .successHandler(customSuccessHandler)
+        );
 
     return http.build();
   }

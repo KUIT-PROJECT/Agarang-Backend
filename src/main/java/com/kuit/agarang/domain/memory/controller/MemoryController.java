@@ -1,13 +1,10 @@
 package com.kuit.agarang.domain.memory.controller;
 
 import com.kuit.agarang.domain.memory.enums.ViewType;
-import com.kuit.agarang.domain.memory.model.dto.FavoriteMemoriesResponse;
-import com.kuit.agarang.domain.memory.model.dto.MemoryRequest;
-import com.kuit.agarang.domain.memory.model.dto.MonthlyMemoryResponse;
-import com.kuit.agarang.domain.memory.model.dto.DailyMemoryResponse;
-import com.kuit.agarang.domain.memory.model.dto.DailyMemoriesResponse;
+import com.kuit.agarang.domain.memory.model.dto.*;
 import com.kuit.agarang.domain.memory.service.MemoryService;
 import com.kuit.agarang.global.common.model.dto.BaseResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemoryController {
   private final MemoryService memoryService;
 
+  @Operation(summary = "다이어리 조회 (카드, 즐겨찾기, 월, 일)")
   @GetMapping
   public ResponseEntity<BaseResponse> getMemoriesByViewType(@ModelAttribute MemoryRequest memoryRequest) {
     String requestViewType = memoryRequest.getViewType();
