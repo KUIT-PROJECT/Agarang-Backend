@@ -7,14 +7,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class GPTQuestionResult {
-  private String questionId;
-  private String questionText;
-  private String questionAudioUrl;
+  private String id;
+  private String text;
+  private String audioUrl;
 
   @Builder
-  public GPTQuestionResult(String questionId, String questionText, String questionAudioUrl) {
-    this.questionId = questionId;
-    this.questionText = questionText;
-    this.questionAudioUrl = questionAudioUrl;
+  public GPTQuestionResult(String id, String text, String audioUrl) {
+    this.id = id;
+    this.text = text;
+    this.audioUrl = audioUrl;
   }
 }

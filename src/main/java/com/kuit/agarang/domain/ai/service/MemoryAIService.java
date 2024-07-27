@@ -65,9 +65,9 @@ public class MemoryAIService {
       .build());
 
     return new GPTQuestionResponse(GPTQuestionResult.builder()
-      .questionId(history.getId())
-      .questionText(questionChat.getResponseMessage().getContent().toString())
-      .questionAudioUrl(history.getQuestionAudioUrl())
+      .id(history.getId())
+      .text(questionChat.getResponseMessage().getContent().toString())
+      .audioUrl(history.getQuestionAudioUrl())
       .build());
   }
 

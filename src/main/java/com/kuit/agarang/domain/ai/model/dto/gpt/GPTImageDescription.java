@@ -3,12 +3,10 @@ package com.kuit.agarang.domain.ai.model.dto.gpt;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
 public class GPTImageDescription {
   private String text;
   private List<String> noun;
