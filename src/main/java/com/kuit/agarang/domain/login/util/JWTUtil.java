@@ -1,4 +1,4 @@
-package com.kuit.agarang.domain.login.jwt;
+package com.kuit.agarang.domain.login.util;
 
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +13,13 @@ import java.util.Date;
 public class JWTUtil {
 
   private SecretKey secretKey;
+
+  @Value("${secret.jwt-access-expired-in}")
+  private Long ACCESS_EXPIRED_IN;
+  @Value("${secret.jwt-refresh-expired-in}")
+  private Long REFRESH_EXPIRED_IN;
+
+
   public JWTUtil(@Value("${secret.jwt-secret-key}")String secret) {
     secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
   }
@@ -28,19 +35,37 @@ public class JWTUtil {
   public String getCategory(String token) {
     return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
   }
+
+  public Date getExpiration(String token) {
+    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration();
+  }
+
   public Boolean isExpired(String token) {
     return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
   }
 
-  public String createJwt(String category, String providerId, String role, Long expiredMs) {
+  public String createAccessToken(String providerId, String role) {
 
     return Jwts.builder()
-        .claim("category", category)
+        .claim("category", "access")
         .claim("providerId", providerId)
         .claim("role", role)
         .issuedAt(new Date(System.currentTimeMillis()))
-        .expiration(new Date(System.currentTimeMillis() + expiredMs))
+        .expiration(new Date(System.currentTimeMillis() + ACCESS_EXPIRED_IN))
         .signWith(secretKey)
         .compact();
   }
+
+  public String createRefreshToken(String providerId, String role) {
+
+    return Jwts.builder()
+        .claim("category", "refresh")
+        .claim("providerId", providerId)
+        .claim("role", role)
+        .issuedAt(new Date(System.currentTimeMillis()))
+        .expiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRED_IN))
+        .signWith(secretKey)
+        .compact();
+  }
+
 }
