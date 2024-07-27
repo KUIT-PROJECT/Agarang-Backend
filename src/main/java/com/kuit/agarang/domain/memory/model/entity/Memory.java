@@ -58,4 +58,8 @@ public class Memory extends BaseEntity {
     this.tempo = tempo;
     this.instrument = instrument;
   }
+
+  public void updateMemory(String text) {
+    this.text = text;
+  }
 }
