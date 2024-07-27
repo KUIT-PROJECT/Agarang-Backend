@@ -1,6 +1,7 @@
 package com.kuit.agarang.domain.ai.model.dto.typecast;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,8 +12,8 @@ public class TypecastAudioResponse {
 
   @Getter
   @NoArgsConstructor
+  @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
   public static class Result {
-    @JsonProperty("audio_download_url")
     private String audioDownloadUrl;
   }
 }

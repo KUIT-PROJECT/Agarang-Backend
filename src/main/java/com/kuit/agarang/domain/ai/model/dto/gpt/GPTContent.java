@@ -1,7 +1,8 @@
 package com.kuit.agarang.domain.ai.model.dto.gpt;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.kuit.agarang.domain.ai.model.enums.GPTContentType;
 import com.kuit.agarang.domain.ai.model.enums.GPTPrompt;
 import lombok.AccessLevel;
@@ -10,11 +11,11 @@ import lombok.Getter;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class GPTContent {
   private String type;
   private String text;
-  @JsonProperty("image_url")
   private ImageUrlContent imageUrl;
 
   @Getter

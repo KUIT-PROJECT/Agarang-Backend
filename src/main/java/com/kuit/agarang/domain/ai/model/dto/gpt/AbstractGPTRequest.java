@@ -1,6 +1,7 @@
 package com.kuit.agarang.domain.ai.model.dto.gpt;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,11 +10,11 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public abstract class AbstractGPTRequest {
   private final String model = "gpt-4o";
   private final Long temperature = 0L;
   private List<GPTMessage> messages;
-  @JsonProperty("response_format")
   private ResponseFormat responseFormat = null;
 
   @Getter
@@ -29,7 +30,6 @@ public abstract class AbstractGPTRequest {
   public void setRequiredJson(boolean required) {
     if (required) {
       this.responseFormat = new ResponseFormat("json_object");
-    }
-    else this.responseFormat = null;
+    } else this.responseFormat = null;
   }
 }

@@ -1,6 +1,7 @@
 package com.kuit.agarang.domain.ai.model.dto.gpt;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -8,11 +9,9 @@ import lombok.ToString;
 @Getter
 @ToString
 @NoArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class GPTUsage {
-  @JsonProperty("prompt_tokens")
   long promptTokens;
-  @JsonProperty("completion_tokens")
   long completionTokens;
-  @JsonProperty("total_tokens")
   long totalTokens;
 }
