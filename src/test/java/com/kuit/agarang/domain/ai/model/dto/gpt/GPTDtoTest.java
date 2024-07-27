@@ -1,5 +1,6 @@
 package com.kuit.agarang.domain.ai.model.dto.gpt;
 
+import com.kuit.agarang.domain.ai.model.enums.GPTPrompt;
 import com.kuit.agarang.domain.ai.model.enums.GPTRole;
 import org.junit.jupiter.api.Test;
 
@@ -39,7 +40,7 @@ class GPTDtoTest {
   @Test
   void createImageRequest() {
     // given
-    GPTContent content1 = GPTContent.createTextContent("What'\\''s in this image?");
+    GPTContent content1 = GPTContent.createTextContent(GPTPrompt.FIRST_QUESTION);
     GPTContent content2 = GPTContent.createImageContent("https://image.jpg");
 
     GPTMessage message = GPTMessage.builder()
@@ -74,7 +75,7 @@ class GPTDtoTest {
       .content("You are a helpful assistant.")
       .build();
 
-    GPTContent content1 = GPTContent.createTextContent("What'\\''s in this image?");
+    GPTContent content1 = GPTContent.createTextContent(GPTPrompt.FIRST_QUESTION);
     GPTContent content2 = GPTContent.createImageContent("https://image.jpg");
     GPTMessage message2 = GPTMessage.builder()
       .role(GPTRole.USER)

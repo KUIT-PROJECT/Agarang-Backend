@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public enum GPTPrompt {
   IMAGE_DESCRIPTION("이미지를 한국어로 하나의 문장으로 감정적으로 묘사해줘. " +
-    "text는 한 줄로 기술된 내용을 하나의 구(Phrase)로 포함하고, " +
+    "text는 하나의 문장으로 묘사된 내용을 포함하고, " +
     "noun는 해당 이미지를 기반으로 인스타 태그로 사용할 수 있는 명사나 형용사를 의미가 중복되지 않게 최대 3개 포함해줘. " +
     "출력은 json 파일 형태로 해줘. "),
 
