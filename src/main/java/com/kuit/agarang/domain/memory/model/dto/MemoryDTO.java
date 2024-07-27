@@ -21,7 +21,7 @@ public class MemoryDTO {
   @Builder
   public MemoryDTO(String content, String date, List<String> hashTags, boolean isBookmarked, String writer) {
     this.content = content;
-    date = date;
+    this.date = date;
     this.hashTags = hashTags;
     this.isBookmarked = isBookmarked;
     this.writer = writer;
