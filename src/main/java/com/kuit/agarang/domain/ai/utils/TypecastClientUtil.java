@@ -15,7 +15,7 @@ public class TypecastClientUtil {
   @Value("${typecast.apiKey}")
   private String apiKey;
 
-  public <T> T post(String uri, TypecastRequest requestDto, Class<T> responseClass) {
+  public <T, V> T post(String uri, V requestDto, Class<T> responseClass) {
     return webClientUtil.post(baseUrl + uri, apiKey, requestDto, responseClass);
   }
 
