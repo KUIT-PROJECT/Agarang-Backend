@@ -1,6 +1,6 @@
 package com.kuit.agarang.domain.ai.controller;
 
-import com.kuit.agarang.domain.ai.model.dto.TypecastWebhookResponse;
+import com.kuit.agarang.domain.ai.model.dto.typecast.TypecastWebhookResponse;
 import com.kuit.agarang.domain.ai.service.TypecastService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

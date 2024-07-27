@@ -28,9 +28,7 @@ public class S3Util {
 
   public S3File upload(MultipartFile file) throws Exception {
     log.info("S3 파일 업로드가 시작되었습니다. [{} of {}]", file.getOriginalFilename(), file.getContentType());
-    S3File s3File = s3FileUtil.convert(file)
-      .orElseThrow(() -> new RuntimeException("파일 변환에 실패했습니다."));
-    s3FileUtil.uploadTempFile(s3File);
+    S3File s3File = s3FileUtil.uploadTempFile(file);
     return upload(s3File);
   }
 
