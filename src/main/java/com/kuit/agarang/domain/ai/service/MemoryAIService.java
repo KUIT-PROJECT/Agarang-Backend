@@ -11,6 +11,7 @@ import com.kuit.agarang.domain.ai.repository.GPTChatHistoryRepository;
 import com.kuit.agarang.domain.ai.repository.TypecastAudioRepository;
 import com.kuit.agarang.domain.ai.utils.GPTRequestUtil;
 import com.kuit.agarang.global.s3.model.dto.S3File;
+import com.kuit.agarang.global.s3.utils.S3FileUtil;
 import com.kuit.agarang.global.s3.utils.S3Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ public class MemoryAIService {
   private final TypecastService typecastService;
   private final GPTRequestUtil gptRequestUtil;
   private final S3Util s3Util;
+  private final S3FileUtil s3FileUtil;
 
   private final GPTChatHistoryRepository gptChatHistoryRepository;
   private final TypecastAudioRepository typecastAudioRepository;
@@ -33,10 +35,11 @@ public class MemoryAIService {
   private final ObjectMapper objectMapper = new ObjectMapper();
 
   public GPTQuestionResponse getFirstQuestion(MultipartFile image) throws Exception {
-    S3File s3File = s3Util.upload(image);
+    S3File s3File = s3FileUtil.uploadTempFile(image);
+    String convertedGPTImageUrl = gptRequestUtil.convert(s3File);
 
     // image -> gpt -> 노래제목, 해시태그 생성
-    GPTChat imageChat = gptService.getImageDescription(s3File);
+    GPTChat imageChat = gptService.getImageDescription(convertedGPTImageUrl);
     GPTImageDescription imageDescription = GPTImageDescription.from(imageChat.getResponseMessage().getContent());
 
     // 해시태그 -> gpt ->  질문1 생성
@@ -54,7 +57,7 @@ public class MemoryAIService {
     // TODO : redis cache 전환
     GPTChatHistory history = gptChatHistoryRepository.save(GPTChatHistory.builder()
       .id(questionChat.getGptResponse().getId())
-      .imageUrl(s3File.getObjectUrl())
+      .imageTempPath(s3File.getContentType().getPath() + s3File.getFilename())
       .musicTitle(imageDescription.getText())
       .hashtags(imageDescription.getNoun().toString())
       .historyMessages(objectMapper.writeValueAsString(gptRequestUtil.addHistoryMessage(questionChat)))

@@ -15,9 +15,7 @@ import lombok.*;
 public class GPTChatHistory extends BaseEntity {
   @Id
   private String id;
-  @Lob
-  @Column(columnDefinition = "TEXT")
-  private String imageUrl;
+  private String imageTempPath;
   private String musicTitle;
   private String hashtags;
   @Lob

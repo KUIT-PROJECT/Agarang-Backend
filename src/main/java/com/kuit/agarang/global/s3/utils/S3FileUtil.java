@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Optional;
@@ -58,6 +59,16 @@ public class S3FileUtil {
         return;
       }
       log.info("임시 업로드 파일 삭제를 실패했습니다. [{}]", file.getPath());
+    }
+  }
+
+  public byte[] getTempFile(String filename) throws IOException {
+    File file = new File(tempPath, filename);
+    if (!file.exists()) {
+      throw new IOException("임시 파일을 찾을 수 없습니다. : " + filename);
+    }
+    try (FileInputStream fis = new FileInputStream(file)) {
+      return fis.readAllBytes();
     }
   }
 
