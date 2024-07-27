@@ -13,7 +13,6 @@ public class KakaoResponse implements OAuth2Response{
   public String getProvider() {
     return "kakao";
   }
-
   @Override
   public String getProviderId() {
     return attribute.get("id").toString();

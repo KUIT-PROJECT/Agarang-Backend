@@ -1,6 +1,6 @@
 package com.kuit.agarang.domain.login.controller;
 
-import com.kuit.agarang.domain.login.jwt.JWTUtil;
+import com.kuit.agarang.domain.login.util.JWTUtil;
 import com.kuit.agarang.domain.member.model.entity.RefreshToken;
 import com.kuit.agarang.domain.member.repository.RefreshRepository;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -67,9 +67,9 @@ public class ReissueController {
     String role = jwtUtil.getRole(refresh);
 
     // AccessToken 생성
-    String newAccess = jwtUtil.createJwt("access", providerId, role, ACCESS_EXPIRED_IN);
+    String newAccess = jwtUtil.createAccessToken(providerId, role);
     // refresh rotate
-    String newRefresh = jwtUtil.createJwt("refresh", providerId, role, REFRESH_EXPIRED_IN);
+    String newRefresh = jwtUtil.createRefreshToken(providerId, role);
 
     //Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
     refreshRepository.deleteByValue(refresh);

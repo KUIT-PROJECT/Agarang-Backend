@@ -1,5 +1,6 @@
-package com.kuit.agarang.domain.login.jwt;
+package com.kuit.agarang.domain.login.filter;
 
+import com.kuit.agarang.domain.login.util.JWTUtil;
 import com.kuit.agarang.domain.login.model.dto.CustomOAuth2User;
 import com.kuit.agarang.domain.member.model.dto.MemberDTO;
 import io.jsonwebtoken.ExpiredJwtException;

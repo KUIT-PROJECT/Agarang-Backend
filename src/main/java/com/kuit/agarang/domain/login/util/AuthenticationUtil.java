@@ -1,4 +1,4 @@
-package com.kuit.agarang.domain.login.jwt;
+package com.kuit.agarang.domain.login.util;
 
 import com.kuit.agarang.domain.login.model.dto.CustomOAuth2User;
 import org.springframework.security.core.Authentication;
