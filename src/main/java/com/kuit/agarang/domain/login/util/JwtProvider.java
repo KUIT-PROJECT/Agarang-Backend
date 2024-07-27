@@ -16,6 +16,8 @@ import static com.kuit.agarang.global.common.response.status.BaseExceptionRespon
 @Component
 public class JwtProvider {
 
+
+  
   @Value("${secret.jwt-secret-key}")
   private String JWT_SECRET_KEY;
 
