@@ -1,9 +1,12 @@
 package com.kuit.agarang.domain.member.model.entity;
 
-import com.kuit.agarang.global.common.model.entity.BaseEntity;
 import com.kuit.agarang.domain.baby.model.entity.Baby;
+import com.kuit.agarang.global.common.model.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -32,12 +35,13 @@ public class Member extends BaseEntity {
 
 
   @Builder
-  public Member(String providerId, String name, String email, String role, String familyRole) {
+  public Member(String providerId, String name, String email, String role, String familyRole, Baby baby) {
     this.providerId = providerId;
     this.name = name;
     this.email = email;
     this.role = role;
     this.familyRole = familyRole;
+    this.baby = baby;
   }
 
   public Member(Long id) {
@@ -50,6 +54,17 @@ public class Member extends BaseEntity {
         .name(name)
         .email(email)
         .role(this.role)
+        .build();
+  }
+
+  public Member changeBaby(Baby baby) {
+    return Member.builder()
+        .providerId(this.providerId)
+        .name(this.name)
+        .email(this.email)
+        .role(this.role)
+        .familyRole(this.familyRole)
+        .baby(baby)
         .build();
   }
 
