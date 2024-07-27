@@ -1,6 +1,5 @@
 package com.kuit.agarang.domain.ai.service;
 
-import com.kuit.agarang.domain.ai.model.dto.typecast.TypecastMessageRequest;
 import com.kuit.agarang.domain.ai.model.dto.typecast.TypecastRequest;
 import com.kuit.agarang.domain.ai.model.dto.typecast.TypecastResponse;
 import com.kuit.agarang.domain.ai.model.dto.typecast.TypecastWebhookResponse;
@@ -20,9 +19,9 @@ public class TypecastService {
   private final TypecastClientUtil typeCastClientUtil;
   private final TypecastAudioRepository typecastAudioRepository;
 
-  public String getAudioDownloadUrl(TypecastMessageRequest request) {
+  public String getAudioDownloadUrl(String text) {
     TypecastResponse response
-      = typeCastClientUtil.post("/api/speak", TypecastRequest.create(request, actorId), TypecastResponse.class);
+      = typeCastClientUtil.post("/api/speak", TypecastRequest.create(text, actorId), TypecastResponse.class);
     return response.getResult().getSpeakUrl();
   }
 

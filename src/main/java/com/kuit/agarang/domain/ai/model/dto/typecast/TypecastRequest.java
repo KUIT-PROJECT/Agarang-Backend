@@ -39,10 +39,10 @@ public class TypecastRequest {
     this.xapiAudioFormat = xapiAudioFormat;
   }
 
-  public static TypecastRequest create(TypecastMessageRequest request, String actorId) {
+  public static TypecastRequest create(String text, String actorId) {
     return TypecastRequest.builder()
       .actorId(actorId)
-      .text(request.getText())
+      .text(text)
       .lang("auto")
       .tempo(1.0)
       .volume(100)

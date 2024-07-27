@@ -5,7 +5,6 @@ import com.kuit.agarang.domain.ai.model.dto.gpt.GPTChat;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTImageDescription;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTQuestionResponse;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTQuestionResult;
-import com.kuit.agarang.domain.ai.model.dto.typecast.TypecastMessageRequest;
 import com.kuit.agarang.domain.ai.model.entity.GPTChatHistory;
 import com.kuit.agarang.domain.ai.repository.GPTChatHistoryRepository;
 import com.kuit.agarang.domain.ai.repository.TypecastAudioRepository;
@@ -47,7 +46,7 @@ public class MemoryAIService {
     String question = (String) questionChat.getResponseMessage().getContent();
 
     // 질문1 -> tts -> 오디오 변환
-    String typecastAudioId = typecastService.getAudioDownloadUrl(TypecastMessageRequest.builder().text(question).build());
+    String typecastAudioId = typecastService.getAudioDownloadUrl(question);
     String questionAudioUrl = null;
     if (checkEntityExistence(typecastAudioId)) {
       questionAudioUrl = typecastAudioRepository.findById(typecastAudioId).get().getAudioDownloadUrl();
