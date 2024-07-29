@@ -7,12 +7,11 @@ import com.kuit.agarang.domain.ai.model.enums.GPTRoleContent;
 import com.kuit.agarang.global.s3.model.dto.S3File;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 
 @Component
-public class GPTRequestUtil {
+public class GPTUtil {
 
   public GPTMessage createImageQuestion(GPTPrompt prompt, String imageUrl) {
     return GPTMessage.builder()
@@ -37,7 +36,7 @@ public class GPTRequestUtil {
   }
 
   public GPTRequest addHistoryMessage(GPTChat gptChat) {
-    gptChat.getGptRequest().getMessages().add(gptChat.getResponseMessage());
+    gptChat.getGptRequest().getMessages().add(getResponseMessage(gptChat));
     return gptChat.getGptRequest();
   }
 
@@ -45,8 +44,22 @@ public class GPTRequestUtil {
     return imageDescription.getNoun().toString() + ", ";
   }
 
-  public String convert(S3File s3File) throws IOException {
+  public String convertToString(S3File s3File) {
     String base64EncodeData = Base64.getEncoder().encodeToString(s3File.getBytes());
     return "data:" + s3File.getContentType().getMimeType() + ";base64," + base64EncodeData;
+  }
+
+  public List<GPTMessage> getHistoryMessage(GPTChat gptChat) {
+    List<GPTMessage> historyMessage = gptChat.getGptRequest().getMessages();
+    historyMessage.add(getResponseMessage(gptChat));
+    return historyMessage;
+  }
+
+  public String getGPTAnswer(GPTChat gptChat) {
+    return (String) getResponseMessage(gptChat).getContent();
+  }
+
+  private GPTMessage getResponseMessage(GPTChat gptChat) {
+    return gptChat.getGptResponse().getChoices().get(0).getMessage();
   }
 }
