@@ -7,7 +7,7 @@ deploy:
   env: blue
 
 app:
-  baseUrl: https://agarang.site
+  baseUrl: https://www.agarang.site
 
 ---
 spring:
@@ -19,4 +19,4 @@ deploy:
   env: green
 
 app:
-  baseUrl: https://agarang.site
+  baseUrl: https://www.agarang.site
