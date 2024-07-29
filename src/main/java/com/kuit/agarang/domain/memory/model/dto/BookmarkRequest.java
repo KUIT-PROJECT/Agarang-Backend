@@ -6,5 +6,5 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class BookmarkRequest {
-  private String id;
+  private String memoryId;
 }
