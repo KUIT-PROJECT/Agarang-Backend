@@ -6,5 +6,5 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class DeleteMemoryRequest {
-  private String id;
+  private long memoryId;
 }

@@ -6,6 +6,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ModifyMemoryRequest {
-  private String id;
+  private long memoryId;
   private String text;
 }
