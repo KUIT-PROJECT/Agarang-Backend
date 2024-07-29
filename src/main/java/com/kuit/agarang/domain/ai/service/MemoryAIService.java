@@ -54,8 +54,7 @@ public class MemoryAIService {
     redisService.save(redisKey,
       GPTChatHistory.builder()
         .imageTempPath(s3File.getFilename())
-        .imageDescription(imageDescription)
-        .questionAudioUrl(questionAudioUrl)
+        .hashtags(imageDescription.getNoun())
         .historyMessages(historyMessage)
         .build());
 

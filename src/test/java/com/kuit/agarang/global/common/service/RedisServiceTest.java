@@ -111,9 +111,8 @@ class RedisServiceTest {
 
     request.getMessages().add(responseMessage); // 질문, 대답 합친 history message 포함해서 선언
     GPTChatHistory chatHistory = GPTChatHistory.builder()
-      .imageTempPath("./temp/images/image.jpeg")
-      .imageDescription(imageDescription)
-      .questionAudioUrl("https://typecastUrl")
+      .imageTempPath("images/image.jpeg")
+      .hashtags(imageDescription.getNoun())
       .historyMessages(request.getMessages())
       .build();
 
@@ -123,9 +122,7 @@ class RedisServiceTest {
     // then
     GPTChatHistory savedChatHistory = redisService.get(KEY, GPTChatHistory.class);
     assertEquals(chatHistory.getImageTempPath(), savedChatHistory.getImageTempPath());
-    assertEquals(chatHistory.getImageDescription().getText(), savedChatHistory.getImageDescription().getText());
-    assertEquals(chatHistory.getImageDescription().getNoun(), savedChatHistory.getImageDescription().getNoun());
-    assertEquals(chatHistory.getQuestionAudioUrl(), savedChatHistory.getQuestionAudioUrl());
+    assertEquals(chatHistory.getHashtags(), savedChatHistory.getHashtags());
     assertEquals(
       "[{\"role\":\"user\",\"content\":\"오늘은 무슨 요일이야?\"},{\"role\":\"assistant\",\"content\":\"오늘은 화요일이야.\"}]",
       savedChatHistory.getHistoryMessage());
