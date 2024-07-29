@@ -12,8 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class RedisServiceTest {
@@ -71,6 +70,26 @@ class RedisServiceTest {
     assertNull(redisService.get(KEY, String.class));
   }
 
+  @Test
+  void existsByKey_true() {
+    // given
+    String value = "test-value";
+    // when
+    redisService.save(KEY, value);
+    // then
+    assertTrue(redisService.existsByKey(KEY));
+  }
+
+  @Test
+  void existsByKey_false() {
+    // given
+    String value = "test-value";
+    // when
+    redisService.save(KEY, value);
+    redisService.delete(KEY);
+    // then
+    assertFalse(redisService.existsByKey(KEY));
+  }
 
   @Test
   void saveGPTChatAndGet() {

@@ -2,7 +2,6 @@ package com.kuit.agarang.domain.ai.service;
 
 import com.kuit.agarang.domain.ai.model.dto.gpt.*;
 import com.kuit.agarang.domain.ai.model.entity.cache.GPTChatHistory;
-import com.kuit.agarang.domain.ai.repository.TypecastAudioRepository;
 import com.kuit.agarang.domain.ai.utils.GPTUtil;
 import com.kuit.agarang.global.common.service.RedisService;
 import com.kuit.agarang.global.s3.model.dto.S3File;
@@ -28,7 +27,6 @@ public class MemoryAIService {
   private final S3FileUtil s3FileUtil;
 
   private final RedisService redisService;
-  private final TypecastAudioRepository typecastAudioRepository;
 
   public GPTQuestionResponse getFirstQuestion(MultipartFile image) throws Exception {
     S3File s3File = s3FileUtil.uploadTempFile(image);
@@ -46,7 +44,8 @@ public class MemoryAIService {
     String typecastAudioId = typecastService.getAudioDownloadUrl(question);
     String questionAudioUrl = null;
     if (checkEntityExistence(typecastAudioId)) {
-      questionAudioUrl = typecastAudioRepository.findById(typecastAudioId).get().getAudioDownloadUrl();
+      questionAudioUrl = redisService.get(typecastAudioId, String.class);
+      redisService.delete(typecastAudioId);
     }
 
     // 대화기록 저장 및 임시저장이 필요한 데이터 저장
@@ -68,17 +67,17 @@ public class MemoryAIService {
   }
 
   // TODO : redis 트리거 전환
-  public boolean checkEntityExistence(String entityId) {
+  public boolean checkEntityExistence(String key) {
     try {
       log.info("1차 대기");
-      Thread.sleep(2000);
+      Thread.sleep(1500);
 
-      if (typecastAudioRepository.existsById(entityId)) {
+      if (redisService.existsByKey(key)) {
         return true;
       } else {
         log.info("2차 대기");
         Thread.sleep(1500);
-        return typecastAudioRepository.existsById(entityId);
+        return redisService.existsByKey(key);
       }
     } catch (InterruptedException e) {
       e.printStackTrace();

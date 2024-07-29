@@ -34,6 +34,10 @@ public class RedisService {
     redisTemplate.opsForValue().set(key, newValue);
   }
 
+  public boolean existsByKey(String key) {
+    return redisTemplate.hasKey(key);
+  }
+
   public void delete(String key) {
     redisTemplate.delete(key);
   }
