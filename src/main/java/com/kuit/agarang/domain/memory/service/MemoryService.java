@@ -126,7 +126,7 @@ public class MemoryService {
   public void updateBookmark(BookmarkRequest bookmarkRequest) {
     // TODO : 회원 JWT -> Member 조회 및 예외처리 필요
     Member member = new Member(1L);
-    Memory memory = memoryRepository.findById(Long.parseLong(bookmarkRequest.getId()))
+    Memory memory = memoryRepository.findById(bookmarkRequest.getMemoryId())
             .orElseThrow(() -> new AgarangException(BaseResponseStatus.INVALID_MEMORY_ID));
 
     Optional<MemoryBookmark> memoryBookmark = memoryBookmarkRepository.findByMemoryAndMember(memory, member);
@@ -140,14 +140,14 @@ public class MemoryService {
 
   @Transactional
   public void modifyMemory(ModifyMemoryRequest modifyMemoryRequest) {
-    Memory memory = memoryRepository.findById(Long.parseLong(modifyMemoryRequest.getId()))
+    Memory memory = memoryRepository.findById(modifyMemoryRequest.getMemoryId())
             .orElseThrow(() -> new AgarangException(BaseResponseStatus.INVALID_MEMORY_ID));
     memory.updateMemory(modifyMemoryRequest.getText());
   }
 
   @Transactional
   public void removeMemory(DeleteMemoryRequest deleteMemoryRequest) {
-    Memory memory = memoryRepository.findById(Long.parseLong(deleteMemoryRequest.getId()))
+    Memory memory = memoryRepository.findById(deleteMemoryRequest.getMemoryId())
             .orElseThrow(() -> new AgarangException(BaseResponseStatus.INVALID_MEMORY_ID));
 
     memoryBookmarkRepository.deleteByMemory(memory);
