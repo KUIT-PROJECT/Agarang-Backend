@@ -3,14 +3,11 @@ spring:
     activate:
       on-profile: blue
 
-server:
-  port: 8080
 deploy:
   env: blue
-  name: blue_server
 
 app:
-  baseUrl: https://agarang.site
+  baseUrl: https://www.agarang.site
 
 ---
 spring:
@@ -18,11 +15,8 @@ spring:
     activate:
       on-profile: green
 
-server:
-  port: 8081
 deploy:
   env: green
-  name: green_server
 
 app:
-  baseUrl: https://agarang.site
+  baseUrl: https://www.agarang.site
