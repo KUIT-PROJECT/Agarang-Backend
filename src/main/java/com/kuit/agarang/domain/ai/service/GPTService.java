@@ -40,4 +40,11 @@ public class GPTService {
     GPTResponse response = gptClientUtil.post(request, GPTResponse.class);
     return new GPTChat(request, response);
   }
+
+  public GPTChat createNextQuestion(List<GPTMessage> historyMessage, String text) {
+    historyMessage.add(gptUtil.createTextMessage(text));
+    GPTRequest request = new GPTRequest(historyMessage);
+    GPTResponse response = gptClientUtil.post(request, GPTResponse.class);
+    return new GPTChat(request, response);
+  }
 }

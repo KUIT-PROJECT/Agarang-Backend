@@ -49,7 +49,7 @@ public class GPTUtil {
     return "data:" + s3File.getContentType().getMimeType() + ";base64," + base64EncodeData;
   }
 
-  public List<GPTMessage> getHistoryMessage(GPTChat gptChat) {
+  public List<GPTMessage> createHistoryMessage(GPTChat gptChat) {
     List<GPTMessage> historyMessage = gptChat.getGptRequest().getMessages();
     historyMessage.add(getResponseMessage(gptChat));
     return historyMessage;

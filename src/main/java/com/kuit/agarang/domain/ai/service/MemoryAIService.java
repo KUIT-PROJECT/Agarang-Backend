@@ -1,9 +1,13 @@
 package com.kuit.agarang.domain.ai.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kuit.agarang.domain.ai.model.dto.Answer;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTChat;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTImageDescription;
 import com.kuit.agarang.domain.ai.model.dto.QuestionResponse;
 import com.kuit.agarang.domain.ai.model.dto.QuestionResult;
+import com.kuit.agarang.domain.ai.model.dto.gpt.GPTMessage;
 import com.kuit.agarang.domain.ai.model.entity.cache.GPTChatHistory;
 import com.kuit.agarang.domain.ai.utils.GPTUtil;
 import com.kuit.agarang.global.common.service.RedisService;
@@ -12,8 +16,11 @@ import com.kuit.agarang.global.s3.utils.S3FileUtil;
 import com.kuit.agarang.global.s3.utils.S3Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -28,6 +35,7 @@ public class MemoryAIService {
   private final S3FileUtil s3FileUtil;
 
   private final RedisService redisService;
+  private final ObjectMapper objectMapper;
 
   public QuestionResponse getFirstQuestion(MultipartFile image) throws Exception {
     S3File s3File = s3FileUtil.uploadTempFile(image);
@@ -42,6 +50,27 @@ public class MemoryAIService {
     String question = gptUtil.getGPTAnswer(questionChat);
 
     // 질문1 -> tts -> 오디오 변환
+    String questionAudioUrl = getAudioUrl(question);
+
+    // 대화기록 저장 및 임시저장이 필요한 데이터 저장
+    String redisKey = questionChat.getGptResponse().getId();
+    List<GPTMessage> historyMessage = gptUtil.createHistoryMessage(questionChat);
+    redisService.save(redisKey,
+      GPTChatHistory.builder()
+        .imageTempPath(s3File.getFilename())
+        .hashtags(imageDescription.getNoun())
+        .historyMessages(historyMessage)
+        .build());
+
+    logChat(historyMessage);
+    return new QuestionResponse(QuestionResult.builder()
+      .id(redisKey)
+      .text(question)
+      .audioUrl(questionAudioUrl)
+      .build());
+  }
+
+  private @Nullable String getAudioUrl(String question) {
     String typecastAudioId = typecastService.getAudioDownloadUrl(question);
     String questionAudioUrl = null;
     if (checkEntityExistence(typecastAudioId)) {
@@ -49,18 +78,23 @@ public class MemoryAIService {
         .orElseThrow(() -> new RuntimeException(""));
       redisService.delete(typecastAudioId);
     }
+    return questionAudioUrl;
+  }
 
-    // 대화기록 저장 및 임시저장이 필요한 데이터 저장
-    String redisKey = questionChat.getGptResponse().getId();
-    redisService.save(redisKey,
-      GPTChatHistory.builder()
-        .imageTempPath(s3File.getFilename())
-        .hashtags(imageDescription.getNoun())
-        .historyMessages(gptUtil.getHistoryMessage(questionChat))
-        .build());
+  public QuestionResponse getNextQuestion(Answer answer) {
+    GPTChatHistory chatHistory = redisService.get(answer.getId(), GPTChatHistory.class)
+      .orElseThrow(() -> new RuntimeException(""));
+
+    GPTChat chat = gptService.createNextQuestion(chatHistory.getHistoryMessage(), answer.getText());
+    String question = gptUtil.getGPTAnswer(chat);
+
+    String questionAudioUrl = getAudioUrl(question);
+
+    logChat(gptUtil.createHistoryMessage(chat));
+    redisService.save(answer.getId(), chatHistory);
 
     return new QuestionResponse(QuestionResult.builder()
-      .id(redisKey)
+      .id(answer.getId())
       .text(question)
       .audioUrl(questionAudioUrl)
       .build());
@@ -83,6 +117,14 @@ public class MemoryAIService {
       e.printStackTrace();
       Thread.currentThread().interrupt(); // 인터럽트 상태를 복구
       return false;
+    }
+  }
+
+  private void logChat(List<GPTMessage> historyMessage) {
+    try {
+      log.info(objectMapper.writeValueAsString(historyMessage));
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
     }
   }
 }
