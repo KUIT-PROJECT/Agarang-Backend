@@ -33,10 +33,6 @@ public class RedisService {
     }
   }
 
-  public void update(String key, Object newValue) {
-    redisTemplate.opsForValue().set(key, newValue);
-  }
-
   public boolean existsByKey(String key) {
     return redisTemplate.hasKey(key);
   }

@@ -44,7 +44,7 @@ class RedisServiceTest {
     redisService.save(KEY, value);
     // when
     String newValue = "test2-value";
-    redisService.update(KEY, newValue);
+    redisService.save(KEY, newValue);
     // then
     assertEquals(newValue, redisService.get(KEY, String.class).orElseThrow(() -> new RuntimeException("")));
   }
@@ -66,7 +66,7 @@ class RedisServiceTest {
     // when
     GPTMessage newMessage = GPTMessage.builder().role(GPTRole.ASSISTANT).content("assistant-assistant").build();
     chatHistory.getHistoryMessage().add(newMessage);
-    redisService.update(KEY, chatHistory);
+    redisService.save(KEY, chatHistory);
 
     // then
     GPTChatHistory updatedGptChatHistory = redisService.get(KEY, GPTChatHistory.class).get();
