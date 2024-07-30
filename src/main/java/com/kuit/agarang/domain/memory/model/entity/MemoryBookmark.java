@@ -21,4 +21,9 @@ public class MemoryBookmark extends BaseEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "memory_id")
   private Memory memory;
+
+  public MemoryBookmark(Member member, Memory memory) {
+    this.member = member;
+    this.memory = memory;
+  }
 }
