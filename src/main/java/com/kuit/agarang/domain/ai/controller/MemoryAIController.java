@@ -29,6 +29,7 @@ public class MemoryAIController {
   @PostMapping("/second-ans")
   public ResponseEntity<BaseResponse<Void>> saveLastAnswer(@RequestBody Answer answer) {
     memoryAIService.saveLastAnswer(answer);
+    memoryAIService.createMemoryText(answer.getId());
     return ResponseEntity.ok(new BaseResponse<>());
   }
 }

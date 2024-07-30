@@ -3,10 +3,10 @@ package com.kuit.agarang.domain.ai.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kuit.agarang.domain.ai.model.dto.Answer;
-import com.kuit.agarang.domain.ai.model.dto.gpt.GPTChat;
-import com.kuit.agarang.domain.ai.model.dto.gpt.GPTImageDescription;
 import com.kuit.agarang.domain.ai.model.dto.QuestionResponse;
 import com.kuit.agarang.domain.ai.model.dto.QuestionResult;
+import com.kuit.agarang.domain.ai.model.dto.gpt.GPTChat;
+import com.kuit.agarang.domain.ai.model.dto.gpt.GPTImageDescription;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTMessage;
 import com.kuit.agarang.domain.ai.model.entity.cache.GPTChatHistory;
 import com.kuit.agarang.domain.ai.utils.GPTUtil;
@@ -17,6 +17,7 @@ import com.kuit.agarang.global.s3.utils.S3Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,7 +40,7 @@ public class MemoryAIService {
 
   public QuestionResponse getFirstQuestion(MultipartFile image) throws Exception {
     S3File s3File = s3FileUtil.uploadTempFile(image);
-    String convertedGPTImageUrl = gptUtil.convertToString(s3File);
+    String convertedGPTImageUrl = gptUtil.convert(s3File);
 
     // image -> gpt -> 노래제목, 해시태그 생성
     GPTChat imageChat = gptService.getImageDescription(convertedGPTImageUrl);
@@ -85,7 +86,7 @@ public class MemoryAIService {
     GPTChatHistory chatHistory = redisService.get(answer.getId(), GPTChatHistory.class)
       .orElseThrow(() -> new RuntimeException(""));
 
-    GPTChat chat = gptService.createNextQuestion(chatHistory.getHistoryMessage(), answer.getText());
+    GPTChat chat = gptService.chatWithHistory(chatHistory.getHistoryMessage(), answer.getText());
     String question = gptUtil.getGPTAnswer(chat);
 
     String questionAudioUrl = getAudioUrl(question);
@@ -107,6 +108,19 @@ public class MemoryAIService {
     chatHistory.getHistoryMessage().add(gptUtil.createTextMessage(answer.getText()));
     logChat(chatHistory.getHistoryMessage());
     redisService.save(answer.getId(), chatHistory);
+  }
+
+  @Async
+  public void createMemoryText(String gptChatHistoryId) {
+    GPTChatHistory chatHistory = redisService.get(gptChatHistoryId, GPTChatHistory.class)
+      .orElseThrow(() -> new RuntimeException(""));
+
+    // TODO : memberId 로 필드 조회
+    String prompt = gptUtil.convert("아빠", "뿌둥");
+    GPTChat chat = gptService.chatWithHistory(chatHistory.getHistoryMessage(), prompt);
+
+    logChat(gptUtil.createHistoryMessage(chat));
+    redisService.save(gptChatHistoryId, chatHistory);
   }
 
   // TODO : redis 트리거 전환

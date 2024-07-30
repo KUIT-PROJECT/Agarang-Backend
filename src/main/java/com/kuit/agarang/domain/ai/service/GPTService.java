@@ -41,7 +41,7 @@ public class GPTService {
     return new GPTChat(request, response);
   }
 
-  public GPTChat createNextQuestion(List<GPTMessage> historyMessage, String text) {
+  public GPTChat chatWithHistory(List<GPTMessage> historyMessage, String text) {
     historyMessage.add(gptUtil.createTextMessage(text));
     GPTRequest request = new GPTRequest(historyMessage);
     GPTResponse response = gptClientUtil.post(request, GPTResponse.class);
