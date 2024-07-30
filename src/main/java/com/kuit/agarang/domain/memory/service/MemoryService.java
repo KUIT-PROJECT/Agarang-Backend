@@ -20,7 +20,7 @@ import com.kuit.agarang.domain.memory.model.entity.MemoryBookmark;
 import com.kuit.agarang.domain.memory.repository.MemoryBookmarkRepository;
 import com.kuit.agarang.domain.memory.repository.MemoryRepository;
 import com.kuit.agarang.domain.playlist.repository.MemoryPlaylistRepository;
-import com.kuit.agarang.domain.playlist.repository.MusicBookmarkRepository;
+import com.kuit.agarang.domain.memory.repository.MusicBookmarkRepository;
 import com.kuit.agarang.global.common.exception.exception.AgarangException;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import com.kuit.agarang.global.common.utils.DateUtil;

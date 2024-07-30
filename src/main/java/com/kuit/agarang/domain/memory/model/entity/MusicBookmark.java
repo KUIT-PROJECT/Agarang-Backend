@@ -1,6 +1,5 @@
-package com.kuit.agarang.domain.playlist.model.entity;
+package com.kuit.agarang.domain.memory.model.entity;
 
-import com.kuit.agarang.domain.memory.model.entity.Memory;
 import com.kuit.agarang.global.common.model.entity.BaseEntity;
 import com.kuit.agarang.domain.member.model.entity.Member;
 import jakarta.persistence.*;
