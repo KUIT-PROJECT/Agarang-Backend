@@ -59,7 +59,6 @@ public class PlaylistService {
     }
 
     private boolean checkBookmarkStatus(Long memoryId, Long memberId) {
-        MusicBookmark musicBookmark = musicBookmarkRepository.existsByMemoryAndMemberId(memoryId, memberId);
-        return musicBookmark != null;
+        return musicBookmarkRepository.existsByMemoryAndMemberId(memoryId, memberId);
     }
 }
