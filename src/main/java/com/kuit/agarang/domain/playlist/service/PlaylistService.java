@@ -45,10 +45,11 @@ public class PlaylistService {
 
         List<MusicDto> musicDtos = memoryPlaylists.stream()
                 .map(memoryPlaylist -> {
-                    Memory memory = memoryRepository.findById(memoryPlaylist.getMemory().getId())
+                    Long memoryId = memoryPlaylist.getMemory().getId();
+                    Memory memory = memoryRepository.findById(memoryId)
                             .orElseThrow(() -> new RuntimeException("member 접근 오류"));
 
-                    boolean isBookmarked = checkBookmarkStatus(memory, memberId);
+                    boolean isBookmarked = checkBookmarkStatus(memoryId, memberId);
 
                     return MusicDto.of(memory, isBookmarked);
                 })
@@ -57,8 +58,8 @@ public class PlaylistService {
         return new PlaylistTracksResponse(playlistDto, musicDtos);
     }
 
-    private boolean checkBookmarkStatus(Memory memory, Long memberId) {
-        MusicBookmark musicBookmark = musicBookmarkRepository.findByMemoryAndMemberId(memory, memberId);
+    private boolean checkBookmarkStatus(Long memoryId, Long memberId) {
+        MusicBookmark musicBookmark = musicBookmarkRepository.existsByMemoryAndMemberId(memoryId, memberId);
         return musicBookmark != null;
     }
 }
