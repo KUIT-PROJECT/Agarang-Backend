@@ -19,7 +19,7 @@ public class MemoryAIController {
   private final MemoryAIService memoryAIService;
 
   @PostMapping("/image-to-question")
-  public ResponseEntity<BaseResponse<GPTQuestionResponse>> imageToFirstQuestion(@RequestParam MultipartFile image) throws Exception {
+  public ResponseEntity<BaseResponse<GPTQuestionResponse>> getImageQuestion(@RequestParam MultipartFile image) throws Exception {
     return ResponseEntity.ok(new BaseResponse<>(memoryAIService.getFirstQuestion(image)));
   }
 }
