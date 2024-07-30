@@ -2,6 +2,9 @@ package com.kuit.agarang.domain.memory.service;
 
 import com.kuit.agarang.domain.baby.model.entity.Baby;
 import com.kuit.agarang.domain.member.model.entity.Member;
+import com.kuit.agarang.domain.memory.model.dto.BookmarkRequest;
+import com.kuit.agarang.domain.memory.model.dto.DeleteMemoryRequest;
+import com.kuit.agarang.domain.memory.model.dto.ModifyMemoryRequest;
 import com.kuit.agarang.domain.memory.model.dto.DailyMemoryDTO;
 import com.kuit.agarang.domain.memory.model.dto.FavoriteMemoriesResponse;
 import com.kuit.agarang.domain.memory.model.dto.DailyMemoryResponse;
@@ -13,8 +16,13 @@ import com.kuit.agarang.domain.memory.model.dto.MemoryRequest;
 import com.kuit.agarang.domain.memory.model.dto.MonthlyMemoryDTO;
 import com.kuit.agarang.domain.memory.model.dto.MonthlyMemoryResponse;
 import com.kuit.agarang.domain.memory.model.entity.Memory;
+import com.kuit.agarang.domain.memory.model.entity.MemoryBookmark;
 import com.kuit.agarang.domain.memory.repository.MemoryBookmarkRepository;
 import com.kuit.agarang.domain.memory.repository.MemoryRepository;
+import com.kuit.agarang.domain.memory.repository.MusicBookmarkRepository;
+import com.kuit.agarang.domain.playlist.repository.MemoryPlaylistRepository;
+import com.kuit.agarang.global.common.exception.exception.AgarangException;
+import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import com.kuit.agarang.global.common.utils.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,6 +45,8 @@ import java.util.stream.Collectors;
 public class MemoryService {
   private final MemoryRepository memoryRepository;
   private final MemoryBookmarkRepository memoryBookmarkRepository;
+  private final MusicBookmarkRepository musicBookmarkRepository;
+  private final MemoryPlaylistRepository memoryPlaylistRepository;
 
   public DailyMemoryResponse findMemory(MemoryRequest memoryRequest) {
     String date = memoryRequest.getDate();
@@ -109,5 +120,39 @@ public class MemoryService {
             .map(memory -> MemoryImageDTO.of(memory.getId(), memory.getImageUrl()))
             .toList();
     return new FavoriteMemoriesResponse(memoryImageDTOS);
+  }
+
+  @Transactional
+  public void updateBookmark(BookmarkRequest bookmarkRequest) {
+    // TODO : 회원 JWT -> Member 조회 및 예외처리 필요
+    Member member = new Member(1L);
+    Memory memory = memoryRepository.findById(bookmarkRequest.getMemoryId())
+            .orElseThrow(() -> new AgarangException(BaseResponseStatus.INVALID_MEMORY_ID));
+
+    Optional<MemoryBookmark> memoryBookmark = memoryBookmarkRepository.findByMemoryAndMember(memory, member);
+
+    if(memoryBookmark.isPresent()) {
+      memoryBookmarkRepository.delete(memoryBookmark.get());
+      return;
+    }
+    memoryBookmarkRepository.save(new MemoryBookmark(member, memory));
+  }
+
+  @Transactional
+  public void modifyMemory(ModifyMemoryRequest modifyMemoryRequest) {
+    Memory memory = memoryRepository.findById(modifyMemoryRequest.getMemoryId())
+            .orElseThrow(() -> new AgarangException(BaseResponseStatus.INVALID_MEMORY_ID));
+    memory.updateMemory(modifyMemoryRequest.getText());
+  }
+
+  @Transactional
+  public void removeMemory(DeleteMemoryRequest deleteMemoryRequest) {
+    Memory memory = memoryRepository.findById(deleteMemoryRequest.getMemoryId())
+            .orElseThrow(() -> new AgarangException(BaseResponseStatus.INVALID_MEMORY_ID));
+
+    memoryBookmarkRepository.deleteByMemory(memory);
+    musicBookmarkRepository.deleteByMemory(memory);
+    memoryPlaylistRepository.deleteByMemory(memory);
+    memoryRepository.delete(memory);
   }
 }
