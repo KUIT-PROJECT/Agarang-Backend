@@ -62,10 +62,10 @@ public class S3FileUtil {
     }
   }
 
-  public byte[] getTempFile(String filename) throws IOException {
-    File file = new File(tempPath, filename);
+  public byte[] getTempFile(S3File s3File) throws IOException {
+    File file = new File(tempPath, s3File.getFilename());
     if (!file.exists()) {
-      throw new IOException("임시 파일을 찾을 수 없습니다. : " + filename);
+      throw new IOException("임시 파일을 찾을 수 없습니다. : " + s3File.getFilename());
     }
     try (FileInputStream fis = new FileInputStream(file)) {
       return fis.readAllBytes();

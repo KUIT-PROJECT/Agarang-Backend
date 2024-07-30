@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kuit.agarang.domain.ai.model.dto.gpt.*;
 import com.kuit.agarang.domain.ai.model.enums.GPTPrompt;
 import com.kuit.agarang.domain.ai.model.enums.GPTRoleContent;
-import com.kuit.agarang.domain.ai.utils.GPTRequestUtil;
+import com.kuit.agarang.domain.ai.utils.GPTUtil;
 import com.kuit.agarang.domain.ai.utils.GptClientUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,13 +20,13 @@ import java.util.List;
 public class GPTService {
 
   private final GptClientUtil gptClientUtil;
-  private final GPTRequestUtil gptRequestUtil;
+  private final GPTUtil gptUtil;
 
   private final ObjectMapper objectMapper = new ObjectMapper();
 
   public GPTChat getImageDescription(String imageUrl) {
-    GPTMessage systemMessage = gptRequestUtil.createSystemMessage(GPTRoleContent.IMAGE_DESCRIBER);
-    GPTMessage imageQuestion = gptRequestUtil.createImageQuestion(GPTPrompt.IMAGE_DESCRIPTION, imageUrl);
+    GPTMessage systemMessage = gptUtil.createSystemMessage(GPTRoleContent.IMAGE_DESCRIBER);
+    GPTMessage imageQuestion = gptUtil.createImageQuestion(GPTPrompt.IMAGE_DESCRIPTION, imageUrl);
 
     GPTRequest request = new GPTRequest(List.of(systemMessage, imageQuestion));
     request.setRequiredJson(true);
@@ -39,10 +39,10 @@ public class GPTService {
   }
 
   public GPTChat createFirstQuestion(GPTImageDescription imageDescription) {
-    GPTMessage systemMessage = gptRequestUtil.createSystemMessage(GPTRoleContent.COUNSELOR);
-    String keywordSentence = gptRequestUtil.createKeywordSentence(imageDescription);
+    GPTMessage systemMessage = gptUtil.createSystemMessage(GPTRoleContent.COUNSELOR);
+    String keywordSentence = gptUtil.createKeywordSentence(imageDescription);
     GPTMessage message =
-      gptRequestUtil.createTextMessage(keywordSentence + GPTPrompt.FIRST_QUESTION.getText());
+      gptUtil.createTextMessage(keywordSentence + GPTPrompt.FIRST_QUESTION.getText());
 
     GPTRequest request = new GPTRequest(new ArrayList<>(List.of(systemMessage, message)));
     request.setRequiredJson(false);

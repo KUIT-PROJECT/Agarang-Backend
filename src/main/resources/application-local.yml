@@ -11,8 +11,6 @@ spring:
 
 deploy:
   env: local
-  address: localhost
-  name: local_server
 
 server:
   port: 8080
