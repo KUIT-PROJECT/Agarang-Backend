@@ -100,6 +100,15 @@ public class MemoryAIService {
       .build());
   }
 
+  public void saveLastAnswer(Answer answer) {
+    GPTChatHistory chatHistory = redisService.get(answer.getId(), GPTChatHistory.class)
+      .orElseThrow(() -> new RuntimeException(""));
+
+    chatHistory.getHistoryMessage().add(gptUtil.createTextMessage(answer.getText()));
+    logChat(chatHistory.getHistoryMessage());
+    redisService.save(answer.getId(), chatHistory);
+  }
+
   // TODO : redis 트리거 전환
   public boolean checkEntityExistence(String key) {
     try {

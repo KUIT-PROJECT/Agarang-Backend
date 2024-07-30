@@ -3,7 +3,7 @@ package com.kuit.agarang.domain.ai.controller;
 import com.kuit.agarang.domain.ai.model.dto.Answer;
 import com.kuit.agarang.domain.ai.model.dto.QuestionResponse;
 import com.kuit.agarang.domain.ai.service.MemoryAIService;
-import com.kuit.agarang.global.common.response.BaseResponse;
+import com.kuit.agarang.global.common.model.dto.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,5 +24,11 @@ public class MemoryAIController {
   @PostMapping("/first-ans")
   public ResponseEntity<BaseResponse<QuestionResponse>> getNextQuestion(@RequestBody Answer answer) {
     return ResponseEntity.ok(new BaseResponse<>(memoryAIService.getNextQuestion(answer)));
+  }
+
+  @PostMapping("/second-ans")
+  public ResponseEntity<BaseResponse<Void>> saveLastAnswer(@RequestBody Answer answer) {
+    memoryAIService.saveLastAnswer(answer);
+    return ResponseEntity.ok(new BaseResponse<>());
   }
 }
