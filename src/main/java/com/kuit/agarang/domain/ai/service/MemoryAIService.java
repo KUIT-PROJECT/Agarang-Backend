@@ -1,6 +1,9 @@
 package com.kuit.agarang.domain.ai.service;
 
-import com.kuit.agarang.domain.ai.model.dto.gpt.*;
+import com.kuit.agarang.domain.ai.model.dto.gpt.GPTChat;
+import com.kuit.agarang.domain.ai.model.dto.gpt.GPTImageDescription;
+import com.kuit.agarang.domain.ai.model.dto.gpt.GPTQuestionResponse;
+import com.kuit.agarang.domain.ai.model.dto.gpt.GPTQuestionResult;
 import com.kuit.agarang.domain.ai.model.entity.cache.GPTChatHistory;
 import com.kuit.agarang.domain.ai.utils.GPTUtil;
 import com.kuit.agarang.global.common.service.RedisService;
@@ -11,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -37,7 +38,7 @@ public class MemoryAIService {
     GPTImageDescription imageDescription = GPTImageDescription.from(gptUtil.getGPTAnswer(imageChat));
 
     // 해시태그 -> gpt ->  질문1 생성
-    GPTChat questionChat = gptService.createFirstQuestion(imageDescription);
+    GPTChat questionChat = gptService.createImageQuestion(imageDescription);
     String question = gptUtil.getGPTAnswer(questionChat);
 
     // 질문1 -> tts -> 오디오 변환
@@ -51,12 +52,11 @@ public class MemoryAIService {
 
     // 대화기록 저장 및 임시저장이 필요한 데이터 저장
     String redisKey = questionChat.getGptResponse().getId();
-    List<GPTMessage> historyMessage = gptUtil.getHistoryMessage(questionChat);
     redisService.save(redisKey,
       GPTChatHistory.builder()
         .imageTempPath(s3File.getFilename())
         .hashtags(imageDescription.getNoun())
-        .historyMessages(historyMessage)
+        .historyMessages(gptUtil.getHistoryMessage(questionChat))
         .build());
 
     return new GPTQuestionResponse(GPTQuestionResult.builder()
