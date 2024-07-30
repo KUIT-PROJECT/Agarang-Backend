@@ -8,12 +8,13 @@ spring:
   #   init:
   #     mode: always
   #     data-locations: classpath:data.sql
+  data:
+    redis:
+      host: localhost
+      port: 6380
 
 deploy:
   env: local
-
-server:
-  port: 8080
 
 app:
   baseUrl: http://localhost:8080

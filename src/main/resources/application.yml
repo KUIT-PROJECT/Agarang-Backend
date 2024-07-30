@@ -7,8 +7,8 @@ spring:
     active: local
     group:
       local: local, secret
-      blue: blue, secret
-      green: green, secret
+      blue: blue, secret, prod
+      green: green, secret, prod
 
   jpa:
     generate-ddl: true
@@ -37,3 +37,21 @@ springdoc:
     tags-sorter: alpha
     operations-sorter: alpha
   paths-to-exclude: /env
+
+---
+spring:
+  config:
+    activate:
+      on-profile: blue
+
+deploy:
+  env: blue
+
+---
+spring:
+  config:
+    activate:
+      on-profile: green
+
+deploy:
+  env: green
