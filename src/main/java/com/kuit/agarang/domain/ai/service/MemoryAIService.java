@@ -2,8 +2,8 @@ package com.kuit.agarang.domain.ai.service;
 
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTChat;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTImageDescription;
-import com.kuit.agarang.domain.ai.model.dto.gpt.GPTQuestionResponse;
-import com.kuit.agarang.domain.ai.model.dto.gpt.GPTQuestionResult;
+import com.kuit.agarang.domain.ai.model.dto.QuestionResponse;
+import com.kuit.agarang.domain.ai.model.dto.QuestionResult;
 import com.kuit.agarang.domain.ai.model.entity.cache.GPTChatHistory;
 import com.kuit.agarang.domain.ai.utils.GPTUtil;
 import com.kuit.agarang.global.common.service.RedisService;
@@ -29,7 +29,7 @@ public class MemoryAIService {
 
   private final RedisService redisService;
 
-  public GPTQuestionResponse getFirstQuestion(MultipartFile image) throws Exception {
+  public QuestionResponse getFirstQuestion(MultipartFile image) throws Exception {
     S3File s3File = s3FileUtil.uploadTempFile(image);
     String convertedGPTImageUrl = gptUtil.convertToString(s3File);
 
@@ -59,7 +59,7 @@ public class MemoryAIService {
         .historyMessages(gptUtil.getHistoryMessage(questionChat))
         .build());
 
-    return new GPTQuestionResponse(GPTQuestionResult.builder()
+    return new QuestionResponse(QuestionResult.builder()
       .id(redisKey)
       .text(question)
       .audioUrl(questionAudioUrl)
