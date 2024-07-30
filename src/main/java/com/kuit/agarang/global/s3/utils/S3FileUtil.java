@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Optional;
@@ -20,7 +21,7 @@ public class S3FileUtil {
   @Value("${aws.s3.upload.tempPath}")
   private String tempPath;
 
-  public Optional<S3File> convert(MultipartFile file) throws Exception {
+  private Optional<S3File> convert(MultipartFile file) throws Exception {
     ContentType contentType = getContentType(file)
       .orElseThrow(() -> new RuntimeException("지원하지 않는 파일확장자입니다."));
     return Optional.of(S3File.builder()
@@ -31,7 +32,14 @@ public class S3FileUtil {
       .build());
   }
 
-  public void uploadTempFile(S3File s3File) throws IOException {
+  public S3File uploadTempFile(MultipartFile file) throws Exception {
+    S3File s3File = convert(file)
+      .orElseThrow(() -> new RuntimeException("파일 변환에 실패했습니다."));
+    uploadTempFile(s3File);
+    return s3File;
+  }
+
+  private void uploadTempFile(S3File s3File) throws IOException {
     File directory = new File(tempPath + s3File.getContentType().getPath());
     if (!directory.exists()) directory.mkdirs();
 
@@ -51,6 +59,16 @@ public class S3FileUtil {
         return;
       }
       log.info("임시 업로드 파일 삭제를 실패했습니다. [{}]", file.getPath());
+    }
+  }
+
+  public byte[] getTempFile(S3File s3File) throws IOException {
+    File file = new File(tempPath, s3File.getFilename());
+    if (!file.exists()) {
+      throw new IOException("임시 파일을 찾을 수 없습니다. : " + s3File.getFilename());
+    }
+    try (FileInputStream fis = new FileInputStream(file)) {
+      return fis.readAllBytes();
     }
   }
 

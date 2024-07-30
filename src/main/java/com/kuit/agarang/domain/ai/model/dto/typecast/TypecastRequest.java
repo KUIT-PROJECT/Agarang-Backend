@@ -1,4 +1,4 @@
-package com.kuit.agarang.domain.ai.model.dto;
+package com.kuit.agarang.domain.ai.model.dto.typecast;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
@@ -39,10 +39,10 @@ public class TypecastRequest {
     this.xapiAudioFormat = xapiAudioFormat;
   }
 
-  public static TypecastRequest create(MessageRequest request, String actorId) {
+  public static TypecastRequest create(String text, String actorId) {
     return TypecastRequest.builder()
       .actorId(actorId)
-      .text(request.getText())
+      .text(text)
       .lang("auto")
       .tempo(1.0)
       .volume(100)
