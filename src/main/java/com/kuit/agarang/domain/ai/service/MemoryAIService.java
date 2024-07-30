@@ -126,21 +126,19 @@ public class MemoryAIService {
   // TODO : redis 트리거 전환
   public boolean checkEntityExistence(String key) {
     try {
-      log.info("1차 대기");
-      Thread.sleep(1500);
-
-      if (redisService.existsByKey(key)) {
-        return true;
-      } else {
-        log.info("2차 대기");
+      for (int i = 1; i < 3; i++) {
+        log.info(i + "차 대기");
         Thread.sleep(1500);
-        return redisService.existsByKey(key);
+
+        if (redisService.existsByKey(key)) {
+          return true;
+        }
       }
     } catch (InterruptedException e) {
-      e.printStackTrace();
       Thread.currentThread().interrupt(); // 인터럽트 상태를 복구
-      return false;
+      throw new RuntimeException(e);
     }
+    return false;
   }
 
   private void logChat(List<GPTMessage> historyMessage) {
