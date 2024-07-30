@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,7 +34,7 @@ class RedisServiceTest {
     // when
     redisService.save(KEY, value);
     // then
-    assertEquals(value, redisService.get(KEY, String.class));
+    assertEquals(value, redisService.get(KEY, String.class).orElseThrow(() -> new RuntimeException("")));
   }
 
   @Test
@@ -45,7 +46,7 @@ class RedisServiceTest {
     String newValue = "test2-value";
     redisService.update(KEY, newValue);
     // then
-    assertEquals(newValue, redisService.get(KEY, String.class));
+    assertEquals(newValue, redisService.get(KEY, String.class).orElseThrow(() -> new RuntimeException("")));
   }
 
   @Test
@@ -56,7 +57,7 @@ class RedisServiceTest {
     // when
     Thread.sleep(1000);
     // then
-    assertNull(redisService.get(KEY, String.class));
+    assertEquals(Optional.empty(), redisService.get(KEY, String.class));
   }
 
   @Test
@@ -67,7 +68,7 @@ class RedisServiceTest {
     // when
     redisService.delete(KEY);
     // then
-    assertNull(redisService.get(KEY, String.class));
+    assertEquals(Optional.empty(), redisService.get(KEY, String.class));
   }
 
   @Test
@@ -120,7 +121,8 @@ class RedisServiceTest {
     redisService.save(KEY, chatHistory);
 
     // then
-    GPTChatHistory savedChatHistory = redisService.get(KEY, GPTChatHistory.class);
+    GPTChatHistory savedChatHistory = redisService.get(KEY, GPTChatHistory.class)
+      .orElseThrow(() -> new RuntimeException(""));
     assertEquals(chatHistory.getImageTempPath(), savedChatHistory.getImageTempPath());
     assertEquals(chatHistory.getHashtags(), savedChatHistory.getHashtags());
     assertEquals(

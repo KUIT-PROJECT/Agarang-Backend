@@ -44,7 +44,8 @@ public class MemoryAIService {
     String typecastAudioId = typecastService.getAudioDownloadUrl(question);
     String questionAudioUrl = null;
     if (checkEntityExistence(typecastAudioId)) {
-      questionAudioUrl = redisService.get(typecastAudioId, String.class);
+      questionAudioUrl = redisService.get(typecastAudioId, String.class)
+        .orElseThrow(() -> new RuntimeException(""));
       redisService.delete(typecastAudioId);
     }
 

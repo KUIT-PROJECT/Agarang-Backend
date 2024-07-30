@@ -2,9 +2,11 @@ package com.kuit.agarang.global.common.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -18,15 +20,16 @@ public class RedisService {
     redisTemplate.opsForValue().set(key, value);
   }
 
-  public <T> T get(String key, Class<T> clazz) {
-    Object value = redisTemplate.opsForValue().get(key);
-    if (value == null) return null;
-
+  public <T> Optional<T> get(String key, Class<T> clazz) {
     try {
-      return objectMapper.convertValue(value, clazz);
-    } catch (Exception e) {
-      // TODO : custom exception 일괄 수정
-      throw new RuntimeException("Failed to convert value from Redis", e);
+      Object value = redisTemplate.opsForValue().get(key);
+      if (value == null) return Optional.empty();
+
+      return Optional.ofNullable(objectMapper.convertValue(value, clazz));
+    } catch (RedisConnectionFailureException e) {
+      throw new RuntimeException("redis 연결 실패");
+    } catch (IllegalArgumentException e) {
+      throw new RuntimeException("객체 변환 실패");
     }
   }
 
