@@ -59,6 +59,6 @@ public class PlaylistService {
     }
 
     private boolean checkBookmarkStatus(Long memoryId, Long memberId) {
-        return musicBookmarkRepository.existsByMemoryAndMemberId(memoryId, memberId);
+        return musicBookmarkRepository.existsByMemoryIdAndMemberId(memoryId, memberId);
     }
 }
