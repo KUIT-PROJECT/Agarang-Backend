@@ -1,7 +1,5 @@
 package com.kuit.agarang.domain.ai.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kuit.agarang.domain.ai.model.dto.gpt.*;
 import com.kuit.agarang.domain.ai.model.enums.GPTPrompt;
 import com.kuit.agarang.domain.ai.model.enums.GPTRoleContent;
@@ -22,8 +20,6 @@ public class GPTService {
   private final GptClientUtil gptClientUtil;
   private final GPTUtil gptUtil;
 
-  private final ObjectMapper objectMapper = new ObjectMapper();
-
   public GPTChat getImageDescription(String imageUrl) {
     GPTMessage systemMessage = gptUtil.createSystemMessage(GPTRoleContent.IMAGE_DESCRIBER);
     GPTMessage imageQuestion = gptUtil.createImageQuestion(GPTPrompt.IMAGE_DESCRIPTION, imageUrl);
@@ -31,36 +27,24 @@ public class GPTService {
     GPTRequest request = new GPTRequest(List.of(systemMessage, imageQuestion));
     request.setRequiredJson(true);
     GPTResponse response = gptClientUtil.post(request, GPTResponse.class);
-    GPTChat chat = new GPTChat(request, response);
-
-    // TODO : gpt 개발 끝나면 지우기
-    logChat(chat);
-    return chat;
+    return new GPTChat(request, response);
   }
 
-  public GPTChat createFirstQuestion(GPTImageDescription imageDescription) {
+  public GPTChat createImageQuestion(GPTImageDescription imageDescription) {
     GPTMessage systemMessage = gptUtil.createSystemMessage(GPTRoleContent.COUNSELOR);
     String keywordSentence = gptUtil.createKeywordSentence(imageDescription);
     GPTMessage message =
-      gptUtil.createTextMessage(keywordSentence + GPTPrompt.FIRST_QUESTION.getText());
+      gptUtil.createTextMessage(keywordSentence + GPTPrompt.IMAGE_QUESTION.getText());
 
     GPTRequest request = new GPTRequest(new ArrayList<>(List.of(systemMessage, message)));
-    request.setRequiredJson(false);
     GPTResponse response = gptClientUtil.post(request, GPTResponse.class);
-    GPTChat chat = new GPTChat(request, response);
-
-    // TODO : gpt 개발 끝나면 지우기
-    logChat(chat);
-    return chat;
+    return new GPTChat(request, response);
   }
 
-  private void logChat(GPTChat gptChat) {
-    String json = null;
-    try {
-      json = objectMapper.writeValueAsString(gptChat);
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
-    }
-    log.info(json);
+  public GPTChat chatWithHistory(List<GPTMessage> historyMessage, String text) {
+    historyMessage.add(gptUtil.createTextMessage(text));
+    GPTRequest request = new GPTRequest(historyMessage);
+    GPTResponse response = gptClientUtil.post(request, GPTResponse.class);
+    return new GPTChat(request, response);
   }
 }
