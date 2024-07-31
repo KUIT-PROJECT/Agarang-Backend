@@ -1,8 +1,6 @@
 spring:
   application:
     name: agarang
-  config:
-    import: classpath:application-prod.yml
   profiles:
     active: local
     group:
@@ -63,3 +61,5 @@ spring:
 
 deploy:
   env: green
+server:
+  port: 8081
