@@ -24,6 +24,14 @@ spring:
       max-file-size: 5MB
       max-request-size: 10MB
 
+  data:
+    redis:
+      repositories:
+        enabled: false
+    jpa:
+      repositories:
+        bootstrap-mode: deferred
+
 aws:
   s3:
     upload:
