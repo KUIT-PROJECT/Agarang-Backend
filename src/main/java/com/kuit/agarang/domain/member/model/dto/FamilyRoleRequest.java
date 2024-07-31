@@ -1,9 +1,10 @@
 package com.kuit.agarang.domain.member.model.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Data
+@Getter
+@NoArgsConstructor
 public class FamilyRoleRequest {
-  private String providerId;
   private String familyRole;
 }

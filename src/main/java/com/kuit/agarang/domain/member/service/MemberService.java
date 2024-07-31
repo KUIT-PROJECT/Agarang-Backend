@@ -2,8 +2,10 @@ package com.kuit.agarang.domain.member.service;
 
 import com.kuit.agarang.domain.baby.model.entity.Baby;
 import com.kuit.agarang.domain.baby.repository.BabyRepository;
+import com.kuit.agarang.domain.login.utils.AuthenticationUtil;
 import com.kuit.agarang.domain.member.model.entity.Member;
 import com.kuit.agarang.domain.member.repository.MemberRepository;
+import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,69 +17,62 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class MemberService {
 
   private final MemberRepository memberRepository;
   private final BabyRepository babyRepository;
+  private final AuthenticationUtil authenticationUtil;
 
-  @Transactional
-  public String verifyBabyCode(String providerId, String babyCode) {
-    Baby baby = babyRepository.findByCode(babyCode);
+  public void verifyBabyCode(String babyCode) {
 
-    if (baby == null) {
-      throw new RuntimeException("Baby not found");
-    }
+    String providerId = authenticationUtil.getProviderId();
+    log.info("providerId = {}", providerId);
 
-    Optional<Member> optionalMember = memberRepository.findByProviderId(providerId);
-    if (optionalMember.isEmpty()) {
-      throw new RuntimeException("Member not found");
-    }
+    Baby baby = babyRepository.findByCode(babyCode)
+        .orElseThrow(() -> new RuntimeException("Baby not found"));
 
-    Member member = optionalMember.get();
+    Member member = memberRepository.findByProviderId(providerId)
+        .orElseThrow(() -> new RuntimeException("Member not found"));
+
     Member updatedMember = member.changeBaby(baby);
     memberRepository.save(updatedMember);
-
-    return baby.getCode();
   }
 
-  @Transactional
-  public Member assignFamilyRole(String providerId, String familyRole) {
+  public void assignFamilyRole(String familyRole) {
+
+    String providerId = authenticationUtil.getProviderId();
+    log.info("providerId = {}", providerId);
+
     memberRepository.updateFamilyRoleByProviderId(providerId, familyRole);
-    Optional<Member> optionalMember = memberRepository.findByProviderId(providerId);
-    if (optionalMember.isEmpty()) {
-      throw new RuntimeException("Member not found after update");
-    }
-    return optionalMember.get();
   }
 
-  @Transactional
-  public void saveBabyName(String providerId, String babyName) {
-    Optional<Member> optionalMember = memberRepository.findByProviderId(providerId);
-    if (optionalMember.isEmpty()) {
-      throw new RuntimeException("Member not found");
-    }
+  public void saveBabyName(String babyName) {
 
-    Member member = optionalMember.get();
-    Baby baby = member.getBaby();
-    if (baby == null) {
-      throw new RuntimeException("Baby not found");
-    }
+    String providerId = authenticationUtil.getProviderId();
+    log.info("providerId = {}", providerId);
+
+    Member member = memberRepository.findByProviderId(providerId)
+        .orElseThrow(() -> new RuntimeException("Member not found"));
+
+    Baby baby = Optional.ofNullable(member.getBaby())
+        .orElseThrow(() -> new RuntimeException("Baby not found"));
+
     baby.setName(babyName);
     babyRepository.save(baby);
   }
 
-  @Transactional
-  public void saveBabyDueDate(String providerId, LocalDate dueDate) {
-    Optional<Member> optionalMember = memberRepository.findByProviderId(providerId);
-    if (optionalMember.isEmpty()) {
-      throw new RuntimeException("Member not found");
-    }
+  public void saveBabyDueDate(LocalDate dueDate) {
 
-    Member member = optionalMember.get();
-    Baby baby = member.getBaby();
-    if (baby == null) {
-      throw new RuntimeException("Baby not found");
-    }
+    String providerId = authenticationUtil.getProviderId();
+    log.info("providerId = {}", providerId);
+
+    Member member = memberRepository.findByProviderId(providerId)
+        .orElseThrow(() -> new RuntimeException("Member not found"));
+
+    Baby baby = Optional.ofNullable(member.getBaby())
+        .orElseThrow(() -> new RuntimeException("Baby not found"));
+
     baby.setExpectedDueAt(dueDate);
     babyRepository.save(baby);
   }

@@ -12,7 +12,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
   Optional<Member> findByProviderId(String providerId);
 
   @Modifying
-  @Transactional
   @Query("UPDATE Member m SET m.familyRole = :familyRole WHERE m.providerId = :providerId")
   void updateFamilyRoleByProviderId(String providerId, String familyRole);
 }
