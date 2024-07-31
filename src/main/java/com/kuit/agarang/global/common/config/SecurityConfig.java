@@ -1,8 +1,8 @@
 package com.kuit.agarang.global.common.config;
 
 import com.kuit.agarang.domain.login.handler.CustomSuccessHandler;
-import com.kuit.agarang.domain.login.jwt.JWTFilter;
-import com.kuit.agarang.domain.login.jwt.JWTUtil;
+import com.kuit.agarang.domain.login.filter.JWTFilter;
+import com.kuit.agarang.domain.login.utils.JWTUtil;
 import com.kuit.agarang.domain.login.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
