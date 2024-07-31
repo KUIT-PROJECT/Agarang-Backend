@@ -1,6 +1,7 @@
-package com.kuit.agarang.domain.login.jwt;
+package com.kuit.agarang.domain.login.filter;
 
 import com.kuit.agarang.domain.login.model.dto.CustomOAuth2User;
+import com.kuit.agarang.domain.login.utils.JWTUtil;
 import com.kuit.agarang.domain.member.model.dto.MemberDTO;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -24,13 +25,11 @@ public class JWTFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-    String accessToken = request.getHeader("access");
+    String accessToken = request.getHeader("Authorization");
 
     // 토큰이 없다면 다음 필터로 넘김
-    if (accessToken == null) {
-
+    if (accessToken == null || !accessToken.startsWith("Bearer ")) {
       filterChain.doFilter(request, response);
-
       return;
     }
 
@@ -38,11 +37,9 @@ public class JWTFilter extends OncePerRequestFilter {
     try {
       jwtUtil.isExpired(accessToken);
     } catch (ExpiredJwtException e) {
-
       PrintWriter writer = response.getWriter();
       writer.print("access token expired");
-
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 토큰 만료 시 상태 코드
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       return;
     }
 
@@ -50,10 +47,8 @@ public class JWTFilter extends OncePerRequestFilter {
     String category = jwtUtil.getCategory(accessToken);
 
     if (!category.equals("access")) {
-
       PrintWriter writer = response.getWriter();
       writer.print("invalid access token");
-
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       return;
     }
@@ -62,14 +57,13 @@ public class JWTFilter extends OncePerRequestFilter {
     String providerId = jwtUtil.getProviderId(accessToken);
     String role = jwtUtil.getRole(accessToken);
 
-
-    MemberDTO memberDTO = new MemberDTO();
-    memberDTO.setProviderId(providerId);
-    memberDTO.setRole(role);
-    CustomOAuth2User customOAuth2User = new CustomOAuth2User(memberDTO);
+    CustomOAuth2User customOAuth2User = new CustomOAuth2User(MemberDTO.builder()
+        .providerId(providerId)
+        .role(role).build());
 
     //스프링 시큐리티 인증 토큰 생성
     Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
+
     //세션에 사용자 등록
     SecurityContextHolder.getContext().setAuthentication(authToken);
 

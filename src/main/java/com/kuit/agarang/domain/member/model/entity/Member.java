@@ -52,4 +52,13 @@ public class Member extends BaseEntity {
         .role(this.role)
         .build();
   }
+
+  public static Member of(String providerId, String name, String email, String role) {
+    return Member.builder()
+        .providerId(providerId)
+        .name(name)
+        .email(email)
+        .role(role)
+        .build();
+  }
 }
