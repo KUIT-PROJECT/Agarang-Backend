@@ -23,8 +23,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
   private final JWTUtil jwtUtil;
   private final CookieUtil cookieUtil;
   private final JWTService jwtService;
-  @Value("${app.baseUrl}")
-  private String baseUrl;
+//  @Value("${app.baseUrl}")
+//  private String baseUrl;
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -44,6 +44,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     response.setHeader("Authorization", "Bearer " + access);
     response.addCookie(cookieUtil.createCookie("refresh", refresh));
     response.setStatus(HttpStatus.OK.value());
-    response.sendRedirect(baseUrl); // 성공 시 redirect url
+    response.sendRedirect("http://localhost:8080"); // 성공 시 redirect url
   }
 }

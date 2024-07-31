@@ -1,12 +1,12 @@
 package com.kuit.agarang.domain.member.model.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.Date;
 
-@Data
+@Getter
+@NoArgsConstructor
 public class BabyDueDateRequest {
-  private String providerId;
   private LocalDate date;
 }
