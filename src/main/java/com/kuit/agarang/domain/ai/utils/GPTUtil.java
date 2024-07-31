@@ -44,12 +44,18 @@ public class GPTUtil {
     return imageDescription.getNoun().toString() + ", ";
   }
 
-  public String convertToString(S3File s3File) {
+  public String convert(S3File s3File) {
     String base64EncodeData = Base64.getEncoder().encodeToString(s3File.getBytes());
     return "data:" + s3File.getContentType().getMimeType() + ";base64," + base64EncodeData;
   }
 
-  public List<GPTMessage> getHistoryMessage(GPTChat gptChat) {
+  public String convert(String familyRole, String babyName) {
+    return "위의 대화는 오늘 " + familyRole + "에게 있었던 일이야. " +
+      familyRole + "에게 있었던 일을 기반으로 " +
+      familyRole + "가 태아인 " + babyName + "에게 편지를 작성할거야. " + GPTPrompt.MEMORY_TEXT.getText();
+  }
+
+  public List<GPTMessage> createHistoryMessage(GPTChat gptChat) {
     List<GPTMessage> historyMessage = gptChat.getGptRequest().getMessages();
     historyMessage.add(getResponseMessage(gptChat));
     return historyMessage;

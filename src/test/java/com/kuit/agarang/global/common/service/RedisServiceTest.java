@@ -44,9 +44,38 @@ class RedisServiceTest {
     redisService.save(KEY, value);
     // when
     String newValue = "test2-value";
-    redisService.update(KEY, newValue);
+    redisService.save(KEY, newValue);
     // then
     assertEquals(newValue, redisService.get(KEY, String.class).orElseThrow(() -> new RuntimeException("")));
+  }
+
+  @Test
+  void updateObject() {
+    // given
+    List<GPTMessage> messages = new ArrayList<>(List.of(
+      GPTMessage.builder().role(GPTRole.USER).content("user-user").build()));
+
+    GPTChatHistory chatHistory = GPTChatHistory.builder()
+      .imageTempPath("path")
+      .hashtags(List.of("a", "b", "c"))
+      .historyMessages(messages)
+      .build();
+    redisService.save(KEY, chatHistory);
+    GPTChatHistory gptChatHistory = redisService.get(KEY, GPTChatHistory.class).get();
+
+    // when
+    GPTMessage newMessage = GPTMessage.builder().role(GPTRole.ASSISTANT).content("assistant-assistant").build();
+    chatHistory.getHistoryMessage().add(newMessage);
+    redisService.save(KEY, chatHistory);
+
+    // then
+    GPTChatHistory updatedGptChatHistory = redisService.get(KEY, GPTChatHistory.class).get();
+    assertEquals(gptChatHistory.getImageTempPath(), updatedGptChatHistory.getImageTempPath());
+    assertEquals(gptChatHistory.getHashtags(), updatedGptChatHistory.getHashtags());
+
+    assertEquals(gptChatHistory.getHistoryMessage().get(0).getContent(),
+      updatedGptChatHistory.getHistoryMessage().get(0).getContent());
+    assertEquals(newMessage.getContent(), updatedGptChatHistory.getHistoryMessage().get(1).getContent());
   }
 
   @Test
