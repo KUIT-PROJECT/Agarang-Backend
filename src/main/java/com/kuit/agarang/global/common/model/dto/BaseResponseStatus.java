@@ -14,6 +14,7 @@ public enum BaseResponseStatus {
   NOT_FOUND(false, HttpStatus.NOT_FOUND, 404, "대상을 찾을 수 없습니다."),
 
   INVALID_MEMORY_ID(false, HttpStatus.NOT_FOUND, 4001, "존재하지 않는 추억입니다."),
+  FILE_TOO_LARGE(false, HttpStatus.PAYLOAD_TOO_LARGE, 4002, "최대 파일 사이즈(1MB)를 초과했습니다."),
 
   SERVER_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR, 5001, "알 수 없는 이유로 서버에 문제가 발생했습니다.");
 
