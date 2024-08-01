@@ -4,7 +4,7 @@ import com.kuit.agarang.domain.login.model.dto.ReissueDto;
 import com.kuit.agarang.domain.login.utils.JWTUtil;
 import com.kuit.agarang.domain.member.model.entity.RefreshToken;
 import com.kuit.agarang.domain.member.repository.RefreshRepository;
-import com.kuit.agarang.global.common.exception.exception.AgarangException;
+import com.kuit.agarang.global.common.exception.exception.BusinessException;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,26 +64,26 @@ public class JWTService {
   private void validateRefreshToken(String refresh) {
 
     if (refresh == null) {
-      throw new AgarangException(BAD_REQUEST);
+      throw new BusinessException(BAD_REQUEST);
     }
 
     // 만료 여부 체크
     try {
       jwtUtil.isExpired(refresh);
     } catch (ExpiredJwtException e) {
-      throw new AgarangException(BAD_REQUEST);
+      throw new BusinessException(BAD_REQUEST);
     }
 
     // 토큰이 refresh인지 확인 (발급시 페이로드에 명시)
     String category = jwtUtil.getCategory(refresh);
     if (!category.equals("refresh")) {
-      throw new AgarangException(BAD_REQUEST);
+      throw new BusinessException(BAD_REQUEST);
     }
 
     // DB에 저장되어 있는지 확인
     Boolean isExist = refreshRepository.existsByValue(refresh);
     if (!isExist) {
-      throw new AgarangException(BAD_REQUEST);
+      throw new BusinessException(BAD_REQUEST);
     }
   }
 }

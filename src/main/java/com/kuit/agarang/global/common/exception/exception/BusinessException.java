@@ -4,10 +4,10 @@ import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import lombok.Getter;
 
 @Getter
-public class AgarangException extends RuntimeException{
+public class BusinessException extends RuntimeException {
   private final BaseResponseStatus baseResponseStatus;
 
-  public AgarangException(BaseResponseStatus baseResponseStatus) {
+  public BusinessException(BaseResponseStatus baseResponseStatus) {
     this.baseResponseStatus = baseResponseStatus;
   }
 }

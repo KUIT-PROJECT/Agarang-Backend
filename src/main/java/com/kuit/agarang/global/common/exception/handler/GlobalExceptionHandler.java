@@ -1,20 +1,23 @@
 package com.kuit.agarang.global.common.exception.handler;
 
-import com.kuit.agarang.global.common.exception.exception.AgarangException;
+import com.kuit.agarang.global.common.exception.exception.BusinessException;
 import com.kuit.agarang.global.common.model.dto.BaseResponse;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice(annotations = RestController.class)
-public class AgarangExceptionHandler {
+public class GlobalExceptionHandler {
 
-  @ExceptionHandler(AgarangException.class)
-  public ResponseEntity<BaseResponse<BaseResponseStatus>> handleAgarangException(AgarangException e) {
+  private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+  @ExceptionHandler(BusinessException.class)
+  public ResponseEntity<BaseResponse<BaseResponseStatus>> handleBusinessException(BusinessException e) {
     return ResponseEntity.status(e.getBaseResponseStatus().getHttpStatus())
-            .body(new BaseResponse(e.getBaseResponseStatus()));
+      .body(new BaseResponse<>(e.getBaseResponseStatus()));
   }
-
 }
