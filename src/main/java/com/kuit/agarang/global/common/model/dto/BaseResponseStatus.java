@@ -13,9 +13,9 @@ public enum BaseResponseStatus {
   FORBIDDEN(false, HttpStatus.FORBIDDEN, 403, "권한이 없습니다."),
   NOT_FOUND(false, HttpStatus.NOT_FOUND, 404, "대상을 찾을 수 없습니다."),
 
-  INVALID_MEMORY_ID(false,HttpStatus.NOT_FOUND, 4001, "존재하지 않는 추억입니다."),
+  INVALID_MEMORY_ID(false, HttpStatus.NOT_FOUND, 4001, "존재하지 않는 추억입니다."),
 
-  ;
+  SERVER_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR, 5001, "알 수 없는 이유로 서버에 문제가 발생했습니다.");
 
 
   private final boolean isSuccess;
