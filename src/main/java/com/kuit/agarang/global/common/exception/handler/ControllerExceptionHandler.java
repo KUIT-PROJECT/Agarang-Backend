@@ -3,7 +3,6 @@ package com.kuit.agarang.global.common.exception.handler;
 import com.kuit.agarang.global.common.model.dto.BaseResponse;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import com.kuit.agarang.global.common.model.dto.HeaderInfo;
-import io.netty.resolver.dns.DnsErrorCauseException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
