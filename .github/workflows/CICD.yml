@@ -110,7 +110,7 @@ jobs:
           script: |
             sudo docker exec -i nginxserver bash -c 'echo "set \$service_url ${{ env.TARGET_UPSTREAM }};" > /etc/nginx/conf.d/service-env.inc && nginx -s reload' 
 
-      - name: Stop current server
+      - name: Stop current server & network connect
         uses: appleboy/ssh-action@master
         with:
           username: ubuntu
@@ -118,5 +118,6 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script_stop: true
           script: |
+            sudo docker network connect my-network ${{env.TARGET_UPSTREAM}}
             sudo docker stop ${{env.CURRENT_UPSTREAM}}
             sudo docker rm ${{env.CURRENT_UPSTREAM}}
