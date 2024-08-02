@@ -5,10 +5,8 @@ import com.kuit.agarang.domain.member.model.dto.BabyCodeRequest;
 import com.kuit.agarang.domain.member.model.dto.BabyDueDateRequest;
 import com.kuit.agarang.domain.member.model.dto.BabyNameRequest;
 import com.kuit.agarang.domain.member.model.dto.FamilyRoleRequest;
-import com.kuit.agarang.domain.member.model.entity.Member;
 import com.kuit.agarang.domain.member.service.MemberService;
 import com.kuit.agarang.global.common.model.dto.BaseResponse;
-import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.*;
+import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.SUCCESS;
 
 @RestController
 @RequestMapping("/api/login")
@@ -32,7 +30,8 @@ public class LoginController {
    */
   @PostMapping("/baby-code")
   public ResponseEntity<BaseResponse<Void>> verifyBabyCode(@RequestBody BabyCodeRequest request) {
-    memberService.verifyBabyCode(request.getBabyCode());
+    String providerId = authenticationUtil.getProviderId();
+    memberService.verifyBabyCode(providerId, request.getBabyCode());
     return ResponseEntity.ok(new BaseResponse<>(SUCCESS));
   }
 

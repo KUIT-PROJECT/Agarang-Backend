@@ -9,6 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
 
@@ -28,7 +30,7 @@ public class JWTFilter extends OncePerRequestFilter {
     String accessToken = request.getHeader("Authorization");
 
     // 토큰이 없다면 다음 필터로 넘김
-    if (accessToken == null || !accessToken.startsWith("Bearer ")) {
+    if (accessToken == null) {
       filterChain.doFilter(request, response);
       return;
     }
@@ -46,7 +48,7 @@ public class JWTFilter extends OncePerRequestFilter {
     // 토큰이 access인지 확인 (발급시 페이로드에 명시)
     String category = jwtUtil.getCategory(accessToken);
 
-    if (!category.equals("access")) {
+    if (!category.equals("Authorization")) {
       PrintWriter writer = response.getWriter();
       writer.print("invalid access token");
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -68,5 +70,6 @@ public class JWTFilter extends OncePerRequestFilter {
     SecurityContextHolder.getContext().setAuthentication(authToken);
 
     filterChain.doFilter(request, response);
+    log.info("JWT Filter Success");
   }
 }

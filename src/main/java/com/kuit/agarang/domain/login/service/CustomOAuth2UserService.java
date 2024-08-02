@@ -40,7 +40,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     String providerId = oAuth2Response.getProvider() + "_" + oAuth2Response.getProviderId();
     Optional<Member> optionalMember = memberRepository.findByProviderId(providerId);
-    log.info(providerId);
 
     if (optionalMember.isEmpty()) {
 
@@ -54,7 +53,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
       Member existData = optionalMember.get();
       existData.changeInfo(oAuth2Response.getName(), oAuth2Response.getEmail());
-      memberRepository.save(existData);
 
       MemberDTO memberDTO = MemberDTO.of(existData.getProviderId(), oAuth2Response.getName(), existData.getRole());
       return new CustomOAuth2User(memberDTO);
