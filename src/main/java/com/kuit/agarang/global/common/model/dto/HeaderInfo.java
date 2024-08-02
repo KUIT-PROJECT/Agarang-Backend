@@ -1,4 +1,4 @@
-package com.kuit.agarang.global.discord.model.dto;
+package com.kuit.agarang.global.common.model.dto;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Builder;

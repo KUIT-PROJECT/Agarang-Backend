@@ -3,7 +3,7 @@ package com.kuit.agarang.domain.playlist.controller;
 import com.kuit.agarang.domain.playlist.model.dto.PlaylistTracksResponse;
 import com.kuit.agarang.domain.playlist.model.dto.PlaylistsResponse;
 import com.kuit.agarang.domain.playlist.service.PlaylistService;
-import com.kuit.agarang.global.common.response.BaseResponse;
+import com.kuit.agarang.global.common.model.dto.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +16,7 @@ public class PlaylistController {
     private final PlaylistService playlistService;
 
     @GetMapping
-    public ResponseEntity<BaseResponse> getAllPlaylists() {
+    public ResponseEntity<BaseResponse<PlaylistsResponse>> getAllPlaylists() {
         PlaylistsResponse playlistsResponse = playlistService.getAllPlaylists();
         return ResponseEntity.ok(new BaseResponse<>(playlistsResponse));
     }
