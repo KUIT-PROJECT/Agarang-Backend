@@ -54,10 +54,6 @@ public class Member extends BaseEntity {
     this.email = email;
   }
 
-  public void changeBaby(Baby baby) {
-    this.baby = baby;
-  }
-
   public static Member of(String providerId, String name, String email, String role) {
     return Member.builder()
         .providerId(providerId)
@@ -65,5 +61,11 @@ public class Member extends BaseEntity {
         .email(email)
         .role(role)
         .build();
+  }
+
+  //== 연관관계 메서드==//
+  public void setBaby(Baby baby) {
+    this.baby = baby;
+    baby.getMembers().add(this);
   }
 }

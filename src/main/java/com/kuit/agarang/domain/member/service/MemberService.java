@@ -5,7 +5,6 @@ import com.kuit.agarang.domain.baby.repository.BabyRepository;
 import com.kuit.agarang.domain.login.utils.AuthenticationUtil;
 import com.kuit.agarang.domain.member.model.entity.Member;
 import com.kuit.agarang.domain.member.repository.MemberRepository;
-import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +33,7 @@ public class MemberService {
     Member member = memberRepository.findByProviderId(providerId)
         .orElseThrow(() -> new RuntimeException("Member not found"));
 
-    member.changeBaby(baby);
+    member.setBaby(baby);
   }
 
   public void assignFamilyRole(String familyRole) {
