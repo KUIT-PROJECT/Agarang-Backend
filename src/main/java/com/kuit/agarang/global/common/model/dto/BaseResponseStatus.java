@@ -20,6 +20,7 @@ public enum BaseResponseStatus {
   NOT_FOUND_S3_FILE(false, HttpStatus.NOT_FOUND, 4005, "S3 파일 서버에 이미지 URL과 일치하는 파일이 존재하지 않습니다."),
   NOT_FOUND_TSS_AUDIO(false, HttpStatus.NOT_FOUND, 4006, "TTS 오디오 생성 및 저장에 문제가 발생했습니다."),
   NOT_FOUND_HISTORY_CHAT(false, HttpStatus.NOT_FOUND, 4007, "카드 생성 중 이전 대화기록을 찾을 수 없습니다. id 값을 확인해주세요."),
+  INVALID_MUSIC_CHOICE(false, HttpStatus.BAD_REQUEST, 4008, "음악 선택값이 올바른지 확인해주세요."),
 
   SERVER_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR, 5001, "알 수 없는 이유로 서버에 문제가 발생했습니다."),
   FAIL_REDIS_CONNECTION(false, HttpStatus.SERVICE_UNAVAILABLE, 5002, "레디스 서버에 연결 실패했습니다."),

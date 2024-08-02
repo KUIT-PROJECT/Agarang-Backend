@@ -5,6 +5,8 @@ import com.kuit.agarang.domain.memory.enums.Genre;
 import com.kuit.agarang.domain.memory.enums.Instrument;
 import com.kuit.agarang.domain.memory.enums.Mood;
 import com.kuit.agarang.domain.memory.enums.Tempo;
+import com.kuit.agarang.global.common.exception.exception.BusinessException;
+import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,7 +36,7 @@ public class MusicInfo {
         .tempo(Tempo.valueOf(musicChoice.getTempo()))
         .build();
     } catch (IllegalArgumentException | NullPointerException e) {
-      throw new RuntimeException("");
+      throw new BusinessException(BaseResponseStatus.INVALID_MUSIC_CHOICE);
     }
   }
 }
