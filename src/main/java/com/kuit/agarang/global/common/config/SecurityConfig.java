@@ -53,7 +53,7 @@ public class SecurityConfig {
     http
         .authorizeHttpRequests((auth) -> auth
             .requestMatchers(
-                "/env", "/api-json/**", "/api-docs", "/swagger-ui/**",
+                "/", "/env", "/api-json/**", "/api-docs", "/swagger-ui/**",
                 "/oauth2/**")
             .permitAll()
             .requestMatchers("/reissue").permitAll()
