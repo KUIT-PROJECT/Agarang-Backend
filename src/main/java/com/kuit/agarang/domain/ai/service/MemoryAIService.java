@@ -1,6 +1,5 @@
 package com.kuit.agarang.domain.ai.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kuit.agarang.domain.ai.model.dto.*;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTChat;
@@ -8,6 +7,8 @@ import com.kuit.agarang.domain.ai.model.dto.gpt.GPTImageDescription;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTMessage;
 import com.kuit.agarang.domain.ai.model.entity.cache.GPTChatHistory;
 import com.kuit.agarang.domain.ai.utils.GPTUtil;
+import com.kuit.agarang.global.common.exception.exception.OpenAPIException;
+import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import com.kuit.agarang.global.common.service.RedisService;
 import com.kuit.agarang.global.s3.model.dto.S3File;
 import com.kuit.agarang.global.s3.utils.S3FileUtil;
@@ -74,7 +75,7 @@ public class MemoryAIService {
     String questionAudioUrl = null;
     if (checkEntityExistence(typecastAudioId)) {
       questionAudioUrl = redisService.get(typecastAudioId, String.class)
-        .orElseThrow(() -> new RuntimeException(""));
+        .orElseThrow(() -> new OpenAPIException(BaseResponseStatus.NOT_FOUND_TSS_AUDIO));
       redisService.delete(typecastAudioId);
     }
     return questionAudioUrl;
@@ -82,7 +83,7 @@ public class MemoryAIService {
 
   public QuestionResponse getNextQuestion(TextAnswer answer) {
     GPTChatHistory chatHistory = redisService.get(answer.getId(), GPTChatHistory.class)
-      .orElseThrow(() -> new RuntimeException(""));
+      .orElseThrow(() -> new OpenAPIException(BaseResponseStatus.NOT_FOUND_HISTORY_CHAT));
 
     GPTChat chat = gptService.chatWithHistory(chatHistory.getHistoryMessages(), answer.getText());
     String question = gptUtil.getGPTAnswer(chat);
@@ -101,7 +102,7 @@ public class MemoryAIService {
 
   public void saveLastAnswer(TextAnswer answer) {
     GPTChatHistory chatHistory = redisService.get(answer.getId(), GPTChatHistory.class)
-      .orElseThrow(() -> new RuntimeException(""));
+      .orElseThrow(() -> new OpenAPIException(BaseResponseStatus.NOT_FOUND_HISTORY_CHAT));
 
     chatHistory.getHistoryMessages().add(gptUtil.createTextMessage(answer.getText()));
     logChat(chatHistory.getHistoryMessages());
@@ -111,7 +112,7 @@ public class MemoryAIService {
   @Async
   public void createMemoryText(String gptChatHistoryId) {
     GPTChatHistory chatHistory = redisService.get(gptChatHistoryId, GPTChatHistory.class)
-      .orElseThrow(() -> new RuntimeException(""));
+      .orElseThrow(() -> new OpenAPIException(BaseResponseStatus.NOT_FOUND_HISTORY_CHAT));
 
     // TODO : memberId 로 필드 조회
     String prompt = gptUtil.convert("아빠", "뿌둥");
@@ -123,7 +124,7 @@ public class MemoryAIService {
 
   public void saveMusicChoice(MusicAnswer answer) {
     GPTChatHistory chatHistory = redisService.get(answer.getId(), GPTChatHistory.class)
-      .orElseThrow(() -> new RuntimeException(""));
+      .orElseThrow(() -> new OpenAPIException(BaseResponseStatus.NOT_FOUND_HISTORY_CHAT));
 
     chatHistory.setMusicInfo(MusicInfo.from(answer.getMusicChoice()));
     log.info("music info : {}, {}, {}, {}",
@@ -145,7 +146,6 @@ public class MemoryAIService {
       }
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt(); // 인터럽트 상태를 복구
-      throw new RuntimeException(e);
     }
     return false;
   }
@@ -153,8 +153,8 @@ public class MemoryAIService {
   private void logChat(List<GPTMessage> historyMessage) {
     try {
       log.info(objectMapper.writeValueAsString(historyMessage));
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
+    } catch (Exception e) {
+      log.info("채팅 로길 실패");
     }
   }
 }
