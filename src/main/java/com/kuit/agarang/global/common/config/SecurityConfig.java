@@ -41,16 +41,6 @@ public class SecurityConfig {
             .successHandler(customSuccessHandler));
 
     http
-        .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-
-    //oauth2
-    http
-        .oauth2Login((oauth2) -> oauth2
-            .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig
-                .userService(customOAuth2UserService)))
-            .successHandler(customSuccessHandler));
-
-    http
         .authorizeHttpRequests((auth) -> auth
             .requestMatchers(
                 "/env", "/api-json/**", "/api-docs", "/swagger-ui/**",
