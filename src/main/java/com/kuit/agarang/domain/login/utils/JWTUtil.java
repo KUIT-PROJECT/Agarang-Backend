@@ -1,5 +1,6 @@
 package com.kuit.agarang.domain.login.utils;
 
+import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -41,7 +42,7 @@ public class JWTUtil {
   public String createAccessToken(String providerId, String role) {
 
     return Jwts.builder()
-        .claim("category", "access")
+        .claim("category", "Authorization")
         .claim("providerId", providerId)
         .claim("role", role)
         .issuedAt(new Date(System.currentTimeMillis()))

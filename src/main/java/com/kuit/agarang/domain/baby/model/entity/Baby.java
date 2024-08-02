@@ -39,4 +39,12 @@ public class Baby extends BaseEntity {
     this.expectedDueAt = expectedDueAt;
     this.weight = weight;
   }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setExpectedDueAt(LocalDate expectedDueAt) {
+    this.expectedDueAt = expectedDueAt;
+  }
 }
