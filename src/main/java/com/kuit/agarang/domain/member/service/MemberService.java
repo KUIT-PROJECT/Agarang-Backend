@@ -24,9 +24,8 @@ public class MemberService {
   private final BabyRepository babyRepository;
   private final AuthenticationUtil authenticationUtil;
 
-  public void verifyBabyCode(String babyCode) {
+  public void verifyBabyCode(String providerId, String babyCode) {
 
-    String providerId = authenticationUtil.getProviderId();
     log.info("providerId = {}", providerId);
 
     Baby baby = babyRepository.findByCode(babyCode)
@@ -35,8 +34,7 @@ public class MemberService {
     Member member = memberRepository.findByProviderId(providerId)
         .orElseThrow(() -> new RuntimeException("Member not found"));
 
-    Member updatedMember = member.changeBaby(baby);
-    memberRepository.save(updatedMember);
+    member.changeBaby(baby);
   }
 
   public void assignFamilyRole(String familyRole) {
@@ -59,7 +57,6 @@ public class MemberService {
         .orElseThrow(() -> new RuntimeException("Baby not found"));
 
     baby.setName(babyName);
-    babyRepository.save(baby);
   }
 
   public void saveBabyDueDate(LocalDate dueDate) {
@@ -74,6 +71,5 @@ public class MemberService {
         .orElseThrow(() -> new RuntimeException("Baby not found"));
 
     baby.setExpectedDueAt(dueDate);
-    babyRepository.save(baby);
   }
 }

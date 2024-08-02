@@ -25,4 +25,10 @@ public class AuthenticationUtil {
     GrantedAuthority auth = iterator.next();
     return auth.getAuthority();
   }
+
+  public String getName() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
+    return customUserDetails.getName();
+  }
 }

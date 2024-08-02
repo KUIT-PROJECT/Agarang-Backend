@@ -25,6 +25,7 @@ public class Member extends BaseEntity {
   @JoinColumn(name = "refresh_token_id")
   private RefreshToken refreshToken;
 
+  @Column(unique = true)
   private String providerId;
 
   private String name;
@@ -48,24 +49,13 @@ public class Member extends BaseEntity {
     this.id = id;
   }
 
-  public Member changeInfo(String name, String email) {
-    return Member.builder()
-        .providerId(this.providerId)
-        .name(name)
-        .email(email)
-        .role(this.role)
-        .build();
+  public void changeInfo(String name, String email) {
+    this.name = name;
+    this.email = email;
   }
 
-  public Member changeBaby(Baby baby) {
-    return Member.builder()
-        .providerId(this.providerId)
-        .name(this.name)
-        .email(this.email)
-        .role(this.role)
-        .familyRole(this.familyRole)
-        .baby(baby)
-        .build();
+  public void changeBaby(Baby baby) {
+    this.baby = baby;
   }
 
   public static Member of(String providerId, String name, String email, String role) {
