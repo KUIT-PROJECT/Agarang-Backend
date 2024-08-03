@@ -5,6 +5,7 @@ import com.kuit.agarang.domain.baby.repository.BabyRepository;
 import com.kuit.agarang.domain.login.utils.AuthenticationUtil;
 import com.kuit.agarang.domain.member.model.entity.Member;
 import com.kuit.agarang.domain.member.repository.MemberRepository;
+import com.kuit.agarang.global.common.exception.exception.BusinessException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Optional;
+
+import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.NOT_FOUND_BABY;
+import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.NOT_FOUND_MEMBER;
 
 @Slf4j
 @Service
@@ -28,10 +32,10 @@ public class MemberService {
     log.info("providerId = {}", providerId);
 
     Baby baby = babyRepository.findByCode(babyCode)
-        .orElseThrow(() -> new RuntimeException("Baby not found"));
+        .orElseThrow(() -> new BusinessException(NOT_FOUND_BABY));
 
     Member member = memberRepository.findByProviderId(providerId)
-        .orElseThrow(() -> new RuntimeException("Member not found"));
+        .orElseThrow(() -> new BusinessException(NOT_FOUND_MEMBER));
 
     member.setBaby(baby);
   }
@@ -50,10 +54,10 @@ public class MemberService {
     log.info("providerId = {}", providerId);
 
     Member member = memberRepository.findByProviderId(providerId)
-        .orElseThrow(() -> new RuntimeException("Member not found"));
+        .orElseThrow(() -> new BusinessException(NOT_FOUND_MEMBER));
 
     Baby baby = Optional.ofNullable(member.getBaby())
-        .orElseThrow(() -> new RuntimeException("Baby not found"));
+        .orElseThrow(() -> new BusinessException(NOT_FOUND_BABY));
 
     baby.setName(babyName);
   }
@@ -64,10 +68,10 @@ public class MemberService {
     log.info("providerId = {}", providerId);
 
     Member member = memberRepository.findByProviderId(providerId)
-        .orElseThrow(() -> new RuntimeException("Member not found"));
+        .orElseThrow(() -> new BusinessException(NOT_FOUND_MEMBER));
 
     Baby baby = Optional.ofNullable(member.getBaby())
-        .orElseThrow(() -> new RuntimeException("Baby not found"));
+        .orElseThrow(() -> new BusinessException(NOT_FOUND_BABY));
 
     baby.setExpectedDueAt(dueDate);
   }
