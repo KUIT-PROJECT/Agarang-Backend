@@ -24,5 +24,5 @@ public interface MemoryRepository extends JpaRepository<Memory,Long> {
 
   List<Memory> findByBabyOrderByCreatedAtDesc(Baby baby);
   List<Memory> findByBaby(Baby baby);
-  List<String> findTop3ImageUrlsByBabyOrderByCreatedAtDesc(Baby baby); // 3개 이하 시 조회된 갯수 만큼만 반환
+  List<Memory> findTop3ByBabyOrderByCreatedAtDesc(Baby baby); // 3개 이하 시 조회된 갯수 만큼만 반환
 }
