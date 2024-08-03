@@ -6,9 +6,10 @@ import com.kuit.agarang.domain.ai.model.dto.gpt.GPTChat;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTImageDescription;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTMessage;
 import com.kuit.agarang.domain.ai.model.entity.cache.GPTChatHistory;
-import com.kuit.agarang.domain.ai.model.enums.GPTRoleContent;
+import com.kuit.agarang.domain.ai.model.enums.GPTSystemRole;
 import com.kuit.agarang.domain.ai.utils.GPTPromptUtil;
 import com.kuit.agarang.domain.ai.utils.GPTUtil;
+import com.kuit.agarang.domain.baby.model.entity.Character;
 import com.kuit.agarang.global.common.exception.exception.OpenAPIException;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import com.kuit.agarang.global.common.service.RedisService;
@@ -50,7 +51,7 @@ public class MemoryAIService {
 
     // 해시태그 -> gpt ->  질문1 생성
     prompt = promptUtil.createImageQuestionPrompt(imageDescription);
-    GPTChat questionChat = gptService.chat(GPTRoleContent.COUNSELOR, prompt);
+    GPTChat questionChat = gptService.chat(GPTSystemRole.COUNSELOR, prompt, 0L);
     String question = gptUtil.getGPTAnswer(questionChat);
 
     // 질문1 -> tts -> 오디오 변환
@@ -89,7 +90,7 @@ public class MemoryAIService {
     GPTChatHistory chatHistory = redisService.get(answer.getId(), GPTChatHistory.class)
       .orElseThrow(() -> new OpenAPIException(BaseResponseStatus.NOT_FOUND_HISTORY_CHAT));
 
-    GPTChat chat = gptService.chatWithHistory(chatHistory.getHistoryMessages(), answer.getText());
+    GPTChat chat = gptService.chatWithHistory(chatHistory.getHistoryMessages(), answer.getText(), 0L);
     String question = gptUtil.getGPTAnswer(chat);
 
     String questionAudioUrl = getAudioUrl(question);
@@ -120,7 +121,7 @@ public class MemoryAIService {
 
     // TODO : memberId 로 필드 조회
     String prompt = promptUtil.createMemoryTextPrompt("뿌둥", "아빠");
-    GPTChat chat = gptService.chatWithHistory(chatHistory.getHistoryMessages(), prompt);
+    GPTChat chat = gptService.chatWithHistory(chatHistory.getHistoryMessages(), prompt, 0L);
 
     logChat(gptUtil.createHistoryMessage(chat));
     redisService.save(gptChatHistoryId, chatHistory);
@@ -135,6 +136,12 @@ public class MemoryAIService {
       chatHistory.getMusicInfo().getInstrument(), chatHistory.getMusicInfo().getGenre(),
       chatHistory.getMusicInfo().getMood(), chatHistory.getMusicInfo().getTempo());
     redisService.save(answer.getId(), chatHistory);
+  }
+
+  public String getCharacterBubble(Character character, String familyRole) {
+    String prompt = promptUtil.createCharacterBubble(character, familyRole);
+    GPTChat chat = gptService.chat(GPTSystemRole.ASSISTANT, prompt, 1L);
+    return gptUtil.getGPTAnswer(chat);
   }
 
   // TODO : redis 트리거 전환

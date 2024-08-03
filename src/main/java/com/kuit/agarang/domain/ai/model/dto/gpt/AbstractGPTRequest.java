@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -13,7 +14,8 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public abstract class AbstractGPTRequest {
   private final String model = "gpt-4o";
-  private final Long temperature = 0L;
+  @Setter
+  private Long temperature = 0L;
   private List<GPTMessage> messages;
   private ResponseFormat responseFormat = null;
 
