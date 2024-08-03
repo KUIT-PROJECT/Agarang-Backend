@@ -7,6 +7,7 @@ import com.kuit.agarang.domain.home.model.dto.BabySettingUpdateRequest;
 import com.kuit.agarang.domain.home.model.dto.FamilySettingResponse;
 import com.kuit.agarang.domain.home.model.dto.GlobalSettingResponse;
 import com.kuit.agarang.domain.login.utils.AuthenticationUtil;
+import com.kuit.agarang.domain.member.model.dto.MemberDTO;
 import com.kuit.agarang.domain.member.model.entity.Member;
 import com.kuit.agarang.global.common.exception.exception.BusinessException;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -95,11 +97,17 @@ public class SettingService {
     String babyName = baby.getCode();
 
     // 가족
-    List<Member> members = baby.getMembers();
+    List<MemberDTO> memberDTOs = baby.getMembers().stream()
+        .map(member -> MemberDTO.builder()
+            .name(member.getName())
+            .role(member.getRole())
+            .providerId(member.getProviderId())
+            .build())
+        .collect(Collectors.toList());
 
     return FamilySettingResponse.builder()
         .babyCode(babyName)
-        .members(members).build();
+        .members(memberDTOs).build();
   }
 
 }
