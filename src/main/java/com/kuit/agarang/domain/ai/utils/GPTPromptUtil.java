@@ -1,6 +1,7 @@
 package com.kuit.agarang.domain.ai.utils;
 
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTImageDescription;
+import com.kuit.agarang.domain.baby.model.entity.Character;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -26,5 +27,11 @@ public class GPTPromptUtil {
       .append(familyRole).append("에게 있었던 일을 기반으로 ")
       .append(familyRole).append("가 태아인 ").append(babyName).append("에게 편지를 작성할거야. ")
       .append("위의 대화를 바탕으로 일상 태담을 5문장 정도로 감성적으로 작성해줘.").toString();
+  }
+
+  public String createCharacterBubble(Character character, String familyRole) {
+    return new StringBuilder("귀여운 아기 ").append(character.getName()).append(" 캐릭터 특징이나 울음소리, 외모 등을 기반으로 맞춰서 ")
+      .append(familyRole).append("에게 하고 싶은 말을 10자 내로 짧게 작성해줘. ")
+      .append(character.getName()).append("의 특징은 다음과 같아. ").append(character.getDescription()).toString();
   }
 }

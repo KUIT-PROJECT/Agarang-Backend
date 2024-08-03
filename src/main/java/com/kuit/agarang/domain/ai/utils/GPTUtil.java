@@ -4,7 +4,7 @@ import com.kuit.agarang.domain.ai.model.dto.gpt.GPTChat;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTContent;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTMessage;
 import com.kuit.agarang.domain.ai.model.enums.GPTRole;
-import com.kuit.agarang.domain.ai.model.enums.GPTRoleContent;
+import com.kuit.agarang.domain.ai.model.enums.GPTSystemRole;
 import com.kuit.agarang.global.common.exception.exception.OpenAPIException;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,7 @@ public class GPTUtil {
       .build();
   }
 
-  public GPTMessage createSystemMessage(GPTRoleContent role) {
+  public GPTMessage createSystemMessage(GPTSystemRole role) {
     return GPTMessage.builder()
       .role(GPTRole.SYSTEM)
       .content(role.getText())
