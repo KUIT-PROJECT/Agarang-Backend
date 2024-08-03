@@ -18,7 +18,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class GPTService {
+public class GPTChatService {
 
   private final GptClientUtil gptClientUtil;
   private final GPTUtil gptUtil;
