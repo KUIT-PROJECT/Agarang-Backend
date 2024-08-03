@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/app/home/setting/character")
+@RequestMapping("/api/home/setting/character")
 @RequiredArgsConstructor
 public class CharacterController {
 
