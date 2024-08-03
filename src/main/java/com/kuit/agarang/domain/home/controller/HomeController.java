@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/app/home")
+@RequestMapping("/api/home")
 @RequiredArgsConstructor
 public class HomeController {
 
