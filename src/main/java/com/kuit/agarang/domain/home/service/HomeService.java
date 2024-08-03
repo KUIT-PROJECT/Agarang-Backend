@@ -5,6 +5,7 @@ import com.kuit.agarang.domain.baby.model.entity.Character;
 import com.kuit.agarang.domain.baby.repository.BabyRepository;
 import com.kuit.agarang.domain.home.model.dto.HomeResponse;
 import com.kuit.agarang.domain.login.utils.AuthenticationUtil;
+import com.kuit.agarang.domain.memory.model.entity.Memory;
 import com.kuit.agarang.domain.memory.repository.MemoryRepository;
 import com.kuit.agarang.global.common.exception.exception.BusinessException;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,8 +50,9 @@ public class HomeService {
     String speechBubble = "안녕!"; // TODO : GPT 아기 말풍선 생성 로직
 
     // 최근 태교 카드
-    List<String> recentImageUrls = memoryRepository.findTop3ImageUrlsByBabyOrderByCreatedAtDesc(baby);
-
+    List<Memory> recentImages = memoryRepository.findTop3ByBabyOrderByCreatedAtDesc(baby);
+    List<String> recentImageUrls = recentImages.stream()
+        .map(Memory::getImageUrl).collect(Collectors.toList());
 
     return HomeResponse.builder()
         .today(today)
