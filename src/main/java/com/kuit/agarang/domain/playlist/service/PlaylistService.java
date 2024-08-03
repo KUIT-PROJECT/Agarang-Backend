@@ -74,14 +74,21 @@ public class PlaylistService {
 
         Member member = memberRepository.findById(musicBookmarkRequest.getMemberId())
                 .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_MEMBER_ID));
+
         MusicBookmark musicBookmark = musicBookmarkRepository.findByMemory(memory);
+
+        Playlist favoritePlaylist = playlistRepository.findById(2L)
+                .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_PLAYLIST_ID));
 
         if (musicBookmark != null) {
             musicBookmarkRepository.delete(musicBookmark);
+
+            MemoryPlaylist memoryPlaylist = memoryPlaylistRepository.findByMemoryAndPlaylist(memory,favoritePlaylist);
+            memoryPlaylistRepository.delete(memoryPlaylist);
         } else {
             musicBookmarkRepository.save(new MusicBookmark(member, memory));
+            memoryPlaylistRepository.save(new MemoryPlaylist(memory,favoritePlaylist));
         }
-        // TODO : 즐겨찾는 플레이리스트에 해당 노래 저장
     }
 
     @Transactional
