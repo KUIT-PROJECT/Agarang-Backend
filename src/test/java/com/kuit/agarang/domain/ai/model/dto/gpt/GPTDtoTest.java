@@ -24,6 +24,7 @@ class GPTDtoTest {
 
     // when
     GPTRequest request = new GPTRequest(List.of(message1, message2));
+    request.setRequiredJson(true);
 
     // then
     assertEquals("gpt-4o", request.getModel());
@@ -53,7 +54,7 @@ class GPTDtoTest {
     // then
     assertEquals("gpt-4o", request.getModel());
     assertEquals(0L, request.getTemperature());
-    assertEquals("json_object", request.getResponseFormat().getType());
+    assertNull(request.getResponseFormat());
 
     assertEquals(message.getRole(), request.getMessages().get(0).getRole());
 
@@ -83,6 +84,7 @@ class GPTDtoTest {
 
     // when
     GPTRequest request = new GPTRequest(List.of(message1, message2));
+    request.setRequiredJson(true);
 
     // then
     assertEquals("gpt-4o", request.getModel());

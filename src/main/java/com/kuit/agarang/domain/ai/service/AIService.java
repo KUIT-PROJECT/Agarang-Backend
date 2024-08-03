@@ -28,11 +28,11 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class MemoryAIService {
+public class AIService {
 
   private final GPTUtil gptUtil;
-  private final GPTService gptService;
   private final GPTPromptUtil promptUtil;
+  private final GPTChatService gptChatService;
   private final TypecastService typecastService;
 
   private final S3Util s3Util;
@@ -46,12 +46,12 @@ public class MemoryAIService {
 
     // image -> gpt -> 노래제목, 해시태그 생성
     String prompt = promptUtil.createImageDescriptionPrompt();
-    GPTChat imageChat = gptService.chatWithImage(s3File, prompt);
+    GPTChat imageChat = gptChatService.chatWithImage(s3File, prompt);
     GPTImageDescription imageDescription = GPTImageDescription.from(gptUtil.getGPTAnswer(imageChat));
 
     // 해시태그 -> gpt ->  질문1 생성
     prompt = promptUtil.createImageQuestionPrompt(imageDescription);
-    GPTChat questionChat = gptService.chat(GPTSystemRole.COUNSELOR, prompt, 0L);
+    GPTChat questionChat = gptChatService.chat(GPTSystemRole.COUNSELOR, prompt, 0L);
     String question = gptUtil.getGPTAnswer(questionChat);
 
     // 질문1 -> tts -> 오디오 변환
@@ -90,7 +90,7 @@ public class MemoryAIService {
     GPTChatHistory chatHistory = redisService.get(answer.getId(), GPTChatHistory.class)
       .orElseThrow(() -> new OpenAPIException(BaseResponseStatus.NOT_FOUND_HISTORY_CHAT));
 
-    GPTChat chat = gptService.chatWithHistory(chatHistory.getHistoryMessages(), answer.getText(), 0L);
+    GPTChat chat = gptChatService.chatWithHistory(chatHistory.getHistoryMessages(), answer.getText(), 0L);
     String question = gptUtil.getGPTAnswer(chat);
 
     String questionAudioUrl = getAudioUrl(question);
@@ -121,7 +121,7 @@ public class MemoryAIService {
 
     // TODO : memberId 로 필드 조회
     String prompt = promptUtil.createMemoryTextPrompt("뿌둥", "아빠");
-    GPTChat chat = gptService.chatWithHistory(chatHistory.getHistoryMessages(), prompt, 0L);
+    GPTChat chat = gptChatService.chatWithHistory(chatHistory.getHistoryMessages(), prompt, 0L);
 
     logChat(gptUtil.createHistoryMessage(chat));
     redisService.save(gptChatHistoryId, chatHistory);
@@ -140,7 +140,7 @@ public class MemoryAIService {
 
   public String getCharacterBubble(Character character, String familyRole) {
     String prompt = promptUtil.createCharacterBubble(character, familyRole);
-    GPTChat chat = gptService.chat(GPTSystemRole.ASSISTANT, prompt, 1L);
+    GPTChat chat = gptChatService.chat(GPTSystemRole.ASSISTANT, prompt, 1L);
     return gptUtil.getGPTAnswer(chat);
   }
 
