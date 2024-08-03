@@ -54,7 +54,10 @@ public class PlaylistService {
                 })
                 .collect(Collectors.toList());
 
-        return new PlaylistTracksResponse(playlistDto, musicDtos);
+        int totalTrackCount = musicDtos.size();
+        int totalTrackTime = totalTrackCount * 40;
+
+        return new PlaylistTracksResponse(playlistDto, musicDtos,totalTrackCount,totalTrackTime);
     }
 
     private boolean checkBookmarkStatus(Long memoryId, Long memberId) {
