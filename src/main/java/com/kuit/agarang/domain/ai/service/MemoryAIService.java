@@ -6,6 +6,8 @@ import com.kuit.agarang.domain.ai.model.dto.gpt.GPTChat;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTImageDescription;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTMessage;
 import com.kuit.agarang.domain.ai.model.entity.cache.GPTChatHistory;
+import com.kuit.agarang.domain.ai.model.enums.GPTRoleContent;
+import com.kuit.agarang.domain.ai.utils.GPTPromptUtil;
 import com.kuit.agarang.domain.ai.utils.GPTUtil;
 import com.kuit.agarang.global.common.exception.exception.OpenAPIException;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
@@ -29,6 +31,7 @@ public class MemoryAIService {
 
   private final GPTUtil gptUtil;
   private final GPTService gptService;
+  private final GPTPromptUtil promptUtil;
   private final TypecastService typecastService;
 
   private final S3Util s3Util;
@@ -39,14 +42,15 @@ public class MemoryAIService {
 
   public QuestionResponse getFirstQuestion(MultipartFile image) throws Exception {
     S3File s3File = s3FileUtil.uploadTempFile(image);
-    String convertedGPTImageUrl = gptUtil.convert(s3File);
 
     // image -> gpt -> 노래제목, 해시태그 생성
-    GPTChat imageChat = gptService.getImageDescription(convertedGPTImageUrl);
+    String prompt = promptUtil.createImageDescriptionPrompt();
+    GPTChat imageChat = gptService.chatWithImage(s3File, prompt);
     GPTImageDescription imageDescription = GPTImageDescription.from(gptUtil.getGPTAnswer(imageChat));
 
     // 해시태그 -> gpt ->  질문1 생성
-    GPTChat questionChat = gptService.createImageQuestion(imageDescription);
+    prompt = promptUtil.createImageQuestionPrompt(imageDescription);
+    GPTChat questionChat = gptService.chat(GPTRoleContent.COUNSELOR, prompt);
     String question = gptUtil.getGPTAnswer(questionChat);
 
     // 질문1 -> tts -> 오디오 변환
@@ -115,7 +119,7 @@ public class MemoryAIService {
       .orElseThrow(() -> new OpenAPIException(BaseResponseStatus.NOT_FOUND_HISTORY_CHAT));
 
     // TODO : memberId 로 필드 조회
-    String prompt = gptUtil.convert("아빠", "뿌둥");
+    String prompt = promptUtil.createMemoryTextPrompt("뿌둥", "아빠");
     GPTChat chat = gptService.chatWithHistory(chatHistory.getHistoryMessages(), prompt);
 
     logChat(gptUtil.createHistoryMessage(chat));
@@ -137,7 +141,7 @@ public class MemoryAIService {
   public boolean checkEntityExistence(String key) {
     try {
       for (int i = 1; i < 3; i++) {
-        log.info(i + "차 대기");
+        log.info("{}차 대기", i);
         Thread.sleep(1500);
 
         if (redisService.existsByKey(key)) {
