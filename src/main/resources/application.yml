@@ -1,14 +1,12 @@
 spring:
   application:
     name: agarang
-  config:
-    import: classpath:application-prod.yml
   profiles:
     active: local
     group:
       local: local, secret
-      blue: blue, secret
-      green: green, secret
+      blue: blue, secret, prod
+      green: green, secret, prod
 
   jpa:
     generate-ddl: true
@@ -19,10 +17,14 @@ spring:
         show_sql: true
         format_sql: true
     open-in-view: true
-  servlet:
-    multipart: # TODO: Exception Handler 추가하기
-      max-file-size: 5MB
-      max-request-size: 10MB
+
+  data:
+    redis:
+      repositories:
+        enabled: false
+    jpa:
+      repositories:
+        bootstrap-mode: deferred
 
 aws:
   s3:
@@ -37,3 +39,23 @@ springdoc:
     tags-sorter: alpha
     operations-sorter: alpha
   paths-to-exclude: /env
+
+---
+spring:
+  config:
+    activate:
+      on-profile: blue
+
+deploy:
+  env: blue
+
+---
+spring:
+  config:
+    activate:
+      on-profile: green
+
+deploy:
+  env: green
+server:
+  port: 8081

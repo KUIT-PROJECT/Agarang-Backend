@@ -19,9 +19,9 @@ import com.kuit.agarang.domain.memory.model.entity.Memory;
 import com.kuit.agarang.domain.memory.model.entity.MemoryBookmark;
 import com.kuit.agarang.domain.memory.repository.MemoryBookmarkRepository;
 import com.kuit.agarang.domain.memory.repository.MemoryRepository;
-import com.kuit.agarang.domain.memory.repository.MusicBookmarkRepository;
 import com.kuit.agarang.domain.playlist.repository.MemoryPlaylistRepository;
-import com.kuit.agarang.global.common.exception.exception.AgarangException;
+import com.kuit.agarang.domain.memory.repository.MusicBookmarkRepository;
+import com.kuit.agarang.global.common.exception.exception.BusinessException;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import com.kuit.agarang.global.common.utils.DateUtil;
 import lombok.RequiredArgsConstructor;
@@ -127,7 +127,7 @@ public class MemoryService {
     // TODO : 회원 JWT -> Member 조회 및 예외처리 필요
     Member member = new Member(1L);
     Memory memory = memoryRepository.findById(bookmarkRequest.getMemoryId())
-            .orElseThrow(() -> new AgarangException(BaseResponseStatus.INVALID_MEMORY_ID));
+            .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_MEMORY_ID));
 
     Optional<MemoryBookmark> memoryBookmark = memoryBookmarkRepository.findByMemoryAndMember(memory, member);
 
@@ -141,14 +141,14 @@ public class MemoryService {
   @Transactional
   public void modifyMemory(ModifyMemoryRequest modifyMemoryRequest) {
     Memory memory = memoryRepository.findById(modifyMemoryRequest.getMemoryId())
-            .orElseThrow(() -> new AgarangException(BaseResponseStatus.INVALID_MEMORY_ID));
+            .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_MEMORY_ID));
     memory.updateMemory(modifyMemoryRequest.getText());
   }
 
   @Transactional
   public void removeMemory(DeleteMemoryRequest deleteMemoryRequest) {
     Memory memory = memoryRepository.findById(deleteMemoryRequest.getMemoryId())
-            .orElseThrow(() -> new AgarangException(BaseResponseStatus.INVALID_MEMORY_ID));
+            .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_MEMORY_ID));
 
     memoryBookmarkRepository.deleteByMemory(memory);
     musicBookmarkRepository.deleteByMemory(memory);

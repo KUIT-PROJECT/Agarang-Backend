@@ -2,11 +2,11 @@ package com.kuit.agarang.domain.playlist.service;
 
 import com.kuit.agarang.domain.memory.model.entity.Memory;
 import com.kuit.agarang.domain.memory.repository.MemoryRepository;
-import com.kuit.agarang.domain.memory.repository.MusicBookmarkRepository;
 import com.kuit.agarang.domain.playlist.model.dto.*;
 import com.kuit.agarang.domain.playlist.model.entity.MemoryPlaylist;
 import com.kuit.agarang.domain.playlist.model.entity.Playlist;
 import com.kuit.agarang.domain.playlist.repository.MemoryPlaylistRepository;
+import com.kuit.agarang.domain.memory.repository.MusicBookmarkRepository;
 import com.kuit.agarang.domain.playlist.repository.PlaylistRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
