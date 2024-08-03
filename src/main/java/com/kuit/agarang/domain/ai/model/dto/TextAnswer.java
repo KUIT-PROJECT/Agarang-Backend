@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class Answer {
+public class TextAnswer {
   private String id;
   private String text;
 }

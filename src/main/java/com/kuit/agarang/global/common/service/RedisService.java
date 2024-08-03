@@ -2,7 +2,6 @@ package com.kuit.agarang.global.common.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -21,16 +20,9 @@ public class RedisService {
   }
 
   public <T> Optional<T> get(String key, Class<T> clazz) {
-    try {
-      Object value = redisTemplate.opsForValue().get(key);
-      if (value == null) return Optional.empty();
-
-      return Optional.ofNullable(objectMapper.convertValue(value, clazz));
-    } catch (RedisConnectionFailureException e) {
-      throw new RuntimeException("redis 연결 실패");
-    } catch (IllegalArgumentException e) {
-      throw new RuntimeException("객체 변환 실패");
-    }
+    Object value = redisTemplate.opsForValue().get(key);
+    if (value == null) return Optional.empty();
+    return Optional.ofNullable(objectMapper.convertValue(value, clazz));
   }
 
   public boolean existsByKey(String key) {

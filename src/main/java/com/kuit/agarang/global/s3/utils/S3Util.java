@@ -1,5 +1,7 @@
 package com.kuit.agarang.global.s3.utils;
 
+import com.kuit.agarang.global.common.exception.exception.FileException;
+import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import com.kuit.agarang.global.s3.model.dto.S3File;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +14,6 @@ import software.amazon.awssdk.services.s3.S3Uri;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetUrlRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.net.URI;
 
@@ -44,9 +45,9 @@ public class S3Util {
       s3Client.putObject(request, RequestBody.fromBytes(s3File.getBytes()));
       log.info("S3 파일 업로드가 완료되었습니다. [{}]", s3File.getFilename());
       return s3File.putObjectUrl(getUrl(s3File.getFilename()));
-    } catch (S3Exception e) {
-      log.error("요청된 객체가 존재하지 않거나 접근 권한이 없습니다.");
-      throw new RuntimeException(e.getMessage());
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new FileException(BaseResponseStatus.FAIL_S3_UPLOAD);
     } finally {
       s3FileUtil.deleteTempFile(s3File);
     }
@@ -55,7 +56,7 @@ public class S3Util {
   public void delete(String objectUrl) {
     S3Uri s3Uri = s3Client.utilities().parseUri(URI.create(objectUrl));
     String filename = s3Uri.key()
-      .orElseThrow(() -> new RuntimeException("이미지 URL 이 유효하지 않습니다."));
+      .orElseThrow(() -> new FileException(BaseResponseStatus.NOT_FOUND_S3_FILE));
     deleteObject(filename);
   }
 
@@ -66,9 +67,9 @@ public class S3Util {
         .key(filename)
         .build();
       s3Client.deleteObject(request);
-    } catch (S3Exception e) {
-      log.error("요청된 객체가 존재하지 않거나 접근 권한이 없습니다.");
-      throw new RuntimeException(e.getMessage());
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new FileException(BaseResponseStatus.FAIL_S3_UPLOAD);
     }
   }
 
@@ -79,9 +80,9 @@ public class S3Util {
         .key(filename)
         .build();
       return s3Client.utilities().getUrl(request).toString();
-    } catch (S3Exception e) {
-      log.error("요청된 객체가 존재하지 않거나 접근 권한이 없습니다.");
-      throw new RuntimeException(e.getMessage());
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new FileException(BaseResponseStatus.FAIL_S3_UPLOAD);
     }
   }
 }
