@@ -18,8 +18,8 @@ public class PlaylistController {
     private final PlaylistService playlistService;
 
     @GetMapping
-    public ResponseEntity<BaseResponse<PlaylistsResponse>> getAllPlaylists() {
-        PlaylistsResponse playlistsResponse = playlistService.getAllPlaylists();
+    public ResponseEntity<BaseResponse<PlaylistsResponse>> getAllPlaylists(@RequestParam Long memberId) {
+        PlaylistsResponse playlistsResponse = playlistService.getAllPlaylists(memberId);
         return ResponseEntity.ok(new BaseResponse<>(playlistsResponse));
     }
 

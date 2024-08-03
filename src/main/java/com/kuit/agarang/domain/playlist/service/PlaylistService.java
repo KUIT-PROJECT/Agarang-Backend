@@ -30,9 +30,10 @@ public class PlaylistService {
     private final MusicBookmarkRepository musicBookmarkRepository;
     private final MemberRepository memberRepository;
 
-    public PlaylistsResponse getAllPlaylists() {
+    public PlaylistsResponse getAllPlaylists(Long memberId) {
         List<Playlist> playlists = playlistRepository.findAll();
         List<PlaylistDto> playlistDtos = playlists.stream()
+                .filter(playlist -> !memoryPlaylistRepository.findByMemberIdAndPlaylistId(memberId, playlist.getId()).isEmpty())
                 .map(PlaylistDto::of)
                 .collect(Collectors.toList());
 
@@ -43,7 +44,7 @@ public class PlaylistService {
         // TODO : 인가처리에 따라 수정
         // TODO : 예외처리 수정
         Playlist playlist = playlistRepository.findById(playlistId)
-                .orElseThrow(() -> new RuntimeException("playlistId : " + playlistId + " 해당 플레이리스트가 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_PLAYLIST_ID));
 
         PlaylistDto playlistDto = PlaylistDto.of(playlist);
 
@@ -53,7 +54,7 @@ public class PlaylistService {
                 .map(memoryPlaylist -> {
                     Long memoryId = memoryPlaylist.getMemory().getId();
                     Memory memory = memoryRepository.findById(memoryId)
-                            .orElseThrow(() -> new RuntimeException("member 접근 오류"));
+                            .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_MEMBER_ID));
 
                     boolean isBookmarked = checkBookmarkStatus(memoryId, memberId);
 
@@ -84,7 +85,7 @@ public class PlaylistService {
             musicBookmarkRepository.delete(musicBookmark);
 
             MemoryPlaylist memoryPlaylist = memoryPlaylistRepository.findByMemoryAndPlaylist(memory,favoritePlaylist);
-            memoryPlaylistRepository.delete(memoryPlaylist);
+            if(memoryPlaylist != null) memoryPlaylistRepository.delete(memoryPlaylist);
         } else {
             musicBookmarkRepository.save(new MusicBookmark(member, memory));
             memoryPlaylistRepository.save(new MemoryPlaylist(memory,favoritePlaylist));
@@ -95,7 +96,7 @@ public class PlaylistService {
     public void deleteMusic(DeleteMusicRequest deleteMusicRequest) {
         Memory memory = memoryRepository.findById(deleteMusicRequest.getMemoryId())
                 .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_MEMORY_ID));
-        //TODO: 예외처리
+
         Playlist playlist = playlistRepository.findById(deleteMusicRequest.getPlaylistId())
                 .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_PLAYLIST_ID));
 

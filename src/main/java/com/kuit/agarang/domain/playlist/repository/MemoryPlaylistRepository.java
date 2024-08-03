@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface MemoryPlaylistRepository extends JpaRepository<MemoryPlaylist, Long> {
+  List<MemoryPlaylist> findByMemberIdAndPlaylistId(Long memberId, Long playlistId);
   List<MemoryPlaylist> findByPlaylistId(Long playlistId);
   MemoryPlaylist findByMemoryAndPlaylist(Memory memory, Playlist playlist);
   void deleteByMemory(Memory memory);
