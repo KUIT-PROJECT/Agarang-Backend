@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,10 +32,22 @@ public class PlaylistService {
     private final MemberRepository memberRepository;
 
     public PlaylistsResponse getAllPlaylists(Long memberId) {
-        List<Playlist> playlists = playlistRepository.findAll();
-        List<PlaylistDto> playlistDtos = playlists.stream()
-                .filter(playlist -> !memoryPlaylistRepository.findByMemberIdAndPlaylistId(memberId, playlist.getId()).isEmpty())
+
+        List<Memory> memories = memoryRepository.findByMemberId(memberId);
+        List<Long> memoryIds = memories
+                .stream()
+                .map(Memory::getId)
+                .collect(Collectors.toList());
+
+        List<MemoryPlaylist> memoryPlaylists = memoryPlaylistRepository.findByMemoryIdIn(memoryIds);
+        List<Playlist> playlistIdsWithMusic = memoryPlaylists.stream()
+                .map(MemoryPlaylist::getPlaylist)
+                .distinct()
+                .collect(Collectors.toList());
+
+        List<PlaylistDto> playlistDtos = playlistIdsWithMusic.stream()
                 .map(PlaylistDto::of)
+                .sorted(Comparator.comparing(PlaylistDto::getId))
                 .collect(Collectors.toList());
 
         return new PlaylistsResponse(playlistDtos);

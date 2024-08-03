@@ -24,4 +24,5 @@ public interface MemoryRepository extends JpaRepository<Memory,Long> {
 
   List<Memory> findByBabyOrderByCreatedAtDesc(Baby baby);
   List<Memory> findByBaby(Baby baby);
+  List<Memory> findByMemberId(Long memberId);
 }
