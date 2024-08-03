@@ -1,15 +1,14 @@
 package com.kuit.agarang.domain.ai.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kuit.agarang.domain.ai.model.dto.Answer;
-import com.kuit.agarang.domain.ai.model.dto.QuestionResponse;
-import com.kuit.agarang.domain.ai.model.dto.QuestionResult;
+import com.kuit.agarang.domain.ai.model.dto.*;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTChat;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTImageDescription;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTMessage;
 import com.kuit.agarang.domain.ai.model.entity.cache.GPTChatHistory;
 import com.kuit.agarang.domain.ai.utils.GPTUtil;
+import com.kuit.agarang.global.common.exception.exception.OpenAPIException;
+import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import com.kuit.agarang.global.common.service.RedisService;
 import com.kuit.agarang.global.s3.model.dto.S3File;
 import com.kuit.agarang.global.s3.utils.S3FileUtil;
@@ -76,17 +75,17 @@ public class MemoryAIService {
     String questionAudioUrl = null;
     if (checkEntityExistence(typecastAudioId)) {
       questionAudioUrl = redisService.get(typecastAudioId, String.class)
-        .orElseThrow(() -> new RuntimeException(""));
+        .orElseThrow(() -> new OpenAPIException(BaseResponseStatus.NOT_FOUND_TSS_AUDIO));
       redisService.delete(typecastAudioId);
     }
     return questionAudioUrl;
   }
 
-  public QuestionResponse getNextQuestion(Answer answer) {
+  public QuestionResponse getNextQuestion(TextAnswer answer) {
     GPTChatHistory chatHistory = redisService.get(answer.getId(), GPTChatHistory.class)
-      .orElseThrow(() -> new RuntimeException(""));
+      .orElseThrow(() -> new OpenAPIException(BaseResponseStatus.NOT_FOUND_HISTORY_CHAT));
 
-    GPTChat chat = gptService.chatWithHistory(chatHistory.getHistoryMessage(), answer.getText());
+    GPTChat chat = gptService.chatWithHistory(chatHistory.getHistoryMessages(), answer.getText());
     String question = gptUtil.getGPTAnswer(chat);
 
     String questionAudioUrl = getAudioUrl(question);
@@ -101,26 +100,37 @@ public class MemoryAIService {
       .build());
   }
 
-  public void saveLastAnswer(Answer answer) {
+  public void saveLastAnswer(TextAnswer answer) {
     GPTChatHistory chatHistory = redisService.get(answer.getId(), GPTChatHistory.class)
-      .orElseThrow(() -> new RuntimeException(""));
+      .orElseThrow(() -> new OpenAPIException(BaseResponseStatus.NOT_FOUND_HISTORY_CHAT));
 
-    chatHistory.getHistoryMessage().add(gptUtil.createTextMessage(answer.getText()));
-    logChat(chatHistory.getHistoryMessage());
+    chatHistory.getHistoryMessages().add(gptUtil.createTextMessage(answer.getText()));
+    logChat(chatHistory.getHistoryMessages());
     redisService.save(answer.getId(), chatHistory);
   }
 
   @Async
   public void createMemoryText(String gptChatHistoryId) {
     GPTChatHistory chatHistory = redisService.get(gptChatHistoryId, GPTChatHistory.class)
-      .orElseThrow(() -> new RuntimeException(""));
+      .orElseThrow(() -> new OpenAPIException(BaseResponseStatus.NOT_FOUND_HISTORY_CHAT));
 
     // TODO : memberId 로 필드 조회
     String prompt = gptUtil.convert("아빠", "뿌둥");
-    GPTChat chat = gptService.chatWithHistory(chatHistory.getHistoryMessage(), prompt);
+    GPTChat chat = gptService.chatWithHistory(chatHistory.getHistoryMessages(), prompt);
 
     logChat(gptUtil.createHistoryMessage(chat));
     redisService.save(gptChatHistoryId, chatHistory);
+  }
+
+  public void saveMusicChoice(MusicAnswer answer) {
+    GPTChatHistory chatHistory = redisService.get(answer.getId(), GPTChatHistory.class)
+      .orElseThrow(() -> new OpenAPIException(BaseResponseStatus.NOT_FOUND_HISTORY_CHAT));
+
+    chatHistory.setMusicInfo(MusicInfo.from(answer.getMusicChoice()));
+    log.info("music info : {}, {}, {}, {}",
+      chatHistory.getMusicInfo().getInstrument(), chatHistory.getMusicInfo().getGenre(),
+      chatHistory.getMusicInfo().getMood(), chatHistory.getMusicInfo().getTempo());
+    redisService.save(answer.getId(), chatHistory);
   }
 
   // TODO : redis 트리거 전환
@@ -136,7 +146,6 @@ public class MemoryAIService {
       }
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt(); // 인터럽트 상태를 복구
-      throw new RuntimeException(e);
     }
     return false;
   }
@@ -144,8 +153,8 @@ public class MemoryAIService {
   private void logChat(List<GPTMessage> historyMessage) {
     try {
       log.info(objectMapper.writeValueAsString(historyMessage));
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
+    } catch (Exception e) {
+      log.info("채팅 로길 실패");
     }
   }
 }
