@@ -4,6 +4,8 @@ import com.kuit.agarang.domain.ai.model.dto.gpt.*;
 import com.kuit.agarang.domain.ai.model.enums.GPTPrompt;
 import com.kuit.agarang.domain.ai.model.enums.GPTRole;
 import com.kuit.agarang.domain.ai.model.enums.GPTRoleContent;
+import com.kuit.agarang.global.common.exception.exception.OpenAPIException;
+import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import com.kuit.agarang.global.s3.model.dto.S3File;
 import org.springframework.stereotype.Component;
 
@@ -62,10 +64,18 @@ public class GPTUtil {
   }
 
   public String getGPTAnswer(GPTChat gptChat) {
-    return (String) getResponseMessage(gptChat).getContent();
+    try {
+      return (String) getResponseMessage(gptChat).getContent();
+    } catch (NullPointerException e) {
+      throw new OpenAPIException(BaseResponseStatus.INVALID_GPT_RESPONSE);
+    }
   }
 
   private GPTMessage getResponseMessage(GPTChat gptChat) {
-    return gptChat.getGptResponse().getChoices().get(0).getMessage();
+    try {
+      return gptChat.getGptResponse().getChoices().get(0).getMessage();
+    } catch (NullPointerException e) {
+      throw new OpenAPIException(BaseResponseStatus.INVALID_GPT_RESPONSE);
+    }
   }
 }

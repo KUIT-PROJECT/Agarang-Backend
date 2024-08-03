@@ -1,5 +1,7 @@
 package com.kuit.agarang.global.s3.utils;
 
+import com.kuit.agarang.global.common.exception.exception.BusinessException;
+import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import com.kuit.agarang.global.s3.model.dto.S3File;
 import com.kuit.agarang.global.s3.model.enums.ContentType;
 import lombok.extern.slf4j.Slf4j;
@@ -21,20 +23,19 @@ public class S3FileUtil {
   @Value("${aws.s3.upload.tempPath}")
   private String tempPath;
 
-  private Optional<S3File> convert(MultipartFile file) throws Exception {
+  private S3File convert(MultipartFile file) throws Exception {
     ContentType contentType = getContentType(file)
-      .orElseThrow(() -> new RuntimeException("지원하지 않는 파일확장자입니다."));
-    return Optional.of(S3File.builder()
+      .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_FILE_EXTENSION));
+    return S3File.builder()
       .filename(createCleanedFilename(file, contentType))
       .contentType(contentType)
       .contentLength(file.getSize())
       .bytes(file.getBytes())
-      .build());
+      .build();
   }
 
   public S3File uploadTempFile(MultipartFile file) throws Exception {
-    S3File s3File = convert(file)
-      .orElseThrow(() -> new RuntimeException("파일 변환에 실패했습니다."));
+    S3File s3File = convert(file);
     uploadTempFile(s3File);
     return s3File;
   }

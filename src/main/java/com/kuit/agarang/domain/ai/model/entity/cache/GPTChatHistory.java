@@ -1,9 +1,11 @@
 package com.kuit.agarang.domain.ai.model.entity.cache;
 
+import com.kuit.agarang.domain.ai.model.dto.MusicInfo;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTMessage;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -12,12 +14,15 @@ import java.util.List;
 public class GPTChatHistory {
   private String imageTempPath;
   private List<String> hashtags;
-  private List<GPTMessage> historyMessage;
+  private List<GPTMessage> historyMessages;
+  @Setter
+  private MusicInfo musicInfo;
 
   @Builder
-  public GPTChatHistory(String imageTempPath, List<String> hashtags, List<GPTMessage> historyMessages) {
+  public GPTChatHistory(String imageTempPath, List<String> hashtags, List<GPTMessage> historyMessages, MusicInfo musicInfo) {
     this.imageTempPath = imageTempPath;
     this.hashtags = hashtags;
-    this.historyMessage = historyMessages;
+    this.historyMessages = historyMessages;
+    this.musicInfo = musicInfo;
   }
 }
