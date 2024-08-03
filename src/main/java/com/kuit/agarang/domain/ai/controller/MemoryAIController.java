@@ -1,6 +1,7 @@
 package com.kuit.agarang.domain.ai.controller;
 
-import com.kuit.agarang.domain.ai.model.dto.Answer;
+import com.kuit.agarang.domain.ai.model.dto.MusicAnswer;
+import com.kuit.agarang.domain.ai.model.dto.TextAnswer;
 import com.kuit.agarang.domain.ai.model.dto.QuestionResponse;
 import com.kuit.agarang.domain.ai.service.MemoryAIService;
 import com.kuit.agarang.global.common.model.dto.BaseResponse;
@@ -22,14 +23,20 @@ public class MemoryAIController {
   }
 
   @PostMapping("/first-ans")
-  public ResponseEntity<BaseResponse<QuestionResponse>> getNextQuestion(@RequestBody Answer answer) {
+  public ResponseEntity<BaseResponse<QuestionResponse>> getNextQuestion(@RequestBody TextAnswer answer) {
     return ResponseEntity.ok(new BaseResponse<>(memoryAIService.getNextQuestion(answer)));
   }
 
   @PostMapping("/second-ans")
-  public ResponseEntity<BaseResponse<Void>> saveLastAnswer(@RequestBody Answer answer) {
+  public ResponseEntity<BaseResponse<Void>> saveLastAnswer(@RequestBody TextAnswer answer) {
     memoryAIService.saveLastAnswer(answer);
     memoryAIService.createMemoryText(answer.getId());
+    return ResponseEntity.ok(new BaseResponse<>());
+  }
+
+  @PostMapping("/music")
+  public ResponseEntity<BaseResponse<Void>> saveLastAnswer(@RequestBody MusicAnswer answer) {
+    memoryAIService.saveMusicChoice(answer);
     return ResponseEntity.ok(new BaseResponse<>());
   }
 }

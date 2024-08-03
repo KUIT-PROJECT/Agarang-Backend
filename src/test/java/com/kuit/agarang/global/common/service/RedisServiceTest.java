@@ -65,7 +65,7 @@ class RedisServiceTest {
 
     // when
     GPTMessage newMessage = GPTMessage.builder().role(GPTRole.ASSISTANT).content("assistant-assistant").build();
-    chatHistory.getHistoryMessage().add(newMessage);
+    chatHistory.getHistoryMessages().add(newMessage);
     redisService.save(KEY, chatHistory);
 
     // then
@@ -73,9 +73,9 @@ class RedisServiceTest {
     assertEquals(gptChatHistory.getImageTempPath(), updatedGptChatHistory.getImageTempPath());
     assertEquals(gptChatHistory.getHashtags(), updatedGptChatHistory.getHashtags());
 
-    assertEquals(gptChatHistory.getHistoryMessage().get(0).getContent(),
-      updatedGptChatHistory.getHistoryMessage().get(0).getContent());
-    assertEquals(newMessage.getContent(), updatedGptChatHistory.getHistoryMessage().get(1).getContent());
+    assertEquals(gptChatHistory.getHistoryMessages().get(0).getContent(),
+      updatedGptChatHistory.getHistoryMessages().get(0).getContent());
+    assertEquals(newMessage.getContent(), updatedGptChatHistory.getHistoryMessages().get(1).getContent());
   }
 
   @Test
@@ -154,8 +154,7 @@ class RedisServiceTest {
       .orElseThrow(() -> new RuntimeException(""));
     assertEquals(chatHistory.getImageTempPath(), savedChatHistory.getImageTempPath());
     assertEquals(chatHistory.getHashtags(), savedChatHistory.getHashtags());
-    assertEquals(
-      "[{\"role\":\"user\",\"content\":\"오늘은 무슨 요일이야?\"},{\"role\":\"assistant\",\"content\":\"오늘은 화요일이야.\"}]",
-      savedChatHistory.getHistoryMessage());
+    assertEquals(requestMessage.getContent(), savedChatHistory.getHistoryMessages().get(0).getContent());
+    assertEquals(responseMessage.getContent(), savedChatHistory.getHistoryMessages().get(1).getContent());
   }
 }
