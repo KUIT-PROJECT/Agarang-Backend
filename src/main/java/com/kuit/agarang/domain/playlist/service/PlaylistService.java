@@ -43,7 +43,7 @@ public class PlaylistService {
         // TODO : 인가처리에 따라 수정
         // TODO : 예외처리 수정
         Playlist playlist = playlistRepository.findById(playlistId)
-                .orElseThrow(() -> new RuntimeException("playlistId : "+ playlistId + " 해당 플레이리스트가 존재하지 않습니다."));
+                .orElseThrow(() -> new RuntimeException("playlistId : " + playlistId + " 해당 플레이리스트가 존재하지 않습니다."));
 
         PlaylistDto playlistDto = PlaylistDto.of(playlist);
 
@@ -64,7 +64,7 @@ public class PlaylistService {
         int totalTrackCount = musicDtos.size();
         int totalTrackTime = totalTrackCount * 40;
 
-        return new PlaylistTracksResponse(playlistDto, musicDtos,totalTrackCount,totalTrackTime);
+        return new PlaylistTracksResponse(playlistDto, musicDtos, totalTrackCount, totalTrackTime);
     }
 
     @Transactional
@@ -74,15 +74,26 @@ public class PlaylistService {
 
         Member member = memberRepository.findById(musicBookmarkRequest.getMemberId())
                 .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_MEMBER_ID));
-        MusicBookmark musicBookmark = musicBookmarkRepository.findByMemoryAndMember(memory, member);
+        MusicBookmark musicBookmark = musicBookmarkRepository.findByMemory(memory);
 
         if (musicBookmark != null) {
             musicBookmarkRepository.delete(musicBookmark);
-        }else{
-            musicBookmarkRepository.save(new MusicBookmark(member,memory));
+        } else {
+            musicBookmarkRepository.save(new MusicBookmark(member, memory));
         }
+        // TODO : 즐겨찾는 플레이리스트에 해당 노래 저장
+    }
 
+    @Transactional
+    public void deleteMusic(DeleteMusicRequest deleteMusicRequest) {
+        Memory memory = memoryRepository.findById(deleteMusicRequest.getMemoryId())
+                .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_MEMORY_ID));
+        //TODO: 예외처리
+        Playlist playlist = playlistRepository.findById(deleteMusicRequest.getPlaylistId())
+                .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_PLAYLIST_ID));
 
+        memoryPlaylistRepository.deleteByMemoryAndPlaylist(memory, playlist);
+        musicBookmarkRepository.deleteByMemory(memory);
     }
 
     private boolean checkBookmarkStatus(Long memoryId, Long memberId) {

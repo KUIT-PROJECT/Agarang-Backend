@@ -1,5 +1,6 @@
 package com.kuit.agarang.domain.playlist.controller;
 
+import com.kuit.agarang.domain.playlist.model.dto.DeleteMusicRequest;
 import com.kuit.agarang.domain.playlist.model.dto.MusicBookmarkRequest;
 import com.kuit.agarang.domain.playlist.model.dto.PlaylistTracksResponse;
 import com.kuit.agarang.domain.playlist.model.dto.PlaylistsResponse;
@@ -32,6 +33,12 @@ public class PlaylistController {
     @PostMapping("/bookmark")
     public ResponseEntity<BaseResponse<Void>> updateMusicBookmark(@RequestBody MusicBookmarkRequest musicBookmarkRequest) {
         playlistService.updateMusicBookmark(musicBookmarkRequest);
+        return ResponseEntity.ok(new BaseResponse<>());
+    }
+
+    @DeleteMapping("/music/delete")
+    public ResponseEntity<BaseResponse<Void>> deleteMusic(@RequestBody DeleteMusicRequest deleteMusicRequest) {
+        playlistService.deleteMusic(deleteMusicRequest);
         return ResponseEntity.ok(new BaseResponse<>());
     }
 }
