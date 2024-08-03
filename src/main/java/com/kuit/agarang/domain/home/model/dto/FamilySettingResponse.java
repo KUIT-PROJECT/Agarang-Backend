@@ -1,6 +1,6 @@
 package com.kuit.agarang.domain.home.model.dto;
 
-import com.kuit.agarang.domain.member.model.entity.Member;
+import com.kuit.agarang.domain.member.model.dto.MemberDTO;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,6 +11,6 @@ import java.util.List;
 public class FamilySettingResponse {
 
   private String babyCode;
-  private List<Member> members;
+  private List<MemberDTO> members;
 
 }
