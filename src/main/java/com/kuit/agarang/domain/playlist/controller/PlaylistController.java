@@ -1,5 +1,6 @@
 package com.kuit.agarang.domain.playlist.controller;
 
+import com.kuit.agarang.domain.playlist.model.dto.MusicBookmarkRequest;
 import com.kuit.agarang.domain.playlist.model.dto.PlaylistTracksResponse;
 import com.kuit.agarang.domain.playlist.model.dto.PlaylistsResponse;
 import com.kuit.agarang.domain.playlist.service.PlaylistService;
@@ -26,5 +27,11 @@ public class PlaylistController {
                                                                                   @RequestParam Long memberId) {
         PlaylistTracksResponse playlistTracksResponse = playlistService.getPlaylistTracks(id, memberId);
         return ResponseEntity.ok(new BaseResponse<>(playlistTracksResponse));
+    }
+
+    @PostMapping("/bookmark")
+    public ResponseEntity<BaseResponse<Void>> updateMusicBookmark(@RequestBody MusicBookmarkRequest musicBookmarkRequest) {
+        playlistService.updateMusicBookmark(musicBookmarkRequest);
+        return ResponseEntity.ok(new BaseResponse<>());
     }
 }
