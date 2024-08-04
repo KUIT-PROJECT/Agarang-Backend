@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Base64;
+
 @Getter
 @NoArgsConstructor
 public class S3File {
@@ -25,5 +27,10 @@ public class S3File {
   public S3File putObjectUrl(String objectUrl) {
     this.objectUrl = objectUrl;
     return this;
+  }
+
+  public String toGPTImageUrl() {
+    String base64EncodeData = Base64.getEncoder().encodeToString(this.getBytes());
+    return "data:" + this.getContentType().getMimeType() + ";base64," + base64EncodeData;
   }
 }
