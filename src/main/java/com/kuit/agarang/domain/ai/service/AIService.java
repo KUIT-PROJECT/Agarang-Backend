@@ -6,7 +6,10 @@ import com.kuit.agarang.domain.ai.model.dto.gpt.GPTChat;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTImageDescription;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTMessage;
 import com.kuit.agarang.domain.ai.model.entity.cache.GPTChatHistory;
+import com.kuit.agarang.domain.ai.model.enums.GPTSystemRole;
+import com.kuit.agarang.domain.ai.utils.GPTPromptUtil;
 import com.kuit.agarang.domain.ai.utils.GPTUtil;
+import com.kuit.agarang.domain.baby.model.entity.Character;
 import com.kuit.agarang.global.common.exception.exception.OpenAPIException;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import com.kuit.agarang.global.common.service.RedisService;
@@ -25,10 +28,11 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class MemoryAIService {
+public class AIService {
 
   private final GPTUtil gptUtil;
-  private final GPTService gptService;
+  private final GPTPromptUtil promptUtil;
+  private final GPTChatService gptChatService;
   private final TypecastService typecastService;
 
   private final S3Util s3Util;
@@ -39,14 +43,15 @@ public class MemoryAIService {
 
   public QuestionResponse getFirstQuestion(MultipartFile image) throws Exception {
     S3File s3File = s3FileUtil.uploadTempFile(image);
-    String convertedGPTImageUrl = gptUtil.convert(s3File);
 
     // image -> gpt -> 노래제목, 해시태그 생성
-    GPTChat imageChat = gptService.getImageDescription(convertedGPTImageUrl);
+    String prompt = promptUtil.createImageDescriptionPrompt();
+    GPTChat imageChat = gptChatService.chatWithImage(s3File, prompt);
     GPTImageDescription imageDescription = GPTImageDescription.from(gptUtil.getGPTAnswer(imageChat));
 
     // 해시태그 -> gpt ->  질문1 생성
-    GPTChat questionChat = gptService.createImageQuestion(imageDescription);
+    prompt = promptUtil.createImageQuestionPrompt(imageDescription);
+    GPTChat questionChat = gptChatService.chat(GPTSystemRole.COUNSELOR, prompt, 0L);
     String question = gptUtil.getGPTAnswer(questionChat);
 
     // 질문1 -> tts -> 오디오 변환
@@ -85,7 +90,7 @@ public class MemoryAIService {
     GPTChatHistory chatHistory = redisService.get(answer.getId(), GPTChatHistory.class)
       .orElseThrow(() -> new OpenAPIException(BaseResponseStatus.NOT_FOUND_HISTORY_CHAT));
 
-    GPTChat chat = gptService.chatWithHistory(chatHistory.getHistoryMessages(), answer.getText());
+    GPTChat chat = gptChatService.chatWithHistory(chatHistory.getHistoryMessages(), answer.getText(), 0L);
     String question = gptUtil.getGPTAnswer(chat);
 
     String questionAudioUrl = getAudioUrl(question);
@@ -115,8 +120,8 @@ public class MemoryAIService {
       .orElseThrow(() -> new OpenAPIException(BaseResponseStatus.NOT_FOUND_HISTORY_CHAT));
 
     // TODO : memberId 로 필드 조회
-    String prompt = gptUtil.convert("아빠", "뿌둥");
-    GPTChat chat = gptService.chatWithHistory(chatHistory.getHistoryMessages(), prompt);
+    String prompt = promptUtil.createMemoryTextPrompt("뿌둥", "아빠");
+    GPTChat chat = gptChatService.chatWithHistory(chatHistory.getHistoryMessages(), prompt, 0L);
 
     logChat(gptUtil.createHistoryMessage(chat));
     redisService.save(gptChatHistoryId, chatHistory);
@@ -133,11 +138,17 @@ public class MemoryAIService {
     redisService.save(answer.getId(), chatHistory);
   }
 
+  public String getCharacterBubble(Character character, String familyRole) {
+    String prompt = promptUtil.createCharacterBubble(character, familyRole);
+    GPTChat chat = gptChatService.chat(GPTSystemRole.ASSISTANT, prompt, 1L);
+    return gptUtil.getGPTAnswer(chat);
+  }
+
   // TODO : redis 트리거 전환
   public boolean checkEntityExistence(String key) {
     try {
       for (int i = 1; i < 3; i++) {
-        log.info(i + "차 대기");
+        log.info("{}차 대기", i);
         Thread.sleep(1500);
 
         if (redisService.existsByKey(key)) {

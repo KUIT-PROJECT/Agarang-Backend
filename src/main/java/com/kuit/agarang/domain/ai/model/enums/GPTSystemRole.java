@@ -7,9 +7,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public enum GPTRoleContent {
-  IMAGE_DESCRIBER("You're the one who describes the image. Emotionally describe the image"),
-  COUNSELOR("너는 상담사야.");
+public enum GPTSystemRole {
+  IMAGE_DESCRIBER("You're the one who describes the image. Emotionally describe the image."),
+  COUNSELOR("너는 상담사야."),
+  ASSISTANT("You are an assistant.");
 
   private String text;
 }
