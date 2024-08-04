@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.kuit.agarang.domain.ai.model.enums.GPTContentType;
-import com.kuit.agarang.domain.ai.model.enums.GPTPrompt;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,8 +23,8 @@ public class GPTContent {
     private String url;
   }
 
-  public static GPTContent createTextContent(GPTPrompt prompt) {
-    return new GPTContent(GPTContentType.TEXT.toLowerString(), prompt.getText(), null);
+  public static GPTContent createTextContent(String prompt) {
+    return new GPTContent(GPTContentType.TEXT.toLowerString(), prompt, null);
   }
 
   public static GPTContent createImageContent(String imageUrl) {

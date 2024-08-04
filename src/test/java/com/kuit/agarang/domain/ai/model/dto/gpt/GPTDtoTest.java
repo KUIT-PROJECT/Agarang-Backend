@@ -1,6 +1,5 @@
 package com.kuit.agarang.domain.ai.model.dto.gpt;
 
-import com.kuit.agarang.domain.ai.model.enums.GPTPrompt;
 import com.kuit.agarang.domain.ai.model.enums.GPTRole;
 import org.junit.jupiter.api.Test;
 
@@ -25,6 +24,7 @@ class GPTDtoTest {
 
     // when
     GPTRequest request = new GPTRequest(List.of(message1, message2));
+    request.setRequiredJson(true);
 
     // then
     assertEquals("gpt-4o", request.getModel());
@@ -40,7 +40,7 @@ class GPTDtoTest {
   @Test
   void createImageRequest() {
     // given
-    GPTContent content1 = GPTContent.createTextContent(GPTPrompt.IMAGE_QUESTION);
+    GPTContent content1 = GPTContent.createTextContent("이미지에 대해 설명해줘");
     GPTContent content2 = GPTContent.createImageContent("https://image.jpg");
 
     GPTMessage message = GPTMessage.builder()
@@ -54,7 +54,7 @@ class GPTDtoTest {
     // then
     assertEquals("gpt-4o", request.getModel());
     assertEquals(0L, request.getTemperature());
-    assertEquals("json_object", request.getResponseFormat().getType());
+    assertNull(request.getResponseFormat());
 
     assertEquals(message.getRole(), request.getMessages().get(0).getRole());
 
@@ -75,7 +75,7 @@ class GPTDtoTest {
       .content("You are a helpful assistant.")
       .build();
 
-    GPTContent content1 = GPTContent.createTextContent(GPTPrompt.IMAGE_QUESTION);
+    GPTContent content1 = GPTContent.createTextContent("이미지에 대해 설명해줘");
     GPTContent content2 = GPTContent.createImageContent("https://image.jpg");
     GPTMessage message2 = GPTMessage.builder()
       .role(GPTRole.USER)
@@ -84,6 +84,7 @@ class GPTDtoTest {
 
     // when
     GPTRequest request = new GPTRequest(List.of(message1, message2));
+    request.setRequiredJson(true);
 
     // then
     assertEquals("gpt-4o", request.getModel());
