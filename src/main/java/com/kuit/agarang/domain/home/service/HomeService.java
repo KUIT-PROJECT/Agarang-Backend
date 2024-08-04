@@ -1,10 +1,13 @@
 package com.kuit.agarang.domain.home.service;
 
+import com.kuit.agarang.domain.ai.service.AIService;
 import com.kuit.agarang.domain.baby.model.entity.Baby;
 import com.kuit.agarang.domain.baby.model.entity.Character;
 import com.kuit.agarang.domain.baby.repository.BabyRepository;
 import com.kuit.agarang.domain.home.model.dto.HomeResponse;
 import com.kuit.agarang.domain.login.utils.AuthenticationUtil;
+import com.kuit.agarang.domain.member.model.entity.Member;
+import com.kuit.agarang.domain.member.repository.MemberRepository;
 import com.kuit.agarang.domain.memory.model.entity.Memory;
 import com.kuit.agarang.domain.memory.repository.MemoryRepository;
 import com.kuit.agarang.global.common.exception.exception.BusinessException;
@@ -16,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,8 +28,10 @@ import java.util.stream.Collectors;
 public class HomeService {
 
   private final BabyRepository babyRepository;
+  private final MemberRepository memberRepository;
   private final MemoryRepository memoryRepository;
   private final AuthenticationUtil authenticationUtil;
+  private final AIService aiService;
 
   public HomeResponse getHome() {
 
@@ -46,8 +52,10 @@ public class HomeService {
     Character character = baby.getCharacter();
     String characterUrl = character.getImageUrl();
 
-    // 말풍선
-    String speechBubble = "안녕!"; // TODO : GPT 아기 말풍선 생성 로직
+    // 말풍선 Character, FamilyRole
+    Member member = memberRepository.findByProviderId(providerId)
+        .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMBER));
+    String speechBubble = aiService.getCharacterBubble(character,member.getFamilyRole());
 
     // 최근 태교 카드
     List<Memory> recentImages = memoryRepository.findTop3ByBabyOrderByCreatedAtDesc(baby);
