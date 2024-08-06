@@ -58,8 +58,10 @@ public class JWTFilter extends OncePerRequestFilter {
     // providerId, role 값을 획득
     String providerId = jwtUtil.getProviderId(accessToken);
     String role = jwtUtil.getRole(accessToken);
+    Long memberId = jwtUtil.getMemberId(accessToken);
 
     CustomOAuth2User customOAuth2User = new CustomOAuth2User(MemberDTO.builder()
+        .memberId(memberId)
         .providerId(providerId)
         .role(role).build());
 

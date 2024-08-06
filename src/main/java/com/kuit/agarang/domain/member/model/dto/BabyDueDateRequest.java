@@ -8,5 +8,5 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 public class BabyDueDateRequest {
-  private LocalDate date;
+  private LocalDate dueDate;
 }

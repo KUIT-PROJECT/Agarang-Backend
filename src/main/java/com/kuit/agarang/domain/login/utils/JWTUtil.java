@@ -23,6 +23,10 @@ public class JWTUtil {
     secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
   }
 
+  public Long getMemberId(String token) {
+    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("Id", Long.class);
+  }
+
   public String getProviderId(String token) {
     return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("providerId", String.class);
   }
@@ -39,24 +43,26 @@ public class JWTUtil {
     return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
   }
 
-  public String createAccessToken(String providerId, String role) {
+  public String createAccessToken(String providerId, String role, Long memberId) {
 
     return Jwts.builder()
         .claim("category", "Authorization")
         .claim("providerId", providerId)
         .claim("role", role)
+        .claim("memberId", memberId)
         .issuedAt(new Date(System.currentTimeMillis()))
         .expiration(new Date(System.currentTimeMillis() + ACCESS_EXPIRED_IN))
         .signWith(secretKey)
         .compact();
   }
 
-  public String createRefreshToken(String providerId, String role) {
+  public String createRefreshToken(String providerId, String role, Long memberId) {
 
     return Jwts.builder()
         .claim("category", "refresh")
         .claim("providerId", providerId)
         .claim("role", role)
+        .claim("memberId", memberId)
         .issuedAt(new Date(System.currentTimeMillis()))
         .expiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRED_IN))
         .signWith(secretKey)

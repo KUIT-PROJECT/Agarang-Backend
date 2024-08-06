@@ -58,7 +58,7 @@ public class LoginController {
    */
   @PostMapping("/due-date")
   public ResponseEntity<BaseResponse<Void>> saveBabyDueDate(@RequestBody BabyDueDateRequest request) {
-    memberService.saveBabyDueDate(request.getDate());
+    memberService.saveBabyDueDate(request.getDueDate());
     return ResponseEntity.ok(new BaseResponse<>(SUCCESS));
   }
 }
