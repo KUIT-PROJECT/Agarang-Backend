@@ -35,24 +35,20 @@ public class HomeService {
 
   public HomeResponse getHome() {
 
-    // 오늘 날짜
     LocalDate today = LocalDate.now();
 
-    // 아기 이름
     String providerId = authenticationUtil.getProviderId();
     Baby baby = babyRepository.findByProviderId(providerId)
         .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_BABY));
     String babyName = baby.getName();
 
-    // 디데이
     LocalDate dueDate = baby.getExpectedDueAt();
     Integer dDay = (int) ChronoUnit.DAYS.between(today, dueDate);
 
-    // 캐릭터 이미지
     Character character = baby.getCharacter();
     String characterUrl = character.getImageUrl();
 
-    // 말풍선 Character, FamilyRole
+    // 말풍선
     Member member = memberRepository.findByProviderId(providerId)
         .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMBER));
     String speechBubble = aiService.getCharacterBubble(character,member.getFamilyRole());

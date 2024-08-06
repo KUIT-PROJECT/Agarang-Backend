@@ -61,6 +61,7 @@ public class MemberService {
         .expectedDueAt(dueDate)
         .build();
 
+    member.setBaby(baby);
     babyRepository.save(baby);
   }
 
