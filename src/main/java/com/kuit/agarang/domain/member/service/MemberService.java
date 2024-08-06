@@ -48,6 +48,23 @@ public class MemberService {
     memberRepository.updateFamilyRoleByProviderId(providerId, familyRole);
   }
 
+  public void saveNewBaby(String babyName, LocalDate dueDate) {
+
+    String providerId = authenticationUtil.getProviderId();
+    log.info("providerId = {}", providerId);
+
+    Member member = memberRepository.findByProviderId(providerId)
+        .orElseThrow(() -> new BusinessException(NOT_FOUND_MEMBER));
+
+    Baby baby = Baby.builder()
+        .name(babyName)
+        .expectedDueAt(dueDate)
+        .build();
+
+    babyRepository.save(baby);
+  }
+
+
   public void saveBabyName(String babyName) {
 
     String providerId = authenticationUtil.getProviderId();
