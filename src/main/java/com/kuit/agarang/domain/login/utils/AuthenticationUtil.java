@@ -26,9 +26,10 @@ public class AuthenticationUtil {
     return auth.getAuthority();
   }
 
-  public String getName() {
+  public Long getMemberId() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
-    return customUserDetails.getName();
+    return customUserDetails.getMemberId();
   }
+
 }

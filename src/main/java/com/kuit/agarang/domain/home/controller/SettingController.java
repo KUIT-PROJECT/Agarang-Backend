@@ -19,13 +19,13 @@ public class SettingController {
   private final SettingService settingService;
 
   @GetMapping()
-  public ResponseEntity<BaseResponse> getSetting() {
+  public ResponseEntity<BaseResponse<GlobalSettingResponse>> getSetting() {
     GlobalSettingResponse settingData = settingService.getGlobalSetting();
     return ResponseEntity.ok(new BaseResponse<>(settingData));
   }
 
   @GetMapping("/baby")
-  public ResponseEntity<BaseResponse> getBabySetting() {
+  public ResponseEntity<BaseResponse<BabySettingResponse>> getBabySetting() {
     BabySettingResponse settingData = settingService.getBabySetting();
     return ResponseEntity.ok(new BaseResponse<>(settingData));
   }
@@ -37,7 +37,7 @@ public class SettingController {
   }
 
   @GetMapping("/family")
-  public ResponseEntity<BaseResponse> getFamilySetting() {
+  public ResponseEntity<BaseResponse<FamilySettingResponse>> getFamilySetting() {
     FamilySettingResponse settingData = settingService.getFamilySetting();
     return ResponseEntity.ok(new BaseResponse<>(settingData));
   }

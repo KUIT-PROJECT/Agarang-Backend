@@ -3,6 +3,7 @@ package com.kuit.agarang.domain.home.controller;
 import com.kuit.agarang.domain.home.model.dto.BabySettingUpdateRequest;
 import com.kuit.agarang.domain.home.model.dto.CharacterChangeRequest;
 import com.kuit.agarang.domain.home.model.dto.CharacterSettingResponse;
+import com.kuit.agarang.domain.home.model.dto.GlobalSettingResponse;
 import com.kuit.agarang.domain.home.service.CharacterService;
 import com.kuit.agarang.global.common.model.dto.BaseResponse;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
@@ -20,7 +21,7 @@ public class CharacterController {
   private final CharacterService characterService;
 
   @GetMapping
-  public ResponseEntity<BaseResponse> getCharactersByDate() {
+  public ResponseEntity<BaseResponse<List<CharacterSettingResponse>>> getCharactersByDate() {
     List<CharacterSettingResponse> charactersByDate = characterService.getCharactersByDate();
     return ResponseEntity.ok(new BaseResponse(charactersByDate));
 

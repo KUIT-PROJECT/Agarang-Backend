@@ -33,10 +33,11 @@ public class JWTService {
 
     String providerId = jwtUtil.getProviderId(refresh);
     String role = jwtUtil.getRole(refresh);
+    Long memberId = jwtUtil.getMemberId(refresh);
 
     // AccessToken 생성 및 Refresh Rotate
-    String newAccess = jwtUtil.createAccessToken(providerId, role);
-    String newRefresh = jwtUtil.createRefreshToken(providerId, role);
+    String newAccess = jwtUtil.createAccessToken(providerId, role, memberId);
+    String newRefresh = jwtUtil.createRefreshToken(providerId, role, memberId);
 
     // 기존 토큰 삭제 후 새로운 Refresh Token 저장
     refreshRepository.deleteByValue(refresh);
