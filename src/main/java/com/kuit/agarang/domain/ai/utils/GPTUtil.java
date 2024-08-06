@@ -1,19 +1,20 @@
 package com.kuit.agarang.domain.ai.utils;
 
-import com.kuit.agarang.domain.ai.model.dto.gpt.*;
-import com.kuit.agarang.domain.ai.model.enums.GPTPrompt;
+import com.kuit.agarang.domain.ai.model.dto.gpt.GPTChat;
+import com.kuit.agarang.domain.ai.model.dto.gpt.GPTContent;
+import com.kuit.agarang.domain.ai.model.dto.gpt.GPTMessage;
 import com.kuit.agarang.domain.ai.model.enums.GPTRole;
-import com.kuit.agarang.domain.ai.model.enums.GPTRoleContent;
-import com.kuit.agarang.global.s3.model.dto.S3File;
+import com.kuit.agarang.domain.ai.model.enums.GPTSystemRole;
+import com.kuit.agarang.global.common.exception.exception.OpenAPIException;
+import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import org.springframework.stereotype.Component;
 
-import java.util.Base64;
 import java.util.List;
 
 @Component
 public class GPTUtil {
 
-  public GPTMessage createImageQuestion(GPTPrompt prompt, String imageUrl) {
+  public GPTMessage createImageQuestion(String prompt, String imageUrl) {
     return GPTMessage.builder()
       .role(GPTRole.USER)
       .content(List.of(
@@ -21,7 +22,7 @@ public class GPTUtil {
       .build();
   }
 
-  public GPTMessage createSystemMessage(GPTRoleContent role) {
+  public GPTMessage createSystemMessage(GPTSystemRole role) {
     return GPTMessage.builder()
       .role(GPTRole.SYSTEM)
       .content(role.getText())
@@ -35,26 +36,6 @@ public class GPTUtil {
       .build();
   }
 
-  public GPTRequest addHistoryMessage(GPTChat gptChat) {
-    gptChat.getGptRequest().getMessages().add(getResponseMessage(gptChat));
-    return gptChat.getGptRequest();
-  }
-
-  public String createKeywordSentence(GPTImageDescription imageDescription) {
-    return imageDescription.getNoun().toString() + ", ";
-  }
-
-  public String convert(S3File s3File) {
-    String base64EncodeData = Base64.getEncoder().encodeToString(s3File.getBytes());
-    return "data:" + s3File.getContentType().getMimeType() + ";base64," + base64EncodeData;
-  }
-
-  public String convert(String familyRole, String babyName) {
-    return "위의 대화는 오늘 " + familyRole + "에게 있었던 일이야. " +
-      familyRole + "에게 있었던 일을 기반으로 " +
-      familyRole + "가 태아인 " + babyName + "에게 편지를 작성할거야. " + GPTPrompt.MEMORY_TEXT.getText();
-  }
-
   public List<GPTMessage> createHistoryMessage(GPTChat gptChat) {
     List<GPTMessage> historyMessage = gptChat.getGptRequest().getMessages();
     historyMessage.add(getResponseMessage(gptChat));
@@ -62,10 +43,18 @@ public class GPTUtil {
   }
 
   public String getGPTAnswer(GPTChat gptChat) {
-    return (String) getResponseMessage(gptChat).getContent();
+    try {
+      return (String) getResponseMessage(gptChat).getContent();
+    } catch (NullPointerException e) {
+      throw new OpenAPIException(BaseResponseStatus.INVALID_GPT_RESPONSE);
+    }
   }
 
   private GPTMessage getResponseMessage(GPTChat gptChat) {
-    return gptChat.getGptResponse().getChoices().get(0).getMessage();
+    try {
+      return gptChat.getGptResponse().getChoices().get(0).getMessage();
+    } catch (NullPointerException e) {
+      throw new OpenAPIException(BaseResponseStatus.INVALID_GPT_RESPONSE);
+    }
   }
 }

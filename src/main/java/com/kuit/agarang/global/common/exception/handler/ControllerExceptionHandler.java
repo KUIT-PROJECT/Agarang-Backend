@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.Arrays;
 
@@ -33,6 +34,13 @@ public class ControllerExceptionHandler {
     LOG.info(e.getMessage());
     return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
       .body(new BaseResponse<>(BaseResponseStatus.FAIL_REDIS_CONNECTION));
+  }
+
+  @ExceptionHandler(NoResourceFoundException.class)
+  public ResponseEntity<BaseResponse<BaseResponseStatus>> handleNoResourceFound(NoResourceFoundException e) {
+    LOG.info("No static resource [{}]", e.getResourcePath());
+    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+      .body(new BaseResponse<>(BaseResponseStatus.NOT_FOUND_RESOURCE));
   }
 
   @ExceptionHandler(Exception.class)
