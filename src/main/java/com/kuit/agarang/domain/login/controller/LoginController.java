@@ -1,10 +1,7 @@
 package com.kuit.agarang.domain.login.controller;
 
 import com.kuit.agarang.domain.login.utils.AuthenticationUtil;
-import com.kuit.agarang.domain.member.model.dto.BabyCodeRequest;
-import com.kuit.agarang.domain.member.model.dto.BabyDueDateRequest;
-import com.kuit.agarang.domain.member.model.dto.BabyNameRequest;
-import com.kuit.agarang.domain.member.model.dto.FamilyRoleRequest;
+import com.kuit.agarang.domain.member.model.dto.*;
 import com.kuit.agarang.domain.member.service.MemberService;
 import com.kuit.agarang.global.common.model.dto.BaseResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +22,6 @@ public class LoginController {
   private final AuthenticationUtil authenticationUtil;
 
   /**
-   * 아기 코드 검증
    * TODO : 아기 코드 생성 로직
    */
   @PostMapping("/baby-code")
@@ -43,6 +39,16 @@ public class LoginController {
     memberService.assignFamilyRole(request.getFamilyRole());
     return ResponseEntity.ok(new BaseResponse<>(SUCCESS));
   }
+
+  /**
+   * 새 아기 등록
+   */
+  @PostMapping("new-baby")
+  public ResponseEntity<BaseResponse<Void>> assignNewBaby(@RequestBody NewBabyRequest request) {
+    memberService.saveNewBaby(request.getBabyName(), request.getDueDate());
+    return ResponseEntity.ok(new BaseResponse<>(SUCCESS));
+  }
+
 
   /**
    * 태명 등록
