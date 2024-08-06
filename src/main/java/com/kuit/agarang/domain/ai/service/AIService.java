@@ -42,16 +42,16 @@ public class AIService {
   private final ObjectMapper objectMapper;
 
   public QuestionResponse getFirstQuestion(MultipartFile image) throws Exception {
-    S3File s3File = s3FileUtil.uploadTempFile(image);
+    S3File convertedImage = s3FileUtil.uploadTempFile(image);
 
     // image -> gpt -> 노래제목, 해시태그 생성
     String prompt = promptUtil.createImageDescriptionPrompt();
-    GPTChat imageChat = gptChatService.chatWithImage(s3File, prompt);
-    GPTImageDescription imageDescription = GPTImageDescription.from(gptUtil.getGPTAnswer(imageChat));
+    GPTChat imageChat = gptChatService.chatWithImage(convertedImage, prompt);
+    GPTImageDescription imageDescription = gptUtil.parseJson(imageChat, GPTImageDescription.class);
 
     // 해시태그 -> gpt ->  질문1 생성
     prompt = promptUtil.createImageQuestionPrompt(imageDescription);
-    GPTChat questionChat = gptChatService.chat(GPTSystemRole.COUNSELOR, prompt, 0L);
+    GPTChat questionChat = gptChatService.chat(GPTSystemRole.COUNSELOR, prompt, 0L, false);
     String question = gptUtil.getGPTAnswer(questionChat);
 
     // 질문1 -> tts -> 오디오 변환
@@ -62,8 +62,8 @@ public class AIService {
     List<GPTMessage> historyMessage = gptUtil.createHistoryMessage(questionChat);
     redisService.save(redisKey,
       GPTChatHistory.builder()
-        .imageTempPath(s3File.getFilename())
-        .hashtags(imageDescription.getNoun())
+        .image(convertedImage.cleanBytes())
+        .imageDescription(imageDescription)
         .historyMessages(historyMessage)
         .build());
 
@@ -127,20 +127,34 @@ public class AIService {
     redisService.save(gptChatHistoryId, chatHistory);
   }
 
-  public void saveMusicChoice(MusicAnswer answer) {
+  public GPTChatHistory setMusicChoice(MusicAnswer answer) {
     GPTChatHistory chatHistory = redisService.get(answer.getId(), GPTChatHistory.class)
       .orElseThrow(() -> new OpenAPIException(BaseResponseStatus.NOT_FOUND_HISTORY_CHAT));
 
     chatHistory.setMusicInfo(MusicInfo.from(answer.getMusicChoice()));
-    log.info("music info : {}, {}, {}, {}",
-      chatHistory.getMusicInfo().getInstrument(), chatHistory.getMusicInfo().getGenre(),
-      chatHistory.getMusicInfo().getMood(), chatHistory.getMusicInfo().getTempo());
-    redisService.save(answer.getId(), chatHistory);
+    return chatHistory;
+  }
+
+  @Async
+  public void createMusicGenPrompt(GPTChatHistory chatHistory) {
+    String prompt = promptUtil.createMusicGenPrompt(chatHistory.getImageDescription(), chatHistory.getMusicInfo());
+    GPTChat chat = gptChatService.chat(GPTSystemRole.MUSIC_PROMPT_ENGINEER, prompt, 1L, true);
+    String musicGenPrompt = gptUtil.parseJson(chat, "prompt");
+    log.info(musicGenPrompt);
+
+    prompt = promptUtil.createMusicTitlePrompt(musicGenPrompt, chatHistory.getMusicInfo());
+    chat = gptChatService.chat(GPTSystemRole.MUSIC_TITLE_WRITER, prompt, 1L, true);
+    String musicTitle = gptUtil.parseJson(chat, "music_name");
+    log.info(musicTitle);
+
+    // TODO : 음악 생성
+
+    // TODO : DB 저장
   }
 
   public String getCharacterBubble(Character character, String familyRole) {
     String prompt = promptUtil.createCharacterBubble(character, familyRole);
-    GPTChat chat = gptChatService.chat(GPTSystemRole.ASSISTANT, prompt, 1L);
+    GPTChat chat = gptChatService.chat(GPTSystemRole.ASSISTANT, prompt, 1L, false);
     return gptUtil.getGPTAnswer(chat);
   }
 

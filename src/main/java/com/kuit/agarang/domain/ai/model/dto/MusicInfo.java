@@ -39,4 +39,20 @@ public class MusicInfo {
       throw new BusinessException(BaseResponseStatus.INVALID_MUSIC_CHOICE);
     }
   }
+
+  public String getInstrumentAsString() {
+    return instrument.toString().toLowerCase();
+  }
+
+  public String getGenreAsString() {
+    return genre.toString().toLowerCase();
+  }
+
+  public String getMoodAsString() {
+    return mood.toString().toLowerCase();
+  }
+
+  public String getTempoAsString() {
+    return tempo.toString().toLowerCase();
+  }
 }
