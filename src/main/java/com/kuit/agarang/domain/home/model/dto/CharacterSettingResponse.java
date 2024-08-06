@@ -9,7 +9,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CharacterSettingResponse {
 
-  private Long id;
+  private Long characterId;
   private String name;
   private String description;
   private String imageUrl;
