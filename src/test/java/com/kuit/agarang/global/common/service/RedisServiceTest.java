@@ -56,8 +56,7 @@ class RedisServiceTest {
       GPTMessage.builder().role(GPTRole.USER).content("user-user").build()));
 
     GPTChatHistory chatHistory = GPTChatHistory.builder()
-      .imageTempPath("path")
-      .hashtags(List.of("a", "b", "c"))
+      .imageDescription(new GPTImageDescription("text", List.of("a", "b", "c")))
       .historyMessages(messages)
       .build();
     redisService.save(KEY, chatHistory);
@@ -70,8 +69,8 @@ class RedisServiceTest {
 
     // then
     GPTChatHistory updatedGptChatHistory = redisService.get(KEY, GPTChatHistory.class).get();
-    assertEquals(gptChatHistory.getImageTempPath(), updatedGptChatHistory.getImageTempPath());
-    assertEquals(gptChatHistory.getHashtags(), updatedGptChatHistory.getHashtags());
+    assertEquals(gptChatHistory.getImageDescription().getText(), updatedGptChatHistory.getImageDescription().getText());
+    assertEquals(gptChatHistory.getImageDescription().getNoun(), updatedGptChatHistory.getImageDescription().getNoun());
 
     assertEquals(gptChatHistory.getHistoryMessages().get(0).getContent(),
       updatedGptChatHistory.getHistoryMessages().get(0).getContent());
@@ -141,8 +140,7 @@ class RedisServiceTest {
 
     request.getMessages().add(responseMessage); // 질문, 대답 합친 history message 포함해서 선언
     GPTChatHistory chatHistory = GPTChatHistory.builder()
-      .imageTempPath("images/image.jpeg")
-      .hashtags(imageDescription.getNoun())
+      .imageDescription(imageDescription)
       .historyMessages(request.getMessages())
       .build();
 
@@ -152,8 +150,8 @@ class RedisServiceTest {
     // then
     GPTChatHistory savedChatHistory = redisService.get(KEY, GPTChatHistory.class)
       .orElseThrow(() -> new RuntimeException(""));
-    assertEquals(chatHistory.getImageTempPath(), savedChatHistory.getImageTempPath());
-    assertEquals(chatHistory.getHashtags(), savedChatHistory.getHashtags());
+    assertEquals(chatHistory.getImageDescription().getText(), savedChatHistory.getImageDescription().getText());
+    assertEquals(chatHistory.getImageDescription().getNoun(), savedChatHistory.getImageDescription().getNoun());
     assertEquals(requestMessage.getContent(), savedChatHistory.getHistoryMessages().get(0).getContent());
     assertEquals(responseMessage.getContent(), savedChatHistory.getHistoryMessages().get(1).getContent());
   }
