@@ -64,7 +64,7 @@ public class Member extends BaseEntity {
   }
 
   //== 연관관계 메서드==//
-  public void setBaby(Baby baby) {
+  public void addBaby(Baby baby) {
     this.baby = baby;
     baby.getMembers().add(this);
   }

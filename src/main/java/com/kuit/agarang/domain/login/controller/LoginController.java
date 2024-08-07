@@ -1,11 +1,13 @@
 package com.kuit.agarang.domain.login.controller;
 
+import com.kuit.agarang.domain.login.model.dto.CustomOAuth2User;
 import com.kuit.agarang.domain.login.utils.AuthenticationUtil;
 import com.kuit.agarang.domain.member.model.dto.*;
 import com.kuit.agarang.domain.member.service.MemberService;
 import com.kuit.agarang.global.common.model.dto.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,9 +23,6 @@ public class LoginController {
   private final MemberService memberService;
   private final AuthenticationUtil authenticationUtil;
 
-  /**
-   * TODO : 아기 코드 생성 로직
-   */
   @PostMapping("/baby-code")
   public ResponseEntity<BaseResponse<Void>> verifyBabyCode(@RequestBody BabyCodeRequest request) {
     String providerId = authenticationUtil.getProviderId();
@@ -44,27 +43,10 @@ public class LoginController {
    * 새 아기 등록
    */
   @PostMapping("new-baby")
-  public ResponseEntity<BaseResponse<Void>> assignNewBaby(@RequestBody NewBabyRequest request) {
-    memberService.saveNewBaby(request.getBabyName(), request.getDueDate());
+  public ResponseEntity<BaseResponse<Void>> assignNewBaby(@AuthenticationPrincipal CustomOAuth2User details,
+                                                          @RequestBody NewBabyRequest request) {
+    memberService.saveNewBaby(details.getProviderId(), request.getBabyName(), request.getDueDate());
     return ResponseEntity.ok(new BaseResponse<>(SUCCESS));
   }
 
-
-  /**
-   * 태명 등록
-   */
-  @PostMapping("/baby-name")
-  public ResponseEntity<BaseResponse<Void>> saveBabyName(@RequestBody BabyNameRequest request) {
-    memberService.saveBabyName(request.getBabyName());
-    return ResponseEntity.ok(new BaseResponse<>(SUCCESS));
-  }
-
-  /**
-   * 출산 예정일 등록
-   */
-  @PostMapping("/due-date")
-  public ResponseEntity<BaseResponse<Void>> saveBabyDueDate(@RequestBody BabyDueDateRequest request) {
-    memberService.saveBabyDueDate(request.getDueDate());
-    return ResponseEntity.ok(new BaseResponse<>(SUCCESS));
-  }
 }
