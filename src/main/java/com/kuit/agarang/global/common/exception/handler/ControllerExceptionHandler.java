@@ -56,7 +56,7 @@ public class ControllerExceptionHandler {
     MDC.put("uri", headerInfo.getUri());
     MDC.put("query", headerInfo.getQueryString());
     MDC.put("details", Arrays.toString(e.getStackTrace()));
-    LOG.error("ControllerException occurred: {}", e.getMessage());
+    LOG.error(e.getMessage());
     e.printStackTrace();
     return ResponseEntity.status(response.getStatus())
         .body(new BaseResponse<>(BaseResponseStatus.SERVER_ERROR));
