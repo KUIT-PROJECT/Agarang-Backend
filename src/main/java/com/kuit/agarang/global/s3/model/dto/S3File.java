@@ -33,4 +33,9 @@ public class S3File {
     String base64EncodeData = Base64.getEncoder().encodeToString(this.getBytes());
     return "data:" + this.getContentType().getMimeType() + ";base64," + base64EncodeData;
   }
+
+  public S3File cleanBytes() {
+    this.bytes = null;
+    return this;
+  }
 }

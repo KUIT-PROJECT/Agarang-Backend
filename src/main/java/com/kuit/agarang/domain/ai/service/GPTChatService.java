@@ -33,12 +33,13 @@ public class GPTChatService {
     return new GPTChat(request, response);
   }
 
-  public GPTChat chat(GPTSystemRole systemRole, String prompt, Long temperature) {
+  public GPTChat chat(GPTSystemRole systemRole, String prompt, Long temperature, boolean requiredJson) {
     GPTMessage systemMessage = gptUtil.createSystemMessage(systemRole);
     GPTMessage message = gptUtil.createTextMessage(prompt);
 
     GPTRequest request = new GPTRequest(new ArrayList<>(List.of(systemMessage, message)));
     request.setTemperature(temperature);
+    request.setRequiredJson(requiredJson);
     GPTResponse response = gptClientUtil.post(request, GPTResponse.class);
     return new GPTChat(request, response);
   }
