@@ -54,10 +54,6 @@ public class Member extends BaseEntity {
     this.email = email;
   }
 
-  public void changeBaby(Baby baby) {
-    this.baby = baby;
-  }
-
   public static Member of(String providerId, String name, String email, String role) {
     return Member.builder()
         .providerId(providerId)
@@ -65,5 +61,14 @@ public class Member extends BaseEntity {
         .email(email)
         .role(role)
         .build();
+  }
+
+  public void addBaby(Baby baby) {
+    this.baby = baby;
+    baby.getMembers().add(this);
+  }
+
+  public void setFamilyRole(String familyRole) {
+    this.familyRole = familyRole;
   }
 }

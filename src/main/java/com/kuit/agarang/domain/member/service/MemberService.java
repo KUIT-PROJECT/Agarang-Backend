@@ -2,17 +2,19 @@ package com.kuit.agarang.domain.member.service;
 
 import com.kuit.agarang.domain.baby.model.entity.Baby;
 import com.kuit.agarang.domain.baby.repository.BabyRepository;
-import com.kuit.agarang.domain.login.utils.AuthenticationUtil;
 import com.kuit.agarang.domain.member.model.entity.Member;
 import com.kuit.agarang.domain.member.repository.MemberRepository;
-import jakarta.annotation.PostConstruct;
+import com.kuit.agarang.global.common.exception.exception.BusinessException;
+import com.kuit.agarang.global.common.utils.CodeUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Optional;
+
+import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.NOT_FOUND_BABY;
+import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.NOT_FOUND_MEMBER;
 
 @Slf4j
 @Service
@@ -22,54 +24,35 @@ public class MemberService {
 
   private final MemberRepository memberRepository;
   private final BabyRepository babyRepository;
-  private final AuthenticationUtil authenticationUtil;
 
-  public void verifyBabyCode(String providerId, String babyCode) {
+  public void verifyBabyCode(Long id, String babyCode) {
 
-    log.info("providerId = {}", providerId);
+    Baby baby = babyRepository.findByBabyCode(babyCode)
+        .orElseThrow(() -> new BusinessException(NOT_FOUND_BABY));
 
-    Baby baby = babyRepository.findByCode(babyCode)
-        .orElseThrow(() -> new RuntimeException("Baby not found"));
+    Member member = memberRepository.findById(id)
+        .orElseThrow(() -> new BusinessException(NOT_FOUND_MEMBER));
 
-    Member member = memberRepository.findByProviderId(providerId)
-        .orElseThrow(() -> new RuntimeException("Member not found"));
-
-    member.changeBaby(baby);
+    member.addBaby(baby);
   }
 
-  public void assignFamilyRole(String familyRole) {
+  public void processBabyAssignment(Long id, String babyName, LocalDate dueDate, String familyRole) {
 
-    String providerId = authenticationUtil.getProviderId();
-    log.info("providerId = {}", providerId);
+    Member member = memberRepository.findById(id)
+        .orElseThrow(() -> new BusinessException(NOT_FOUND_MEMBER));
 
-    memberRepository.updateFamilyRoleByProviderId(providerId, familyRole);
-  }
+    if (member.getBaby() == null) {
 
-  public void saveBabyName(String babyName) {
+      Baby baby = Baby.builder()
+          .name(babyName)
+          .dueDate(dueDate)
+          .babyCode(CodeUtil.generateUniqueCode())
+          .build();
 
-    String providerId = authenticationUtil.getProviderId();
-    log.info("providerId = {}", providerId);
+      babyRepository.save(baby);
+      member.addBaby(baby);
+    }
 
-    Member member = memberRepository.findByProviderId(providerId)
-        .orElseThrow(() -> new RuntimeException("Member not found"));
-
-    Baby baby = Optional.ofNullable(member.getBaby())
-        .orElseThrow(() -> new RuntimeException("Baby not found"));
-
-    baby.setName(babyName);
-  }
-
-  public void saveBabyDueDate(LocalDate dueDate) {
-
-    String providerId = authenticationUtil.getProviderId();
-    log.info("providerId = {}", providerId);
-
-    Member member = memberRepository.findByProviderId(providerId)
-        .orElseThrow(() -> new RuntimeException("Member not found"));
-
-    Baby baby = Optional.ofNullable(member.getBaby())
-        .orElseThrow(() -> new RuntimeException("Baby not found"));
-
-    baby.setExpectedDueAt(dueDate);
+    member.setFamilyRole(familyRole);
   }
 }

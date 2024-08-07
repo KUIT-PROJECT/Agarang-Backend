@@ -3,6 +3,7 @@ package com.kuit.agarang.domain.ai.controller;
 import com.kuit.agarang.domain.ai.model.dto.MusicAnswer;
 import com.kuit.agarang.domain.ai.model.dto.TextAnswer;
 import com.kuit.agarang.domain.ai.model.dto.QuestionResponse;
+import com.kuit.agarang.domain.ai.model.entity.cache.GPTChatHistory;
 import com.kuit.agarang.domain.ai.service.AIService;
 import com.kuit.agarang.global.common.model.dto.BaseResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,8 @@ public class MemoryAIController {
 
   @PostMapping("/music")
   public ResponseEntity<BaseResponse<Void>> saveLastAnswer(@RequestBody MusicAnswer answer) {
-    AIService.saveMusicChoice(answer);
+    GPTChatHistory chatHistory = AIService.setMusicChoice(answer);
+    AIService.createMusicGenPrompt(chatHistory);
     return ResponseEntity.ok(new BaseResponse<>());
   }
 }

@@ -11,7 +11,7 @@ DELETE FROM baby;
 
 
 -- Insert new baby record
-INSERT INTO baby (id, character_id, code, name, expected_due_at, weight, created_at, updated_at)
+INSERT INTO baby (id, character_id, code, name, due_date, weight, created_at, updated_at)
 VALUES (1, NULL, 'DXW1234', '아가', '2025-01-01', 1.8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Insert new member record
