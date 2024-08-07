@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,7 +41,7 @@ public class HomeService {
         .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_BABY));
     String babyName = baby.getName();
 
-    LocalDate dueDate = baby.getExpectedDueAt();
+    LocalDate dueDate = baby.getDueDate();
     Integer dDay = (int) ChronoUnit.DAYS.between(today, dueDate);
 
     Character character = baby.getCharacter();

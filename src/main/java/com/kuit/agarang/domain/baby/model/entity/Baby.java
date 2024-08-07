@@ -25,24 +25,26 @@ public class Baby extends BaseEntity {
   @OneToMany(mappedBy = "baby", fetch = FetchType.LAZY)
   private List<Member> members = new ArrayList<>();
 
-  private String code;
+  @Column(nullable = false, unique = true)
+  private String babyCode;
+
   private String name;
-  private LocalDate expectedDueAt; // 출산 예정일
+  private LocalDate dueDate; // 출산 예정일
   private Double weight;
 
   @Builder
-  public Baby(String code, String name, LocalDate expectedDueAt, Double weight) {
-    this.code = code;
+  public Baby(String babyCode, String name, LocalDate expectedDueAt, Double weight) {
+    this.babyCode = babyCode;
     this.name = name;
-    this.expectedDueAt = expectedDueAt;
+    this.dueDate = expectedDueAt;
     this.weight = weight;
   }
 
-  public Baby(Long id, String code, String name, LocalDate expectedDueAt, Double weight) {
+  public Baby(Long id, String babyCode, String name, LocalDate expectedDueAt, Double weight) {
     this.id = id;
-    this.code = code;
+    this.babyCode = babyCode;
     this.name = name;
-    this.expectedDueAt = expectedDueAt;
+    this.dueDate = expectedDueAt;
     this.weight = weight;
   }
 
@@ -50,8 +52,8 @@ public class Baby extends BaseEntity {
   public void setName(String name) {
     this.name = name;
   }
-  public void setExpectedDueAt(LocalDate expectedDueAt) {
-    this.expectedDueAt = expectedDueAt;
+  public void setDueDate(LocalDate dueDate) {
+    this.dueDate = dueDate;
   }
   public void setWeight(Double weight) { this.weight = weight; }
 }
