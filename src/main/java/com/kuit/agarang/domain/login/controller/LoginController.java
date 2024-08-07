@@ -21,31 +21,19 @@ import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.SUCCES
 public class LoginController {
 
   private final MemberService memberService;
-  private final AuthenticationUtil authenticationUtil;
 
   @PostMapping("/baby-code")
-  public ResponseEntity<BaseResponse<Void>> verifyBabyCode(@RequestBody BabyCodeRequest request) {
-    String providerId = authenticationUtil.getProviderId();
-    memberService.verifyBabyCode(providerId, request.getBabyCode());
+  public ResponseEntity<BaseResponse<Void>> verifyBabyCode(@AuthenticationPrincipal CustomOAuth2User details,
+                                                           @RequestBody BabyCodeRequest request) {
+    memberService.verifyBabyCode(details.getProviderId(), request.getBabyCode());
     return ResponseEntity.ok(new BaseResponse<>(SUCCESS));
   }
 
-  /**
-   * 가족 역할 등록
-   */
-  @PostMapping("/family-role")
-  public ResponseEntity<BaseResponse<Void>> assignFamilyRole(@RequestBody FamilyRoleRequest request) {
-    memberService.assignFamilyRole(request.getFamilyRole());
-    return ResponseEntity.ok(new BaseResponse<>(SUCCESS));
-  }
-
-  /**
-   * 새 아기 등록
-   */
-  @PostMapping("new-baby")
-  public ResponseEntity<BaseResponse<Void>> assignNewBaby(@AuthenticationPrincipal CustomOAuth2User details,
-                                                          @RequestBody NewBabyRequest request) {
-    memberService.saveNewBaby(details.getProviderId(), request.getBabyName(), request.getDueDate());
+  @PostMapping("/process-baby")
+  public ResponseEntity<BaseResponse<Void>> processBabyAssignment(@AuthenticationPrincipal CustomOAuth2User details,
+                                                                  @RequestBody ProcessBabyRequest request) {
+    memberService.processBabyAssignment(details.getProviderId(), request.getBabyName(),
+        request.getDueDate(), request.getFamilyRole());
     return ResponseEntity.ok(new BaseResponse<>(SUCCESS));
   }
 
