@@ -1,10 +1,13 @@
 package com.kuit.agarang.domain.baby.model.entity;
 
+import com.kuit.agarang.domain.member.model.entity.Member;
 import com.kuit.agarang.global.common.model.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -15,9 +18,12 @@ public class Baby extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "character_id")
   private Character character;
+
+  @OneToMany(mappedBy = "baby", fetch = FetchType.LAZY)
+  private List<Member> members = new ArrayList<>();
 
   private String code;
   private String name;
@@ -40,11 +46,12 @@ public class Baby extends BaseEntity {
     this.weight = weight;
   }
 
+  public void setCharacter(Character character) { this.character = character; }
   public void setName(String name) {
     this.name = name;
   }
-
   public void setExpectedDueAt(LocalDate expectedDueAt) {
     this.expectedDueAt = expectedDueAt;
   }
+  public void setWeight(Double weight) { this.weight = weight; }
 }

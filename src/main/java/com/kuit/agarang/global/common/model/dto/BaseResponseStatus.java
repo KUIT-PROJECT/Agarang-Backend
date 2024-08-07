@@ -15,6 +15,11 @@ public enum BaseResponseStatus {
 
   INVALID_MEMORY_ID(false, HttpStatus.NOT_FOUND, 4001, "존재하지 않는 추억입니다."),
   FILE_TOO_LARGE(false, HttpStatus.PAYLOAD_TOO_LARGE, 4002, "최대 파일 사이즈(1MB)를 초과했습니다."),
+
+  NOT_FOUND_BABY(false, HttpStatus.NOT_FOUND, 4009, "아기를 찾을 수 없습니다"),
+  NOT_FOUND_CHARACTER(false, HttpStatus.NOT_FOUND, 4010, "캐릭터를 찾을 수 없습니다"),
+  NOT_FOUND_MEMBER(false, HttpStatus.NOT_FOUND, 4011, "사용자를 찾을 수 없습니다"),
+
   INVALID_FILE_EXTENSION(false, HttpStatus.BAD_REQUEST, 4003, "지원하지 않는 파일확장자입니다."),
   NOT_FOUND_RESOURCE(false, HttpStatus.NOT_FOUND, 4004, "존재하지 않는 페이지입니다."),
   NOT_FOUND_S3_FILE(false, HttpStatus.NOT_FOUND, 4005, "S3 파일 서버에 이미지 URL과 일치하는 파일이 존재하지 않습니다."),

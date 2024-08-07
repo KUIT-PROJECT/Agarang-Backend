@@ -7,6 +7,7 @@ import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
-public class BabyDueDateRequest {
+public class NewBabyRequest {
+  private String babyName;
   private LocalDate dueDate;
 }

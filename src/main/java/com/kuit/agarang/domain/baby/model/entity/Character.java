@@ -20,6 +20,7 @@ public class Character extends BaseEntity {
   private String name;
   private String description;
   private String imageUrl;
+  private Integer level;
 
   @Builder
   public Character(String name, String description, String imageUrl) {
