@@ -7,5 +7,4 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MusicBookmarkRequest {
     private long memoryId;
-    private long memberId;
 }

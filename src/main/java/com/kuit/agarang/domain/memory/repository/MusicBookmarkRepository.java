@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MusicBookmarkRepository extends JpaRepository<MusicBookmark, Long> {
     MusicBookmark findByMemory(Memory memory);
-    boolean existsByMemoryIdAndMemberId(Long memoryId, Long memberId);
+    boolean existsByMemory(Memory memory);
     void deleteByMemory(Memory memory);
 }

@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,18 +32,25 @@ public class PlaylistService {
     private final MemberRepository memberRepository;
 
     public PlaylistsResponse getAllPlaylists(Long memberId) {
-        List<Playlist> playlists = playlistRepository.findAll();
+
+        List<Memory> memories = memoryRepository.findByMemberId(memberId);
+
+        List<MemoryPlaylist> memoryPlaylists = memoryPlaylistRepository.findByMemoryIn(memories);
+
+        List<Playlist> playlists = memoryPlaylists.stream()
+                .map(MemoryPlaylist::getPlaylist)
+                .distinct()
+                .toList();
+
         List<PlaylistDto> playlistDtos = playlists.stream()
-                .filter(playlist -> !memoryPlaylistRepository.findByMemberIdAndPlaylistId(memberId, playlist.getId()).isEmpty())
                 .map(PlaylistDto::of)
-                .collect(Collectors.toList());
+                .sorted(Comparator.comparing(PlaylistDto::getId)) // ID 순서대로 정렬
+                .toList();
 
         return new PlaylistsResponse(playlistDtos);
     }
 
     public PlaylistTracksResponse getPlaylistTracks(Long playlistId, Long memberId) {
-        // TODO : 인가처리에 따라 수정
-        // TODO : 예외처리 수정
         Playlist playlist = playlistRepository.findById(playlistId)
                 .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_PLAYLIST_ID));
 
@@ -51,12 +59,10 @@ public class PlaylistService {
         List<MemoryPlaylist> memoryPlaylists = memoryPlaylistRepository.findByPlaylistId(playlistId);
 
         List<MusicDto> musicDtos = memoryPlaylists.stream()
-                .map(memoryPlaylist -> {
-                    Long memoryId = memoryPlaylist.getMemory().getId();
-                    Memory memory = memoryRepository.findById(memoryId)
-                            .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_MEMBER_ID));
-
-                    boolean isBookmarked = checkBookmarkStatus(memoryId, memberId);
+                .map(MemoryPlaylist::getMemory)
+                .filter(memory -> memory.getMember().getId().equals(memberId))
+                .map(memory -> {
+                    boolean isBookmarked = checkBookmarkStatus(memory);
 
                     return MusicDto.of(memory, isBookmarked);
                 })
@@ -69,11 +75,11 @@ public class PlaylistService {
     }
 
     @Transactional
-    public void updateMusicBookmark(MusicBookmarkRequest musicBookmarkRequest) {
+    public void updateMusicBookmark(MusicBookmarkRequest musicBookmarkRequest, Long memberId) {
         Memory memory = memoryRepository.findById(musicBookmarkRequest.getMemoryId())
                 .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_MEMORY_ID));
 
-        Member member = memberRepository.findById(musicBookmarkRequest.getMemberId())
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_MEMBER_ID));
 
         MusicBookmark musicBookmark = musicBookmarkRepository.findByMemory(memory);
@@ -101,10 +107,12 @@ public class PlaylistService {
                 .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_PLAYLIST_ID));
 
         memoryPlaylistRepository.deleteByMemoryAndPlaylist(memory, playlist);
-        musicBookmarkRepository.deleteByMemory(memory);
+        if(checkBookmarkStatus(memory)) {
+            musicBookmarkRepository.deleteByMemory(memory);
+        }
     }
 
-    private boolean checkBookmarkStatus(Long memoryId, Long memberId) {
-        return musicBookmarkRepository.existsByMemoryIdAndMemberId(memoryId, memberId);
+    private boolean checkBookmarkStatus(Memory memory) {
+        return musicBookmarkRepository.existsByMemory(memory);
     }
 }
