@@ -8,7 +8,6 @@ import com.kuit.agarang.domain.home.model.dto.FamilySettingResponse;
 import com.kuit.agarang.domain.home.model.dto.GlobalSettingResponse;
 import com.kuit.agarang.domain.login.utils.AuthenticationUtil;
 import com.kuit.agarang.domain.member.model.dto.MemberDTO;
-import com.kuit.agarang.domain.member.model.entity.Member;
 import com.kuit.agarang.global.common.exception.exception.BusinessException;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +37,7 @@ public class SettingService {
     String babyName = baby.getName();
 
     // 예정일
-    LocalDate dueDate = baby.getExpectedDueAt();
+    LocalDate dueDate = baby.getDueDate();
 
     // 디데이
     LocalDate today = LocalDate.now();
@@ -59,7 +58,7 @@ public class SettingService {
     String babyName = baby.getName();
 
     // 예정일
-    LocalDate dueDate = baby.getExpectedDueAt();
+    LocalDate dueDate = baby.getDueDate();
 
     // 아기 체중
     Double weight = baby.getWeight();
@@ -80,7 +79,7 @@ public class SettingService {
         .ifPresent(baby::setName);
 
     Optional.ofNullable(updateRequest.getDueDate())
-        .ifPresent(baby::setExpectedDueAt);
+        .ifPresent(baby::setDueDate);
 
     Optional.ofNullable(updateRequest.getWeight())
         .ifPresent(baby::setWeight);
@@ -94,7 +93,7 @@ public class SettingService {
     String providerId = authenticationUtil.getProviderId();
     Baby baby = babyRepository.findByProviderId(providerId)
         .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_BABY));
-    String babyName = baby.getCode();
+    String babyName = baby.getBabyCode();
 
     // 가족
     List<MemberDTO> memberDTOs = baby.getMembers().stream()
