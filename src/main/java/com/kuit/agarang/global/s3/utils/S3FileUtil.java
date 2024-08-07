@@ -1,6 +1,7 @@
 package com.kuit.agarang.global.s3.utils;
 
 import com.kuit.agarang.global.common.exception.exception.BusinessException;
+import com.kuit.agarang.global.common.exception.exception.FileException;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import com.kuit.agarang.global.s3.model.dto.S3File;
 import com.kuit.agarang.global.s3.model.enums.ContentType;
@@ -23,7 +24,7 @@ public class S3FileUtil {
   @Value("${aws.s3.upload.tempPath}")
   private String tempPath;
 
-  private S3File convert(MultipartFile file) throws Exception {
+  private S3File convert(MultipartFile file) throws IOException {
     ContentType contentType = getContentType(file)
       .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_FILE_EXTENSION));
     return S3File.builder()
@@ -34,21 +35,25 @@ public class S3FileUtil {
       .build();
   }
 
-  public S3File uploadTempFile(MultipartFile file) throws Exception {
+  public S3File uploadTempFile(MultipartFile file) throws IOException {
     S3File s3File = convert(file);
     uploadTempFile(s3File);
     return s3File;
   }
 
-  private void uploadTempFile(S3File s3File) throws IOException {
+  private void uploadTempFile(S3File s3File) {
     File directory = new File(tempPath + s3File.getContentType().getPath());
     if (!directory.exists()) directory.mkdirs();
 
     File file = new File(tempPath, s3File.getFilename());
-    if (file.createNewFile()) {
-      try (FileOutputStream fos = new FileOutputStream(file)) {
-        fos.write(s3File.getBytes());
+    try {
+      if (file.createNewFile()) {
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+          fos.write(s3File.getBytes());
+        }
       }
+    } catch (IOException e) {
+      throw new FileException(BaseResponseStatus.FAIL_FILE_READ);
     }
   }
 
@@ -63,13 +68,17 @@ public class S3FileUtil {
     }
   }
 
-  public byte[] getTempFile(S3File s3File) throws IOException {
+  public S3File getTempFile(S3File s3File) {
     File file = new File(tempPath, s3File.getFilename());
     if (!file.exists()) {
-      throw new IOException("임시 파일을 찾을 수 없습니다. : " + s3File.getFilename());
+      uploadTempFile(s3File);
+      return s3File;
     }
+
     try (FileInputStream fis = new FileInputStream(file)) {
-      return fis.readAllBytes();
+      return s3File.chargeBytes(fis.readAllBytes());
+    } catch (IOException e) {
+      throw new FileException(BaseResponseStatus.FAIL_FILE_READ);
     }
   }
 

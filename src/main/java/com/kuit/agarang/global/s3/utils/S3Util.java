@@ -33,7 +33,7 @@ public class S3Util {
     return upload(s3File);
   }
 
-  private S3File upload(S3File s3File) {
+  public S3File upload(S3File s3File) {
     try {
       PutObjectRequest request = PutObjectRequest.builder()
         .bucket(bucket)

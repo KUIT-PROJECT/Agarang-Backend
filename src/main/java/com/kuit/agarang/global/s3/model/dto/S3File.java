@@ -38,4 +38,9 @@ public class S3File {
     this.bytes = null;
     return this;
   }
+
+  public S3File chargeBytes(byte[] bytes) {
+    this.bytes = bytes;
+    return this;
+  }
 }
