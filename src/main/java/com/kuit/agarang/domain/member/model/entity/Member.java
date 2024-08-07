@@ -67,4 +67,8 @@ public class Member extends BaseEntity {
     this.baby = baby;
     baby.getMembers().add(this);
   }
+
+  public void setFamilyRole(String familyRole) {
+    this.familyRole = familyRole;
+  }
 }

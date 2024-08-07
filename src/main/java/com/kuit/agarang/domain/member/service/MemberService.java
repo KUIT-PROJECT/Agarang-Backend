@@ -53,6 +53,6 @@ public class MemberService {
       member.addBaby(baby);
     }
 
-    memberRepository.updateFamilyRoleById(id, familyRole);
+    member.setFamilyRole(familyRole);
   }
 }

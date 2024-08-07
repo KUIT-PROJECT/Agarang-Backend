@@ -24,7 +24,7 @@ public class JWTUtil {
   }
 
   public Long getMemberId(String token) {
-    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("Id", Long.class);
+    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("memberId", Long.class);
   }
 
   public String getProviderId(String token) {
