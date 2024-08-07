@@ -10,6 +10,8 @@ import com.kuit.agarang.domain.ai.model.enums.GPTSystemRole;
 import com.kuit.agarang.domain.ai.utils.GPTPromptUtil;
 import com.kuit.agarang.domain.ai.utils.GPTUtil;
 import com.kuit.agarang.domain.baby.model.entity.Character;
+import com.kuit.agarang.domain.memory.model.entity.Memory;
+import com.kuit.agarang.domain.memory.repository.MemoryRepository;
 import com.kuit.agarang.global.common.exception.exception.OpenAPIException;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import com.kuit.agarang.global.common.service.RedisService;
@@ -40,6 +42,8 @@ public class AIService {
 
   private final RedisService redisService;
   private final ObjectMapper objectMapper;
+
+  private final MemoryRepository memoryRepository;
 
   public QuestionResponse getFirstQuestion(MultipartFile image) throws Exception {
     S3File convertedImage = s3FileUtil.uploadTempFile(image);
@@ -123,6 +127,7 @@ public class AIService {
     String prompt = promptUtil.createMemoryTextPrompt("뿌둥", "아빠");
     GPTChat chat = gptChatService.chatWithHistory(chatHistory.getHistoryMessages(), prompt, 0L);
 
+    chatHistory.setMemoryText(gptUtil.getGPTAnswer(chat));
     logChat(gptUtil.createHistoryMessage(chat));
     redisService.save(gptChatHistoryId, chatHistory);
   }
@@ -140,16 +145,34 @@ public class AIService {
     String prompt = promptUtil.createMusicGenPrompt(chatHistory.getImageDescription(), chatHistory.getMusicInfo());
     GPTChat chat = gptChatService.chat(GPTSystemRole.MUSIC_PROMPT_ENGINEER, prompt, 1L, true);
     String musicGenPrompt = gptUtil.parseJson(chat, "prompt");
+    logChat(gptUtil.createHistoryMessage(chat));
     log.info(musicGenPrompt);
 
     prompt = promptUtil.createMusicTitlePrompt(musicGenPrompt, chatHistory.getMusicInfo());
     chat = gptChatService.chat(GPTSystemRole.MUSIC_TITLE_WRITER, prompt, 1L, true);
     String musicTitle = gptUtil.parseJson(chat, "music_name");
+    logChat(gptUtil.createHistoryMessage(chat));
     log.info(musicTitle);
 
     // TODO : 음악 생성
 
+
     // TODO : DB 저장
+    S3File tempFile = s3FileUtil.getTempFile(chatHistory.getImage());
+
+    memoryRepository.save(Memory.builder()
+      // member
+      // baby
+      .imageUrl(s3Util.upload(tempFile).getObjectUrl())
+      .musicTitle(musicTitle)
+      // musicUrl
+      .text(chatHistory.getMemoryText())
+      .genre(chatHistory.getMusicInfo().getGenre())
+      .mood(chatHistory.getMusicInfo().getMood())
+      .tempo(chatHistory.getMusicInfo().getTempo())
+      .instrument(chatHistory.getMusicInfo().getInstrument())
+      .hashtag(chatHistory.getImageDescription().getNoun())
+      .build());
   }
 
   public String getCharacterBubble(Character character, String familyRole) {
@@ -179,7 +202,7 @@ public class AIService {
     try {
       log.info(objectMapper.writeValueAsString(historyMessage));
     } catch (Exception e) {
-      log.info("채팅 로길 실패");
+      log.info("채팅 로깅 실패");
     }
   }
 }
