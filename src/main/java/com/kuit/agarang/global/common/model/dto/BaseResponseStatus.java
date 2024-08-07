@@ -19,7 +19,6 @@ public enum BaseResponseStatus {
   NOT_FOUND_BABY(false, HttpStatus.NOT_FOUND, 4009, "아기를 찾을 수 없습니다"),
   NOT_FOUND_CHARACTER(false, HttpStatus.NOT_FOUND, 4010, "캐릭터를 찾을 수 없습니다"),
   NOT_FOUND_MEMBER(false, HttpStatus.NOT_FOUND, 4011, "사용자를 찾을 수 없습니다"),
-  DUPLICATE_BABY_CODE(false, HttpStatus.NOT_FOUND, 4012, "중복된 아기 코드 입니다"),
 
   INVALID_FILE_EXTENSION(false, HttpStatus.BAD_REQUEST, 4003, "지원하지 않는 파일확장자입니다."),
   NOT_FOUND_RESOURCE(false, HttpStatus.NOT_FOUND, 4004, "존재하지 않는 페이지입니다."),

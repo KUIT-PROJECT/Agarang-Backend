@@ -29,22 +29,22 @@ public class Baby extends BaseEntity {
   private String babyCode;
 
   private String name;
-  private LocalDate dueDate; // 출산 예정일
+  private LocalDate dueDate;
   private Double weight;
 
   @Builder
-  public Baby(String babyCode, String name, LocalDate expectedDueAt, Double weight) {
+  public Baby(String babyCode, String name, LocalDate dueDate, Double weight) {
     this.babyCode = babyCode;
     this.name = name;
-    this.dueDate = expectedDueAt;
+    this.dueDate = dueDate;
     this.weight = weight;
   }
 
-  public Baby(Long id, String babyCode, String name, LocalDate expectedDueAt, Double weight) {
+  public Baby(Long id, String babyCode, String name, LocalDate dueDate, Double weight) {
     this.id = id;
     this.babyCode = babyCode;
     this.name = name;
-    this.dueDate = expectedDueAt;
+    this.dueDate = dueDate;
     this.weight = weight;
   }
 
