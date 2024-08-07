@@ -57,6 +57,8 @@ dependencies {
     implementation 'com.github.napstr:logback-discord-appender:1.0.0'
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    // Apache Commons Lang
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
 }
 
 tasks.named('test') {

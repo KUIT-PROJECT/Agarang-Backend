@@ -1,11 +1,14 @@
 package com.kuit.agarang.domain.login.controller;
 
-import com.kuit.agarang.domain.login.utils.AuthenticationUtil;
-import com.kuit.agarang.domain.member.model.dto.*;
+import com.kuit.agarang.domain.login.model.dto.CustomOAuth2User;
+import com.kuit.agarang.domain.member.model.dto.BabyCodeRequest;
+import com.kuit.agarang.domain.member.model.dto.ProcessBabyRequest;
 import com.kuit.agarang.domain.member.service.MemberService;
 import com.kuit.agarang.global.common.model.dto.BaseResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,58 +16,27 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.SUCCESS;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/login")
 @RequiredArgsConstructor
 public class LoginController {
 
   private final MemberService memberService;
-  private final AuthenticationUtil authenticationUtil;
 
-  /**
-   * TODO : 아기 코드 생성 로직
-   */
   @PostMapping("/baby-code")
-  public ResponseEntity<BaseResponse<Void>> verifyBabyCode(@RequestBody BabyCodeRequest request) {
-    String providerId = authenticationUtil.getProviderId();
-    memberService.verifyBabyCode(providerId, request.getBabyCode());
+  public ResponseEntity<BaseResponse<Void>> verifyBabyCode(@AuthenticationPrincipal CustomOAuth2User details,
+                                                           @RequestBody BabyCodeRequest request) {
+    memberService.verifyBabyCode(details.getMemberId(), request.getBabyCode());
     return ResponseEntity.ok(new BaseResponse<>(SUCCESS));
   }
 
-  /**
-   * 가족 역할 등록
-   */
-  @PostMapping("/family-role")
-  public ResponseEntity<BaseResponse<Void>> assignFamilyRole(@RequestBody FamilyRoleRequest request) {
-    memberService.assignFamilyRole(request.getFamilyRole());
+  @PostMapping("/process-baby")
+  public ResponseEntity<BaseResponse<Void>> processBabyAssignment(@AuthenticationPrincipal CustomOAuth2User details,
+                                                                  @RequestBody ProcessBabyRequest request) {
+    memberService.processBabyAssignment(details.getMemberId(), request.getBabyName(),
+        request.getDueDate(), request.getFamilyRole());
     return ResponseEntity.ok(new BaseResponse<>(SUCCESS));
   }
 
-  /**
-   * 새 아기 등록
-   */
-  @PostMapping("new-baby")
-  public ResponseEntity<BaseResponse<Void>> assignNewBaby(@RequestBody NewBabyRequest request) {
-    memberService.saveNewBaby(request.getBabyName(), request.getDueDate());
-    return ResponseEntity.ok(new BaseResponse<>(SUCCESS));
-  }
-
-
-  /**
-   * 태명 등록
-   */
-  @PostMapping("/baby-name")
-  public ResponseEntity<BaseResponse<Void>> saveBabyName(@RequestBody BabyNameRequest request) {
-    memberService.saveBabyName(request.getBabyName());
-    return ResponseEntity.ok(new BaseResponse<>(SUCCESS));
-  }
-
-  /**
-   * 출산 예정일 등록
-   */
-  @PostMapping("/due-date")
-  public ResponseEntity<BaseResponse<Void>> saveBabyDueDate(@RequestBody BabyDueDateRequest request) {
-    memberService.saveBabyDueDate(request.getDueDate());
-    return ResponseEntity.ok(new BaseResponse<>(SUCCESS));
-  }
 }
