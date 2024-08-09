@@ -30,14 +30,13 @@ public class ReissueController {
 
   @PostMapping("/reissue")
   public ResponseEntity<BaseResponse<ReissueDto>> reissue(@AuthenticationPrincipal CustomOAuth2User details,
-                                                          HttpServletResponse response) {
+                                                          HttpServletRequest request, HttpServletResponse response) {
 
     Long memberId = details.getMemberId();
     Member member = memberRepository.findById(memberId).orElseThrow(() -> new BusinessException(NOT_FOUND_MEMBER));
 
     String refresh = member.getRefreshToken().getValue();
-
-    ReissueDto reissueDto = jwtService.reissueTokens(refresh);
+    ReissueDto reissueDto = jwtService.reissueTokens(refresh); // newAccess, newRefresh 토큰 생성
     response.addCookie(cookieUtil.createCookie("Authorization", reissueDto.getNewAccessToken()));
 
     log.info("New Access Token = {}", reissueDto.getNewAccessToken());
