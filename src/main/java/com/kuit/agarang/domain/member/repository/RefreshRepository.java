@@ -7,5 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 public interface RefreshRepository extends JpaRepository<RefreshToken, Long> {
 
   Boolean existsByValue(String value);
+
   void deleteByValue(String value);
 }
