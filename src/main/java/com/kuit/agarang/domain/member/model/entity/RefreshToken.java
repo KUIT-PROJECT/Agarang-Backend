@@ -1,10 +1,7 @@
 package com.kuit.agarang.domain.member.model.entity;
 
 import com.kuit.agarang.global.common.model.entity.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -16,22 +13,20 @@ public class RefreshToken extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String providerId;
   private String value;
-  private String expiration;
 
   @Builder
-  public RefreshToken(String providerId, String value, String expiration) {
-    this.providerId = providerId;
+  public RefreshToken(String value) {
     this.value = value;
-    this.expiration = expiration;
   }
 
-  public static RefreshToken of(String providerId, String value, String expiration) {
+  public static RefreshToken of(String value) {
     return RefreshToken.builder()
-        .providerId(providerId)
         .value(value)
-        .expiration(expiration)
         .build();
+  }
+
+  public void changeValue(String value) {
+    this.value = value;
   }
 }
