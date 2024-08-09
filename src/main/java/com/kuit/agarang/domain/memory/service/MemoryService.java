@@ -2,25 +2,14 @@ package com.kuit.agarang.domain.memory.service;
 
 import com.kuit.agarang.domain.baby.model.entity.Baby;
 import com.kuit.agarang.domain.member.model.entity.Member;
-import com.kuit.agarang.domain.memory.model.dto.BookmarkRequest;
-import com.kuit.agarang.domain.memory.model.dto.DeleteMemoryRequest;
-import com.kuit.agarang.domain.memory.model.dto.ModifyMemoryRequest;
-import com.kuit.agarang.domain.memory.model.dto.DailyMemoryDTO;
-import com.kuit.agarang.domain.memory.model.dto.FavoriteMemoriesResponse;
-import com.kuit.agarang.domain.memory.model.dto.DailyMemoryResponse;
-import com.kuit.agarang.domain.memory.model.dto.DailyMemoriesResponse;
-import com.kuit.agarang.domain.memory.model.dto.MemoryBookmarkedDTO;
-import com.kuit.agarang.domain.memory.model.dto.MemoryDTO;
-import com.kuit.agarang.domain.memory.model.dto.MemoryImageDTO;
-import com.kuit.agarang.domain.memory.model.dto.MemoryRequest;
-import com.kuit.agarang.domain.memory.model.dto.MonthlyMemoryDTO;
-import com.kuit.agarang.domain.memory.model.dto.MonthlyMemoryResponse;
+import com.kuit.agarang.domain.memory.model.dto.*;
 import com.kuit.agarang.domain.memory.model.entity.Memory;
 import com.kuit.agarang.domain.memory.model.entity.MemoryBookmark;
+import com.kuit.agarang.domain.memory.repository.HashTagRepository;
 import com.kuit.agarang.domain.memory.repository.MemoryBookmarkRepository;
 import com.kuit.agarang.domain.memory.repository.MemoryRepository;
-import com.kuit.agarang.domain.playlist.repository.MemoryPlaylistRepository;
 import com.kuit.agarang.domain.memory.repository.MusicBookmarkRepository;
+import com.kuit.agarang.domain.playlist.repository.MemoryPlaylistRepository;
 import com.kuit.agarang.global.common.exception.exception.BusinessException;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import com.kuit.agarang.global.common.utils.DateUtil;
@@ -31,11 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -47,6 +32,7 @@ public class MemoryService {
   private final MemoryBookmarkRepository memoryBookmarkRepository;
   private final MusicBookmarkRepository musicBookmarkRepository;
   private final MemoryPlaylistRepository memoryPlaylistRepository;
+  private final HashTagRepository hashTagRepository;
 
   public DailyMemoryResponse findMemory(MemoryRequest memoryRequest) {
     String date = memoryRequest.getDate();
@@ -153,6 +139,7 @@ public class MemoryService {
     memoryBookmarkRepository.deleteByMemory(memory);
     musicBookmarkRepository.deleteByMemory(memory);
     memoryPlaylistRepository.deleteByMemory(memory);
+    hashTagRepository.deleteByMemory(memory);
     memoryRepository.delete(memory);
   }
 }
