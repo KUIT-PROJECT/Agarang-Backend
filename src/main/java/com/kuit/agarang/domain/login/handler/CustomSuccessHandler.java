@@ -1,6 +1,5 @@
 package com.kuit.agarang.domain.login.handler;
 
-import com.kuit.agarang.domain.login.service.JWTService;
 import com.kuit.agarang.domain.login.utils.AuthenticationUtil;
 import com.kuit.agarang.domain.login.utils.CookieUtil;
 import com.kuit.agarang.domain.login.utils.JWTUtil;
@@ -46,7 +45,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     // 토큰 생성
     String access = jwtUtil.createAccessToken(providerId, role, memberId);
     String refresh = jwtUtil.createRefreshToken(providerId, role, memberId);
-    log.info("onAuthenticationSuccess accessToken = {}", access);
+    log.info("AccessToken = {}", access);
 
     // Refresh 토큰 저장
     RefreshToken refreshToken = RefreshToken.of(refresh);

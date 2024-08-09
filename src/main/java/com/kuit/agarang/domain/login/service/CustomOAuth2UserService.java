@@ -27,7 +27,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     OAuth2User oAuth2User = super.loadUser(userRequest);
 
     String registrationId = userRequest.getClientRegistration().getRegistrationId();
-    OAuth2Response oAuth2Response = null;
+    OAuth2Response oAuth2Response;
+    log.info("oAuth2User.getAttributes() = {}", oAuth2User.getAttributes());
     switch (registrationId) {
       case "naver" -> oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
       case "kakao" -> oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
