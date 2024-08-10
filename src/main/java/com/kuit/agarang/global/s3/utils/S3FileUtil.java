@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Optional;
@@ -50,10 +49,12 @@ public class S3FileUtil {
       if (file.createNewFile()) {
         try (FileOutputStream fos = new FileOutputStream(file)) {
           fos.write(s3File.getBytes());
+        } catch (IOException e) {
+          throw new FileException(BaseResponseStatus.FAIL_FILE_READ);
         }
       }
     } catch (IOException e) {
-      throw new FileException(BaseResponseStatus.FAIL_FILE_READ);
+      log.info("파일 생성 실패");
     }
   }
 
@@ -65,20 +66,6 @@ public class S3FileUtil {
         return;
       }
       log.info("임시 업로드 파일 삭제를 실패했습니다. [{}]", file.getPath());
-    }
-  }
-
-  public S3File getTempFile(S3File s3File) {
-    File file = new File(tempPath, s3File.getFilename());
-    if (!file.exists()) {
-      uploadTempFile(s3File);
-      return s3File;
-    }
-
-    try (FileInputStream fis = new FileInputStream(file)) {
-      return s3File.chargeBytes(fis.readAllBytes());
-    } catch (IOException e) {
-      throw new FileException(BaseResponseStatus.FAIL_FILE_READ);
     }
   }
 
