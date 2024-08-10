@@ -61,7 +61,6 @@ public class JWTService {
     try {
       jwtUtil.isExpired(refresh);
     } catch (ExpiredJwtException e) {
-      refreshRepository.deleteByValue(refresh);
       throw new BusinessException(NOT_FOUND_REFRESH_TOKEN);
     }
 
