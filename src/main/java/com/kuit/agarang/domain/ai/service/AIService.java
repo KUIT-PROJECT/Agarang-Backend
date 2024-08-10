@@ -12,7 +12,9 @@ import com.kuit.agarang.domain.ai.utils.GPTUtil;
 import com.kuit.agarang.domain.baby.model.entity.Character;
 import com.kuit.agarang.domain.member.model.entity.Member;
 import com.kuit.agarang.domain.member.repository.MemberRepository;
+import com.kuit.agarang.domain.memory.model.entity.Hashtag;
 import com.kuit.agarang.domain.memory.model.entity.Memory;
+import com.kuit.agarang.domain.memory.repository.HashTagRepository;
 import com.kuit.agarang.domain.memory.repository.MemoryRepository;
 import com.kuit.agarang.global.common.exception.exception.BusinessException;
 import com.kuit.agarang.global.common.exception.exception.OpenAPIException;
@@ -21,6 +23,7 @@ import com.kuit.agarang.global.common.service.RedisService;
 import com.kuit.agarang.global.s3.model.dto.S3File;
 import com.kuit.agarang.global.s3.utils.S3FileUtil;
 import com.kuit.agarang.global.s3.utils.S3Util;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
@@ -48,6 +51,8 @@ public class AIService {
 
   private final MemoryRepository memoryRepository;
   private final MemberRepository memberRepository;
+  private final MusicGenService musicGenService;
+  private final HashTagRepository hashTagRepository;
 
   public QuestionResponse getFirstQuestion(MultipartFile image) throws Exception {
     S3File convertedImage = s3FileUtil.uploadTempFile(image);
@@ -70,7 +75,7 @@ public class AIService {
     List<GPTMessage> historyMessage = gptUtil.createHistoryMessage(questionChat);
     redisService.save(redisKey,
       GPTChatHistory.builder()
-        .image(convertedImage.cleanBytes())
+        .image(convertedImage)
         .imageDescription(imageDescription)
         .historyMessages(historyMessage)
         .build());
@@ -126,14 +131,25 @@ public class AIService {
   public void createMemoryText(Long memberId, String gptChatHistoryId) {
     GPTChatHistory chatHistory = redisService.get(gptChatHistoryId, GPTChatHistory.class)
       .orElseThrow(() -> new OpenAPIException(BaseResponseStatus.NOT_FOUND_HISTORY_CHAT));
-    Member member = getMember(memberId);
 
-    String prompt = promptUtil.createMemoryTextPrompt(member.getBaby().getName(), member.getFamilyRole());
+    MemoryTextInfo memoryTextInfo = getMemoryTextInfo(memberId);
+
+    String prompt = promptUtil.createMemoryTextPrompt(memoryTextInfo);
     GPTChat chat = gptChatService.chatWithHistory(chatHistory.getHistoryMessages(), prompt, 0L);
 
     chatHistory.setMemoryText(gptUtil.getGPTAnswer(chat));
     logChat(gptUtil.createHistoryMessage(chat));
     redisService.save(gptChatHistoryId, chatHistory);
+  }
+
+  @Transactional
+  public MemoryTextInfo getMemoryTextInfo(Long memberId) {
+    Member member = memberRepository.findByIdFetchJoinBaby(memberId)
+      .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMBER));
+    return MemoryTextInfo.builder()
+      .familyRole(member.getFamilyRole())
+      .babyName(member.getBaby().getName())
+      .build();
   }
 
   public GPTChatHistory setMusicChoice(MusicAnswer answer) {
@@ -145,12 +161,13 @@ public class AIService {
   }
 
   @Async
+  @Transactional
   public void createMusicGenPrompt(Long memberId, GPTChatHistory chatHistory) {
     String prompt = promptUtil.createMusicGenPrompt(chatHistory.getImageDescription(), chatHistory.getMusicInfo());
     GPTChat chat = gptChatService.chat(GPTSystemRole.MUSIC_PROMPT_ENGINEER, prompt, 1L, true);
     String musicGenPrompt = gptUtil.parseJson(chat, "prompt");
     logChat(gptUtil.createHistoryMessage(chat));
-    log.info(musicGenPrompt);
+    log.info("musicGenPrompt {}", musicGenPrompt);
 
     prompt = promptUtil.createMusicTitlePrompt(musicGenPrompt, chatHistory.getMusicInfo());
     chat = gptChatService.chat(GPTSystemRole.MUSIC_TITLE_WRITER, prompt, 1L, true);
@@ -158,25 +175,27 @@ public class AIService {
     logChat(gptUtil.createHistoryMessage(chat));
     log.info(musicTitle);
 
-    // TODO : 음악 생성
-
+    String musicGenId = musicGenService.getMusic(musicGenPrompt);
+    S3File image = s3Util.upload(chatHistory.getImage());
 
     Member member = getMember(memberId);
-    S3File tempFile = s3FileUtil.getTempFile(chatHistory.getImage());
-
-    memoryRepository.save(Memory.builder()
+    Memory memory = Memory.builder()
       .member(member)
       .baby(member.getBaby())
-      .imageUrl(s3Util.upload(tempFile).getObjectUrl())
+      .imageUrl(image.getObjectUrl())
       .musicTitle(musicTitle)
-      // musicUrl
+      .musicGenId(musicGenId)
       .text(chatHistory.getMemoryText())
       .genre(chatHistory.getMusicInfo().getGenre())
       .mood(chatHistory.getMusicInfo().getMood())
       .tempo(chatHistory.getMusicInfo().getTempo())
       .instrument(chatHistory.getMusicInfo().getInstrument())
-      .hashtag(chatHistory.getImageDescription().getNoun())
-      .build());
+      .build();
+
+    List<Hashtag> hashtags = chatHistory.getImageDescription().convertNoun(memory);
+    hashTagRepository.saveAll(hashtags);
+    memory.setHashtags(hashtags);
+    memoryRepository.save(memory);
 
     // TODO : playlist 구분 저장 구현 시 반영
   }
