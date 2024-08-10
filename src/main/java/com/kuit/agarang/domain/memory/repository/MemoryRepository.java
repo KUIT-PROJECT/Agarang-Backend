@@ -1,7 +1,6 @@
 package com.kuit.agarang.domain.memory.repository;
 
 import com.kuit.agarang.domain.baby.model.entity.Baby;
-import com.kuit.agarang.domain.member.model.entity.Member;
 import com.kuit.agarang.domain.memory.model.dto.MemoryBookmarkedDTO;
 import com.kuit.agarang.domain.memory.model.entity.Memory;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,4 +28,6 @@ public interface MemoryRepository extends JpaRepository<Memory,Long> {
   List<Memory> findTop3ByBabyOrderByCreatedAtDesc(Baby baby); // 3개 이하 시 조회된 갯수 만큼만 반환
   Optional<Memory> findByIdAndMemberId(Long memoryId, Long memberId);
   List<Memory> findByMemberId(Long memberId);
+
+  Optional<Memory> findByMusicGenId(String musicGenId);
 }
