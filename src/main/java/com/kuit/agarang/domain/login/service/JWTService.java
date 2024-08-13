@@ -12,8 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.NOT_FOUND_MEMBER;
-import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.NOT_FOUND_REFRESH_TOKEN;
+import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -57,7 +56,7 @@ public class JWTService {
     try {
       jwtUtil.isExpired(refresh);
     } catch (ExpiredJwtException e) {
-      throw new BusinessException(NOT_FOUND_REFRESH_TOKEN);
+      throw new BusinessException(EXPIRED_REFRESH_TOKEN);
     }
 
     String category = jwtUtil.getCategory(refresh);
