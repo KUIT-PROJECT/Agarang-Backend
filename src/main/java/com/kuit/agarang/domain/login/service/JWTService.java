@@ -9,13 +9,11 @@ import com.kuit.agarang.domain.member.repository.RefreshRepository;
 import com.kuit.agarang.global.common.exception.exception.BusinessException;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-
-import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.*;
+import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.NOT_FOUND_MEMBER;
+import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.NOT_FOUND_REFRESH_TOKEN;
 
 @Service
 @RequiredArgsConstructor
@@ -26,29 +24,27 @@ public class JWTService {
   private final MemberRepository memberRepository;
   private final RefreshRepository refreshRepository;
 
-  public ReissueDto reissueTokens(String refresh) {
+  public ReissueDto reissueTokens(Long memberId) {
 
+    Member member = memberRepository.findByIdWithRefreshToken(memberId)
+        .orElseThrow(() -> new BusinessException(NOT_FOUND_MEMBER));
+    String refresh = member.getRefreshToken().getValue();
+
+    // RefreshToken 유효성 검증
     validateRefreshToken(refresh);
 
-    String providerId = jwtUtil.getProviderId(refresh);
-    String role = jwtUtil.getRole(refresh);
-    Long memberId = jwtUtil.getMemberId(refresh);
-
     // AccessToken 생성 및 Refresh Rotate
-    String newAccess = jwtUtil.createAccessToken(providerId, role, memberId);
-    String newRefresh = jwtUtil.createRefreshToken(providerId, role, memberId);
+    String newAccess = jwtUtil.createAccessToken(member.getProviderId(), member.getRole(), member.getId());
+    String newRefresh = jwtUtil.createRefreshToken(member.getProviderId(), member.getRole(), member.getId());
 
     // Refresh Token Update
-    Member member = memberRepository.findById(memberId).orElseThrow(() -> new BusinessException(NOT_FOUND_MEMBER));
-    RefreshToken refreshToken = refreshRepository.findById(member.getRefreshToken().getId())
-        .orElseThrow(() -> new BusinessException(NOT_FOUND_REFRESH_TOKEN));
-    refreshToken.changeValue(newRefresh);
+    member.getRefreshToken().setValue(newRefresh);
 
     return ReissueDto.builder()
         .newAccessToken(newAccess)
         .newRefreshToken(newRefresh)
-        .providerId(providerId)
-        .role(role)
+        .providerId(member.getProviderId())
+        .role(member.getRole())
         .build();
   }
 

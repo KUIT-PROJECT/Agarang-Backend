@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.NOT_FOUND_MEMBER;
+import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.SUCCESS;
 
 @Slf4j
 @RestController
@@ -26,21 +27,16 @@ public class ReissueController {
 
   private final JWTService jwtService;
   private final CookieUtil cookieUtil;
-  private final MemberRepository memberRepository;
 
   @PostMapping("/reissue")
   public ResponseEntity<BaseResponse<ReissueDto>> reissue(@AuthenticationPrincipal CustomOAuth2User details,
                                                           HttpServletRequest request, HttpServletResponse response) {
 
-    Long memberId = details.getMemberId();
-    Member member = memberRepository.findById(memberId).orElseThrow(() -> new BusinessException(NOT_FOUND_MEMBER));
+    ReissueDto reissueDto = jwtService.reissueTokens(details.getMemberId());
 
-    String refresh = member.getRefreshToken().getValue();
-    ReissueDto reissueDto = jwtService.reissueTokens(refresh); // newAccess, newRefresh 토큰 생성
     response.addCookie(cookieUtil.createCookie("Authorization", reissueDto.getNewAccessToken()));
-
     log.info("New Access Token = {}", reissueDto.getNewAccessToken());
 
-    return ResponseEntity.ok(new BaseResponse<>());
+    return ResponseEntity.ok(new BaseResponse<>(SUCCESS));
   }
 }
