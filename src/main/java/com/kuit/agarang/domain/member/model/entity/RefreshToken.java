@@ -13,6 +13,7 @@ public class RefreshToken extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Setter
   private String value;
 
   @Builder
@@ -24,9 +25,5 @@ public class RefreshToken extends BaseEntity {
     return RefreshToken.builder()
         .value(value)
         .build();
-  }
-
-  public void changeValue(String value) {
-    this.value = value;
   }
 }

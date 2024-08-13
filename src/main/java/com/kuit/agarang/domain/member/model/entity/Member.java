@@ -53,7 +53,7 @@ public class Member extends BaseEntity {
     this.name = name;
     this.email = email;
   }
-
+  
   public static Member of(String providerId, String name, String email, String role) {
     return Member.builder()
         .providerId(providerId)
