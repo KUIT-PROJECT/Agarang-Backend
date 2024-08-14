@@ -54,7 +54,6 @@ public class JWTFilter extends OncePerRequestFilter {
       return;
     }
 
-    // providerId, role 값을 획득
     String providerId = jwtUtil.getProviderId(accessToken);
     String role = jwtUtil.getRole(accessToken);
     Long memberId = jwtUtil.getMemberId(accessToken);
