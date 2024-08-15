@@ -3,7 +3,6 @@ package com.kuit.agarang.domain.login.service;
 import com.kuit.agarang.domain.login.model.dto.ReissueDto;
 import com.kuit.agarang.domain.login.utils.JWTUtil;
 import com.kuit.agarang.domain.member.model.entity.Member;
-import com.kuit.agarang.domain.member.model.entity.RefreshToken;
 import com.kuit.agarang.domain.member.repository.MemberRepository;
 import com.kuit.agarang.domain.member.repository.RefreshRepository;
 import com.kuit.agarang.global.common.exception.exception.BusinessException;

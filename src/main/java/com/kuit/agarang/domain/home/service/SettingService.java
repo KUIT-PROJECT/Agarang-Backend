@@ -25,13 +25,11 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class SettingService {
 
-  private final AuthenticationUtil authenticationUtil;
   private final BabyRepository babyRepository;
 
-  public GlobalSettingResponse getGlobalSetting() {
+  public GlobalSettingResponse getGlobalSetting(String providerId) {
 
     // 아기 이름
-    String providerId = authenticationUtil.getProviderId();
     Baby baby = babyRepository.findByProviderId(providerId)
         .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_BABY));
     String babyName = baby.getName();
@@ -49,10 +47,9 @@ public class SettingService {
         .dueDate(dueDate).build();
   }
 
-  public BabySettingResponse getBabySetting() {
+  public BabySettingResponse getBabySetting(String providerId) {
 
     // 아기 이름
-    String providerId = authenticationUtil.getProviderId();
     Baby baby = babyRepository.findByProviderId(providerId)
         .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_BABY));
     String babyName = baby.getName();
@@ -70,8 +67,7 @@ public class SettingService {
   }
 
   @Transactional
-  public void updateBabySetting(BabySettingUpdateRequest updateRequest) {
-    String providerId = authenticationUtil.getProviderId();
+  public void updateBabySetting(String providerId, BabySettingUpdateRequest updateRequest) {
     Baby baby = babyRepository.findByProviderId(providerId)
         .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_BABY));
 
@@ -87,10 +83,9 @@ public class SettingService {
     babyRepository.save(baby);
   }
 
-  public FamilySettingResponse getFamilySetting() {
+  public FamilySettingResponse getFamilySetting(String providerId) {
 
     // 아기 코드
-    String providerId = authenticationUtil.getProviderId();
     Baby baby = babyRepository.findByProviderId(providerId)
         .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_BABY));
     String babyName = baby.getBabyCode();
