@@ -5,7 +5,6 @@ import com.kuit.agarang.domain.baby.model.entity.Character;
 import com.kuit.agarang.domain.baby.repository.BabyRepository;
 import com.kuit.agarang.domain.baby.repository.CharacterRepository;
 import com.kuit.agarang.domain.home.model.dto.CharacterSettingResponse;
-import com.kuit.agarang.domain.login.utils.AuthenticationUtil;
 import com.kuit.agarang.global.common.exception.exception.BusinessException;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +23,9 @@ public class CharacterService {
 
   private final CharacterRepository characterRepository;
   private final BabyRepository babyRepository;
-  private final AuthenticationUtil authenticationUtil;
 
-  public List<CharacterSettingResponse> getCharactersByDate() {
+  public List<CharacterSettingResponse> getCharactersByDate(String providerId) {
 
-    String providerId = authenticationUtil.getProviderId();
     Baby baby = babyRepository.findByProviderId(providerId)
         .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_BABY));
 
@@ -43,9 +40,7 @@ public class CharacterService {
         .collect(Collectors.toList());
   }
 
-  public void updateCharacterSetting(Long characterId) {
-
-    String providerId = authenticationUtil.getProviderId();
+  public void updateCharacterSetting(String providerId, Long characterId) {
 
     // 현재 사용자의 아기(Baby) 정보 가져오기
     Baby baby = babyRepository.findByProviderId(providerId)
