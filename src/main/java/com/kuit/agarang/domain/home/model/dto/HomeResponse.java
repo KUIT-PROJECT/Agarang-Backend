@@ -15,5 +15,5 @@ public class HomeResponse {
   private Integer dDay;
   private String characterUrl;
   private String speechBubble;
-  private List<String> memoryUrls;
+  private List<Long> memoryIds;
 }

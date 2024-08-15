@@ -53,10 +53,10 @@ public class HomeService {
         .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMBER));
     String speechBubble = aiService.getCharacterBubble(character, member.getFamilyRole());
 
-    // 최근 태교 카드
+    // 최근 태교 카드 Id
     List<Memory> recentImages = memoryRepository.findTop3ByBabyOrderByCreatedAtDesc(baby);
-    List<String> recentImageUrls = recentImages.stream()
-        .map(Memory::getImageUrl).collect(Collectors.toList());
+    List<Long> recentImageIds = recentImages.stream()
+        .map(Memory::getId).collect(Collectors.toList());
 
     return HomeResponse.builder()
         .today(today)
@@ -64,6 +64,6 @@ public class HomeService {
         .dDay(dDay)
         .characterUrl(characterUrl)
         .speechBubble(speechBubble)
-        .memoryUrls(recentImageUrls).build();
+        .memoryIds(recentImageIds).build();
   }
 }
