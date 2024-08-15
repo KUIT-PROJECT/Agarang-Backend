@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -59,14 +60,25 @@ public class MemoryService {
             .toList();
   }
 
-  private List<String> getImageThumbnails(LocalDate selectedDate) {
+  private List<String> getImageThumbnails(LocalDate today) {
     final int beforeRange = -3;
     final int afterRange = 3;
 
-    LocalDate startDate = DateUtil.findDate(selectedDate, beforeRange);
-    LocalDate endDate = DateUtil.findDate(selectedDate, afterRange);
-    List<String> imageUrlsByDate = memoryRepository.findImageUrlsByDate(startDate, endDate);
-    return imageUrlsByDate;
+    LocalDate startDate = DateUtil.findDate(today, beforeRange);
+    LocalDate endDate = DateUtil.findDate(today, afterRange);
+
+    List<Memory> memoriesInDates = memoryRepository.findMemoriesInDates(startDate, endDate);
+
+    List<String> thumbnails = Stream.iterate(startDate, date -> date.plusDays(1))
+            .limit(7) // 7일간의 날짜 스트림 생성 (이전 3일, 오늘, 이후 3일)
+            .filter(date -> !date.equals(today)) // 오늘 날짜는 제외
+            .map(date -> memoriesInDates.stream()
+                    .filter(memory -> memory.getCreatedAt().toLocalDate().equals(date))
+                    .findFirst()
+                    .map(Memory::getImageUrl)
+                    .orElse("")) // 해당 날짜에 메모리가 없으면 빈 문자열을 반환
+            .collect(Collectors.toList());
+    return thumbnails;
   }
 
   public DailyMemoriesResponse findDailyMemories(Long memberId) {
