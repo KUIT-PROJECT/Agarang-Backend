@@ -11,10 +11,10 @@ import java.util.Optional;
 
 public interface MemoryBookmarkRepository extends JpaRepository<MemoryBookmark, Long> {
 
-  @Query("SELECT m FROM MemoryBookmark mb join Memory m on m.id = mb.memory.id WHERE m.member = :member")
-  List<Memory> findMemoryBookmarksByMember(Member member);
+  @Query("SELECT m FROM MemoryBookmark mb join Memory m on m.id = mb.memory.id WHERE m.member.id = :memberId")
+  List<Memory> findMemoryBookmarksByMember(Long memberId);
 
-  Optional<MemoryBookmark> findByMemoryAndMember(Memory memory, Member member);
+  Optional<MemoryBookmark> findByMemoryAndMemberId(Memory memory, Long memberId);
 
   void deleteByMemory(Memory memory);
 }

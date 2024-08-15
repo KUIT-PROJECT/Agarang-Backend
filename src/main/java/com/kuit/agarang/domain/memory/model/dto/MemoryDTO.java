@@ -16,17 +16,19 @@ public class MemoryDTO {
   private String date;
   private String content;
   private String musicUrl;
+  private String imageUrl;
   private List<String> hashTags;
   private boolean isBookmarked;
 
   @Builder
-  public MemoryDTO(String content, String date, String musicUrl, List<String> hashTags, boolean isBookmarked, String writer) {
-    this.content = content;
+  public MemoryDTO(String writer, String date, String content, String musicUrl, String imageUrl, List<String> hashTags, boolean isBookmarked) {
+    this.writer = writer;
     this.date = date;
+    this.content = content;
     this.musicUrl = musicUrl;
+    this.imageUrl = imageUrl;
     this.hashTags = hashTags;
     this.isBookmarked = isBookmarked;
-    this.writer = writer;
   }
 
   public static MemoryDTO of(Memory memory, boolean isBookmarked) {
@@ -38,6 +40,7 @@ public class MemoryDTO {
             .hashTags(memory.getHashtag().stream()
                     .map(Hashtag::getName)
                     .toList())
+            .imageUrl(memory.getImageUrl())
             .isBookmarked(isBookmarked)
             .build();
   }
