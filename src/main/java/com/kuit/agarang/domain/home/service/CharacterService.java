@@ -29,7 +29,7 @@ public class CharacterService {
     Baby baby = babyRepository.findByProviderId(providerId)
         .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_BABY));
 
-    long dDay = ChronoUnit.DAYS.between(LocalDate.now(), baby.getDueDate());
+    long dDay = ChronoUnit.DAYS.between(baby.getDueDate(), LocalDate.now());
     Integer level = dDay <= 140 ? 2 : 1;  // DDay 140일 이하면 레벨 2, 아니면 레벨 1
 
     List<Character> charactersByLevel = characterRepository.findByLevel(level);

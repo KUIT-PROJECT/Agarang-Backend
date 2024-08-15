@@ -42,7 +42,7 @@ public class HomeService {
     String babyName = baby.getName();
 
     LocalDate dueDate = baby.getDueDate();
-    Integer dDay = (int) ChronoUnit.DAYS.between(today, dueDate);
+    Integer dDay = (int) ChronoUnit.DAYS.between(dueDate, today);
     log.info("dDay = {}", dDay);
 
     Character character = baby.getCharacter();

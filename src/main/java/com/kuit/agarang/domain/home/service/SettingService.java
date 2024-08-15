@@ -39,7 +39,7 @@ public class SettingService {
 
     // 디데이
     LocalDate today = LocalDate.now();
-    Integer dDay = (int) ChronoUnit.DAYS.between(today, dueDate);
+    Integer dDay = (int) ChronoUnit.DAYS.between(dueDate, today);
 
     return GlobalSettingResponse.builder()
         .babyName(babyName)

@@ -35,8 +35,9 @@ public class JWTFilter extends OncePerRequestFilter {
       filterChain.doFilter(request, response);
       return;
     }
-
-    // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
+    /*
+      EXPIRED_ACCESS_TOKEN -> Reissue Controller redirect
+     */
     try {
       jwtUtil.isExpired(accessToken);
     } catch (ExpiredJwtException e) {
