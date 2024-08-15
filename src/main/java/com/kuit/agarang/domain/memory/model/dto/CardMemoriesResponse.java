@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DailyMemoryResponse {
+public class CardMemoriesResponse {
   List<String> thumbNails;
   List<MemoryDTO> memories;
 }
