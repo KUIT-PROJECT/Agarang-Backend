@@ -1,7 +1,9 @@
 package com.kuit.agarang.domain.memory.service;
 
 import com.kuit.agarang.domain.baby.model.entity.Baby;
+import com.kuit.agarang.domain.baby.repository.BabyRepository;
 import com.kuit.agarang.domain.member.model.entity.Member;
+import com.kuit.agarang.domain.member.repository.MemberRepository;
 import com.kuit.agarang.domain.memory.model.dto.*;
 import com.kuit.agarang.domain.memory.model.entity.Memory;
 import com.kuit.agarang.domain.memory.model.entity.MemoryBookmark;
@@ -33,22 +35,25 @@ public class MemoryService {
   private final MusicBookmarkRepository musicBookmarkRepository;
   private final MemoryPlaylistRepository memoryPlaylistRepository;
   private final HashTagRepository hashTagRepository;
+  private final MemberRepository memberRepository;
 
-  public DailyMemoryResponse findMemory(MemoryRequest memoryRequest) {
+  public CardMemoriesResponse findMemory(Long memberId, MemoryRequest memoryRequest) {
     String date = memoryRequest.getDate();
     LocalDate selectedDate = DateUtil.convertStringToLocalDate(date);
 
-    List<MemoryDTO> memoryDTOS = getMemoriesByDateAndBaby(selectedDate);
+    Member member = memberRepository.findByIdFetchJoinBaby(memberId)
+            .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMBER));
+
+    List<MemoryDTO> memoryDTOS = getMemoriesByDateAndBaby(member, selectedDate);
     List<String> imageUrlsByDate = getImageThumbnails(selectedDate);
 
-    return new DailyMemoryResponse(imageUrlsByDate, memoryDTOS);
+    return new CardMemoriesResponse(imageUrlsByDate, memoryDTOS);
   }
 
-  private List<MemoryDTO> getMemoriesByDateAndBaby(LocalDate selectedDate) {
-    //TODO : 회원 JWT -> 아기 조회 로직 추가 필요
-    Baby baby = new Baby(1L, "DXW1234", "아가", LocalDate.of(2025, 1, 1), 1.8D);
+  private List<MemoryDTO> getMemoriesByDateAndBaby(Member member, LocalDate selectedDate) {
 
-    List<MemoryBookmarkedDTO> memoriesByDateAndBaby = memoryRepository.findByDateAndBabyForMemoryCard(selectedDate, baby);
+
+    List<MemoryBookmarkedDTO> memoriesByDateAndBaby = memoryRepository.findByDateAndBabyForMemoryCard(selectedDate, member.getBaby());
     return memoriesByDateAndBaby.stream()
             .map(result -> MemoryDTO.of(result.getMemory(), result.isBookmarked()))
             .toList();
@@ -64,21 +69,21 @@ public class MemoryService {
     return imageUrlsByDate;
   }
 
-  public DailyMemoriesResponse findDailyMemories() {
-    //TODO : 회원 JWT -> 아기 조회 로직 추가 필요
-    Baby baby = new Baby(1L,"DXW1234", "아가", LocalDate.of(2025, 1, 1), 1.8D);
+  public DailyMemoriesResponse findDailyMemories(Long memberId) {
+    Member member = memberRepository.findByIdFetchJoinBaby(memberId)
+            .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMBER));
 
-    List<Memory> memories = memoryRepository.findByBabyOrderByCreatedAtDesc(baby);
+    List<Memory> memories = memoryRepository.findByBabyOrderByCreatedAtDesc(member.getBaby());
     List<DailyMemoryDTO> dailyMemoryDTOS = memories.stream()
             .map(memory -> DailyMemoryDTO.from(memory))
             .toList();
     return new DailyMemoriesResponse(dailyMemoryDTOS);
   }
 
-  public MonthlyMemoryResponse findAllMonthlyThumbnails() {
-    //TODO : 회원 JWT -> 아기 조회 로직 추가 필요
-    Baby baby = new Baby(1L, "DXW1234", "아가", LocalDate.of(2025, 1, 1), 1.8D);
-    List<Memory> allMemories = memoryRepository.findByBaby(baby);
+  public MonthlyMemoryResponse findAllMonthlyThumbnails(Long memberId) {
+    Member member = memberRepository.findByIdFetchJoinBaby(memberId)
+            .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMBER));
+    List<Memory> allMemories = memoryRepository.findByBaby(member.getBaby());
 
     Map<String, List<Memory>> memoriesByMonth = allMemories.stream()
             .collect(Collectors.
@@ -98,10 +103,8 @@ public class MemoryService {
     return new MonthlyMemoryResponse(monthlyMemories);
   }
 
-  public FavoriteMemoriesResponse findFavoriteMemories() {
-    // TODO : 회원 JWT -> Member 조회 및 예외처리 필요
-    Member member = new Member(1L);
-    List<Memory> favoriteMemoriesByMember = memoryBookmarkRepository.findMemoryBookmarksByMember(member);
+  public FavoriteMemoriesResponse findFavoriteMemories(Long memberId) {
+    List<Memory> favoriteMemoriesByMember = memoryBookmarkRepository.findMemoryBookmarksByMember(memberId);
     List<MemoryImageDTO> memoryImageDTOS = favoriteMemoriesByMember.stream()
             .map(memory -> MemoryImageDTO.of(memory.getId(), memory.getImageUrl()))
             .toList();
@@ -109,13 +112,13 @@ public class MemoryService {
   }
 
   @Transactional
-  public void updateBookmark(BookmarkRequest bookmarkRequest) {
-    // TODO : 회원 JWT -> Member 조회 및 예외처리 필요
-    Member member = new Member(1L);
+  public void updateBookmark(Long memberId, BookmarkRequest bookmarkRequest) {
+    Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMBER));
     Memory memory = memoryRepository.findById(bookmarkRequest.getMemoryId())
             .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_MEMORY_ID));
 
-    Optional<MemoryBookmark> memoryBookmark = memoryBookmarkRepository.findByMemoryAndMember(memory, member);
+    Optional<MemoryBookmark> memoryBookmark = memoryBookmarkRepository.findByMemoryAndMemberId(memory, 1L);
 
     if(memoryBookmark.isPresent()) {
       memoryBookmarkRepository.delete(memoryBookmark.get());
@@ -141,5 +144,13 @@ public class MemoryService {
     memoryPlaylistRepository.deleteByMemory(memory);
     hashTagRepository.deleteByMemory(memory);
     memoryRepository.delete(memory);
+  }
+
+  public MemoryDTO findMemoryById(Long memberId, Long memoryId) {
+    Memory memory = memoryRepository.findByIdAndMemberId(memoryId, memberId)
+            .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_MEMORY_ID));
+    Optional<MemoryBookmark> memoryBookmark = memoryBookmarkRepository.findByMemoryAndMemberId(memory, 1L);
+    boolean isBookmarked = memoryBookmark.isPresent();
+    return MemoryDTO.of(memory, isBookmarked);
   }
 }
