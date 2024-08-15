@@ -33,7 +33,7 @@ public class SettingController {
   }
 
   @PutMapping("/baby")
-  public ResponseEntity<BaseResponse> updateBabySetting(@AuthenticationPrincipal CustomOAuth2User details,
+  public ResponseEntity<BaseResponse<Void>> updateBabySetting(@AuthenticationPrincipal CustomOAuth2User details,
                                                         @RequestBody BabySettingUpdateRequest request) {
     settingService.updateBabySetting(details.getProviderId(), request);
     return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
