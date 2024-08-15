@@ -21,6 +21,8 @@ public enum BaseResponseStatus {
   NOT_FOUND_MEMBER(false, HttpStatus.NOT_FOUND, 4023, "사용자를 찾을 수 없습니다"),
   NOT_FOUND_REFRESH_TOKEN(false, HttpStatus.NOT_FOUND, 4024, "리프레시 토큰을 찾을 수 없습니다"),
   EXPIRED_REFRESH_TOKEN(false, HttpStatus.NOT_FOUND, 4025, "리프레시 토큰이 만료되었습니다."),
+  EXPIRED_ACCESS_TOKEN(false, HttpStatus.NOT_FOUND, 4026, "액세스 토큰이 만료되었습니다."),
+  INVALID_ACCESS_TOKEN(false, HttpStatus.NOT_FOUND, 4027, "유효하지 않은 액세스 토큰입니다."),
 
   INVALID_FILE_EXTENSION(false, HttpStatus.BAD_REQUEST, 4003, "지원하지 않는 파일확장자입니다."),
   NOT_FOUND_RESOURCE(false, HttpStatus.NOT_FOUND, 4004, "존재하지 않는 페이지입니다."),
