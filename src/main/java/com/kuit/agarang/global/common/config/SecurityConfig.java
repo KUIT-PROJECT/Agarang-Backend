@@ -4,7 +4,6 @@ import com.kuit.agarang.domain.login.handler.CustomSuccessHandler;
 import com.kuit.agarang.domain.login.filter.JWTFilter;
 import com.kuit.agarang.domain.login.utils.JWTUtil;
 import com.kuit.agarang.domain.login.service.CustomOAuth2UserService;
-import com.kuit.agarang.global.common.exception.exception.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,10 +47,8 @@ public class SecurityConfig {
                 "/oauth2/**")
             .permitAll()
             .requestMatchers("/reissue").permitAll()
-            .anyRequest().authenticated() // TODO : 인가 구현 후 수정
+            .anyRequest().permitAll() // TODO : 인가 구현 후 수정
         )
-        .exceptionHandling((exception) -> exception
-            .authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
         .oauth2Login(oauth2 -> oauth2
             .userInfoEndpoint(endpoint -> endpoint.userService(customOAuth2UserService))
             .successHandler(customSuccessHandler)

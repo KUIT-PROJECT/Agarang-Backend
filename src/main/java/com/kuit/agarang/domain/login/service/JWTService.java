@@ -52,6 +52,9 @@ public class JWTService {
       throw new BusinessException(NOT_FOUND_REFRESH_TOKEN);
     }
 
+    /*
+       EXPIRED_REFRESH_TOKEN -> Login redirect
+     */
     try {
       jwtUtil.isExpired(refresh);
     } catch (ExpiredJwtException e) {

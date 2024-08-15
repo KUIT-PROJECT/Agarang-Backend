@@ -52,7 +52,7 @@ public class MemberService {
           .build();
 
       // Default Value
-      baby.setCharacter(characterRepository.findById(0L)
+      baby.setCharacter(characterRepository.findById(1L)
           .orElseThrow(() -> new BusinessException(NOT_FOUND_CHARACTER)));
 
       babyRepository.save(baby);
