@@ -30,6 +30,7 @@ public class ReissueController {
     response.addHeader("Authorization", reissueDto.getNewAccessToken());
     response.addCookie(cookieUtil.createCookie("REFRESH", reissueDto.getNewRefreshToken()));
     log.info("New Access Token = {}", reissueDto.getNewAccessToken());
+    log.info("New Refresh Token = {}", reissueDto.getNewRefreshToken());
 
     return ResponseEntity.ok(new BaseResponse<>(SUCCESS));
   }
