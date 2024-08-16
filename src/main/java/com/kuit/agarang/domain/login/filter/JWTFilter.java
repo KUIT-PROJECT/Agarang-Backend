@@ -48,6 +48,8 @@ public class JWTFilter extends OncePerRequestFilter {
       jwtUtil.isExpired(accessToken);
     } catch (ExpiredJwtException e) {
       throw new JWTException(BaseResponseStatus.EXPIRED_ACCESS_TOKEN);
+    } catch (Exception e) {
+      throw new JWTException(BaseResponseStatus.INVALID_ACCESS_TOKEN);
     }
 
     // 토큰이 access인지 확인 (발급시 페이로드에 명시)
