@@ -16,7 +16,7 @@ public class CookieUtil {
 
     Cookie cookie = new Cookie(key, value);
     cookie.setMaxAge(24 * 60 * 60);
-//    cookie.setSecure(true); https 환경에서만 쿠키 전송
+    cookie.setSecure(true); 
     cookie.setPath("/");
     cookie.setHttpOnly(true);
 
