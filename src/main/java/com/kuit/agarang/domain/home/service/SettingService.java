@@ -89,6 +89,7 @@ public class SettingService {
     // 가족
     List<MemberDTO> memberDTOs = baby.getMembers().stream()
         .map(member -> MemberDTO.builder()
+            .memberId(memberId)
             .name(member.getName())
             .role(member.getRole())
             .providerId(member.getProviderId())
