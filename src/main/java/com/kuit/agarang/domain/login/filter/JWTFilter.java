@@ -3,6 +3,8 @@ package com.kuit.agarang.domain.login.filter;
 import com.kuit.agarang.domain.login.model.dto.CustomOAuth2User;
 import com.kuit.agarang.domain.login.utils.JWTUtil;
 import com.kuit.agarang.domain.member.model.dto.MemberDTO;
+import com.kuit.agarang.global.common.exception.exception.BusinessException;
+import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -33,15 +35,16 @@ public class JWTFilter extends OncePerRequestFilter {
       filterChain.doFilter(request, response);
       return;
     }
-
-    // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
+    /*
+      EXPIRED_ACCESS_TOKEN -> Reissue Controller redirect
+     */
     try {
       jwtUtil.isExpired(accessToken);
     } catch (ExpiredJwtException e) {
+      log.info("Access token expired: {}", e.getMessage());
       PrintWriter writer = response.getWriter();
       writer.print("access token expired");
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      return;
+      throw new BusinessException(BaseResponseStatus.EXPIRED_ACCESS_TOKEN);
     }
 
     // 토큰이 access인지 확인 (발급시 페이로드에 명시)
@@ -50,8 +53,7 @@ public class JWTFilter extends OncePerRequestFilter {
     if (!category.equals("Authorization")) {
       PrintWriter writer = response.getWriter();
       writer.print("invalid access token");
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      return;
+      throw new BusinessException(BaseResponseStatus.INVALID_ACCESS_TOKEN);
     }
 
     String providerId = jwtUtil.getProviderId(accessToken);
