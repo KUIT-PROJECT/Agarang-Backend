@@ -9,10 +9,27 @@ DELETE FROM memory;
 DELETE FROM member;
 DELETE FROM baby;
 
+-- Delete existing records (if any)
+DELETE FROM `character`;
+
+-- Insert new character records
+INSERT INTO `character` (created_at, status, updated_at, description, image_url, level, name)
+VALUES
+    (CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, 'A cheerful bunny.', 'https://example.com/images/bunny.jpg', 1, 'Bunny'),
+    (CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, 'A clever fox.', 'https://example.com/images/fox.jpg', 1, 'Fox'),
+    (CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, 'A wise owl.', 'https://example.com/images/owl.jpg', 2, 'Owl'),
+    (CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, 'A brave lion.', 'https://example.com/images/lion.jpg', 2, 'Lion'),
+    (CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, 'A friendly dog.', 'https://example.com/images/dog.jpg', 1, 'Dog'),
+    (CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, 'A curious cat.', 'https://example.com/images/cat.jpg', 1, 'Cat'),
+    (CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, 'A strong bear.', 'https://example.com/images/bear.jpg', 2, 'Bear'),
+    (CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, 'A playful monkey.', 'https://example.com/images/monkey.jpg', 1, 'Monkey'),
+    (CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, 'A graceful deer.', 'https://example.com/images/deer.jpg', 2, 'Deer'),
+    (CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, 'A swift cheetah.', 'https://example.com/images/cheetah.jpg', 2, 'Cheetah');
+
 
 -- Insert new baby record
 INSERT INTO baby (id, character_id, baby_code, name, due_date, weight, created_at, updated_at)
-VALUES (1, NULL, 'DXW1234', '아가', '2025-01-01', 1.8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+VALUES (1, NULL, 'DXW123', '아가', '2025-01-01', 1.8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Insert new member record
 INSERT INTO member (id, baby_id, refresh_token_id, role, created_at, updated_at)

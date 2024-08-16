@@ -9,8 +9,8 @@ import java.util.Optional;
 public interface BabyRepository extends JpaRepository<Baby, Long> {
   Optional<Baby> findByBabyCode(String code);
 
-  @Query("SELECT b FROM Baby b JOIN b.members m WHERE m.providerId = :providerId")
-  Optional<Baby> findByProviderId(String providerId);
+  @Query("SELECT b FROM Baby b JOIN b.members m WHERE m.id = :memberId")
+  Optional<Baby> findByMemberId(Long memberId);
 
   boolean existsByBabyCode(String code);
 }
