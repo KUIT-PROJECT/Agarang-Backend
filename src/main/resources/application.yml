@@ -14,9 +14,7 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
-        show_sql: true
         format_sql: true
-    open-in-view: true
 
   data:
     redis:
@@ -25,6 +23,12 @@ spring:
     jpa:
       repositories:
         bootstrap-mode: deferred
+
+logging:
+  level:
+    org:
+      hibernate:
+        sql: debug
 
 aws:
   s3:

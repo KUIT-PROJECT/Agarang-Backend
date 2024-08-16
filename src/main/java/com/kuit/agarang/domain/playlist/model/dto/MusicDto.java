@@ -32,7 +32,7 @@ public class MusicDto {
                 .imageUrl(memory.getImageUrl())
                 .musicTitle(memory.getMusicTitle())
                 .musicUrl(memory.getMusicUrl())
-                .hashTags(memory.getHashtag().stream()
+                .hashTags(memory.getHashtags().stream()
                         .map(Hashtag::getName)
                         .toList())
                 .isBookmarked(isBookmarked)

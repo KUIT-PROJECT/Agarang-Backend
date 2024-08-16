@@ -1,5 +1,6 @@
 package com.kuit.agarang.domain.ai.utils;
 
+import com.kuit.agarang.domain.ai.model.dto.MemoryTextInfo;
 import com.kuit.agarang.domain.ai.model.dto.MusicInfo;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTImageDescription;
 import com.kuit.agarang.domain.baby.model.entity.Character;
@@ -23,10 +24,10 @@ public class GPTPromptUtil {
       .append("말투는 아이가 부모님에게 묻는 말투로 해줘. ").toString();
   }
 
-  public String createMemoryTextPrompt(String babyName, String familyRole) {
-    return new StringBuilder("위의 대화는 오늘 ").append(familyRole).append("에게 있었던 일이야. ")
-      .append(familyRole).append("에게 있었던 일을 기반으로 ")
-      .append(familyRole).append("가 태아인 ").append(babyName).append("에게 편지를 작성할거야. ")
+  public String createMemoryTextPrompt(MemoryTextInfo info) {
+    return new StringBuilder("위의 대화는 오늘 ").append(info.getFamilyRole()).append("에게 있었던 일이야. ")
+      .append(info.getFamilyRole()).append("에게 있었던 일을 기반으로 ")
+      .append(info.getFamilyRole()).append("가 태아인 ").append(info.getBabyName()).append("에게 편지를 작성할거야. ")
       .append("위의 대화를 바탕으로 일상 태담을 5문장 정도로 감성적으로 작성해줘.").toString();
   }
 

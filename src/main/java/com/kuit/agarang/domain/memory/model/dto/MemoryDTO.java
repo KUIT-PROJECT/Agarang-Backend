@@ -37,7 +37,7 @@ public class MemoryDTO {
             .date(DateUtil.formatLocalDateTime(memory.getCreatedAt(), "yyyy. MM. dd"))
             .content(memory.getText())
             .musicUrl(memory.getMusicUrl())
-            .hashTags(memory.getHashtag().stream()
+            .hashTags(memory.getHashtags().stream()
                     .map(Hashtag::getName)
                     .toList())
             .imageUrl(memory.getImageUrl())
