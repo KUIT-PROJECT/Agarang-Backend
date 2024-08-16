@@ -8,6 +8,7 @@ spring:
 #      init:
 #        mode: always
 #        data-locations: classpath:data.sql
+
   data:
     redis:
       host: localhost
