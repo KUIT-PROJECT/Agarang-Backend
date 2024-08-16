@@ -2,9 +2,9 @@
 DELETE FROM memory_playlist;
 DELETE FROM memory_bookmark;
 DELETE FROM music_bookmark;
-DELETE FROM hashtag;
 
 DELETE FROM playlist;
+DELETE FROM hashtag;
 DELETE FROM memory;
 DELETE FROM member;
 DELETE FROM baby;
@@ -58,12 +58,12 @@ VALUES
 -- Insert new hashtag records
 INSERT INTO hashtag (id, created_at, updated_at, status, name, memory_id)
 VALUES
-    (1, '2024-07-01 00:00:00', '2024-07-01 00:00:00', 'ACTIVE', 'HAPPY', 1),
-    (2, '2024-07-01 00:00:00', '2024-07-01 00:00:00', 'ACTIVE', 'BEAUTIFUL', 2),
-    (3, '2024-07-01 00:00:00', '2024-07-01 00:00:00', 'ACTIVE', 'LOVELY', 3);
+    (1, '2024-07-01 00:00:00', '2024-07-01 00:00:00', 'ACTIVE', '여름', 1),
+    (2, '2024-07-01 00:00:00', '2024-07-01 00:00:00', 'ACTIVE', '바다', 1),
+    (3, '2024-07-01 00:00:00', '2024-07-01 00:00:00', 'ACTIVE', '파도', 1);
 
 -- Insert new memoryplaylist records
-INSERT INTO memory_playlist (id, created_at, updated_at, status, memory_id,playlist_id)
+INSERT INTO memory_playlist (id, created_at, updated_at, status, memory_id, playlist_id)
 VALUES
     (1, '2024-07-01 00:00:00', '2024-07-01 00:00:00', 'ACTIVE', 1, 1),
     (2, '2024-07-01 00:00:00', '2024-07-01 00:00:00', 'ACTIVE', 1, 5),
