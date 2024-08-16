@@ -16,12 +16,6 @@ spring:
       hibernate:
         format_sql: true
 
-logging:
-  level:
-    org:
-      hibernate:
-        sql: debug
-
   data:
     redis:
       repositories:
@@ -29,6 +23,12 @@ logging:
     jpa:
       repositories:
         bootstrap-mode: deferred
+
+logging:
+  level:
+    org:
+      hibernate:
+        sql: debug
 
 aws:
   s3:
