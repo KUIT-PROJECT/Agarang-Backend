@@ -4,7 +4,7 @@ import com.kuit.agarang.domain.login.model.dto.ReissueDto;
 import com.kuit.agarang.domain.login.utils.JWTUtil;
 import com.kuit.agarang.domain.member.model.entity.Member;
 import com.kuit.agarang.domain.member.repository.MemberRepository;
-import com.kuit.agarang.global.common.exception.exception.BusinessException;
+import com.kuit.agarang.global.common.exception.exception.JWTException;
 import com.kuit.agarang.global.common.service.RedisService;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
@@ -45,24 +45,24 @@ public class JWTService {
 
   private Member validateRefreshToken(String oldRefresh) {
     if (oldRefresh == null) {
-      throw new BusinessException(NOT_FOUND_REFRESH_TOKEN);
+      throw new JWTException(NOT_FOUND_REFRESH_TOKEN);
     }
 
     Long memberId = redisService.get(oldRefresh, Long.class)
-      .orElseThrow(() -> new BusinessException(NOT_FOUND_REFRESH_TOKEN));
+      .orElseThrow(() -> new JWTException(NOT_FOUND_REFRESH_TOKEN));
 
     try {
       jwtUtil.isExpired(oldRefresh);
     } catch (ExpiredJwtException e) {
-      throw new BusinessException(EXPIRED_REFRESH_TOKEN);
+      throw new JWTException(EXPIRED_REFRESH_TOKEN);
     }
 
     String category = jwtUtil.getCategory(oldRefresh);
     if (!category.equals("refresh")) {
-      throw new BusinessException(INVALID_REFRESH_TOKEN);
+      throw new JWTException(INVALID_REFRESH_TOKEN);
     }
 
     return memberRepository.findById(memberId)
-      .orElseThrow(() -> new BusinessException(NOT_FOUND_MEMBER));
+      .orElseThrow(() -> new JWTException(NOT_FOUND_MEMBER));
   }
 }
