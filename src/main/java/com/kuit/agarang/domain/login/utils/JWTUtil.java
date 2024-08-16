@@ -25,23 +25,23 @@ public class JWTUtil {
   }
 
   public Long getMemberId(String token) {
-    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token.replace(BEARER, "")).getPayload().get("memberId", Long.class);
+    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("memberId", Long.class);
   }
 
   public String getProviderId(String token) {
-    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token.replace(BEARER, "")).getPayload().get("providerId", String.class);
+    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("providerId", String.class);
   }
 
   public String getRole(String token) {
-    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token.replace(BEARER, "")).getPayload().get("role", String.class);
+    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
   }
 
   public String getCategory(String token) {
-    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token.replace(BEARER, "")).getPayload().get("category", String.class);
+    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
   }
 
   public Boolean isExpired(String token) {
-    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token.replace(BEARER, "")).getPayload().getExpiration().before(new Date());
+    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
   }
 
   public String createAccessToken(String providerId, String role, Long memberId) {

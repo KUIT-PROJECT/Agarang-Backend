@@ -25,16 +25,23 @@ import java.io.PrintWriter;
 public class JWTFilter extends OncePerRequestFilter {
 
   private final JWTUtil jwtUtil;
+  private static final String BEARER = "Bearer ";
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
     String accessToken = request.getHeader("Authorization");
 
-    if (accessToken == null) {
+    if (accessToken == null || "/reissue".equals(request.getRequestURI())) {
       filterChain.doFilter(request, response);
       return;
     }
+
+    if (!accessToken.startsWith(BEARER)) {
+      throw new BusinessException(BaseResponseStatus.INVALID_ACCESS_TOKEN);
+    }
+    accessToken = accessToken.split("Bearer ")[1];
+
     /*
       EXPIRED_ACCESS_TOKEN -> Reissue Controller redirect
      */
