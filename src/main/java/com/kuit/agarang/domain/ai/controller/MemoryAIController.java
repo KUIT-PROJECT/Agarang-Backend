@@ -5,9 +5,11 @@ import com.kuit.agarang.domain.ai.model.dto.TextAnswer;
 import com.kuit.agarang.domain.ai.model.dto.QuestionResponse;
 import com.kuit.agarang.domain.ai.model.entity.cache.GPTChatHistory;
 import com.kuit.agarang.domain.ai.service.AIService;
+import com.kuit.agarang.domain.login.model.dto.CustomOAuth2User;
 import com.kuit.agarang.global.common.model.dto.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,16 +31,18 @@ public class MemoryAIController {
   }
 
   @PostMapping("/second-ans")
-  public ResponseEntity<BaseResponse<Void>> saveLastAnswer(@RequestBody TextAnswer answer) {
+  public ResponseEntity<BaseResponse<Void>> saveLastAnswer(@AuthenticationPrincipal CustomOAuth2User details,
+                                                           @RequestBody TextAnswer answer) {
     AIService.saveLastAnswer(answer);
-    AIService.createMemoryText(answer.getId());
+    AIService.createMemoryText(details.getMemberId(), answer.getId());
     return ResponseEntity.ok(new BaseResponse<>());
   }
 
   @PostMapping("/music")
-  public ResponseEntity<BaseResponse<Void>> saveLastAnswer(@RequestBody MusicAnswer answer) {
+  public ResponseEntity<BaseResponse<Void>> saveLastAnswer(@AuthenticationPrincipal CustomOAuth2User details,
+                                                           @RequestBody MusicAnswer answer) {
     GPTChatHistory chatHistory = AIService.setMusicChoice(answer);
-    AIService.createMusicGenPrompt(chatHistory);
+    AIService.createMusicGenPrompt(details.getMemberId(), chatHistory);
     return ResponseEntity.ok(new BaseResponse<>());
   }
 }

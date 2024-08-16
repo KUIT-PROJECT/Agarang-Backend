@@ -33,6 +33,7 @@ public class TypecastService {
   }
 
   public void saveAudio(TypecastWebhookResponse response) {
+    log.info("tts webhook : {}", response.getSpeakUrl());
     if ("failed".equals(response.getStatus())) {
       throw new OpenAPIException(BaseResponseStatus.NOT_FOUND_TSS_AUDIO);
     }
