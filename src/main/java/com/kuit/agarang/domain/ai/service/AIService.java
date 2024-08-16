@@ -144,7 +144,7 @@ public class AIService {
 
   @Transactional
   public MemoryTextInfo getMemoryTextInfo(Long memberId) {
-    Member member = memberRepository.findByIdFetchJoinBaby(memberId)
+    Member member = memberRepository.findByIdWithBaby(memberId)
       .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMBER));
     return MemoryTextInfo.builder()
       .familyRole(member.getFamilyRole())
@@ -193,7 +193,6 @@ public class AIService {
       .build();
 
     List<Hashtag> hashtags = chatHistory.getImageDescription().convertNoun(memory);
-    hashTagRepository.saveAll(hashtags);
     memory.setHashtags(hashtags);
     memoryRepository.save(memory);
 
