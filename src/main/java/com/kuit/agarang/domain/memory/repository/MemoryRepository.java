@@ -1,6 +1,7 @@
 package com.kuit.agarang.domain.memory.repository;
 
 import com.kuit.agarang.domain.baby.model.entity.Baby;
+import com.kuit.agarang.domain.member.model.entity.Member;
 import com.kuit.agarang.domain.memory.model.dto.MemoryBookmarkedDTO;
 import com.kuit.agarang.domain.memory.model.entity.Memory;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface MemoryRepository extends JpaRepository<Memory,Long> {
 //  @Query("SELECT mm FROM Memory mm JOIN MemoryBookmark mbm WHERE Date(mm.createdAt) = :date AND mm.baby.id = :babyId")
@@ -19,11 +21,12 @@ public interface MemoryRepository extends JpaRepository<Memory,Long> {
           "ORDER BY mm.createdAt DESC")
   List<MemoryBookmarkedDTO> findByDateAndBabyForMemoryCard(LocalDate date, Baby baby);
 
-  @Query("SELECT m.imageUrl FROM Memory m WHERE Date(m.createdAt) >= :startDate AND Date(m.createdAt) <= :endDate")
-  List<String> findImageUrlsByDate(LocalDate startDate, LocalDate endDate);
+  @Query("SELECT m FROM Memory m WHERE Date(m.createdAt) >= :startDate AND Date(m.createdAt) <= :endDate")
+  List<Memory> findMemoriesInDates(LocalDate startDate, LocalDate endDate);
 
   List<Memory> findByBabyOrderByCreatedAtDesc(Baby baby);
   List<Memory> findByBaby(Baby baby);
   List<Memory> findTop3ByBabyOrderByCreatedAtDesc(Baby baby); // 3개 이하 시 조회된 갯수 만큼만 반환
+  Optional<Memory> findByIdAndMemberId(Long memoryId, Long memberId);
   List<Memory> findByMemberId(Long memberId);
 }
