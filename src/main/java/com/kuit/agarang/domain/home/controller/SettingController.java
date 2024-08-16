@@ -22,26 +22,26 @@ public class SettingController {
 
   @GetMapping()
   public ResponseEntity<BaseResponse<GlobalSettingResponse>> getSetting(@AuthenticationPrincipal CustomOAuth2User details) {
-    GlobalSettingResponse settingData = settingService.getGlobalSetting(details.getProviderId());
+    GlobalSettingResponse settingData = settingService.getGlobalSetting(details.getMemberId());
     return ResponseEntity.ok(new BaseResponse<>(settingData));
   }
 
   @GetMapping("/baby")
   public ResponseEntity<BaseResponse<BabySettingResponse>> getBabySetting(@AuthenticationPrincipal CustomOAuth2User details) {
-    BabySettingResponse settingData = settingService.getBabySetting(details.getProviderId());
+    BabySettingResponse settingData = settingService.getBabySetting(details.getMemberId());
     return ResponseEntity.ok(new BaseResponse<>(settingData));
   }
 
-  @PutMapping("/baby")
+  @PatchMapping("/baby")
   public ResponseEntity<BaseResponse<Void>> updateBabySetting(@AuthenticationPrincipal CustomOAuth2User details,
                                                         @RequestBody BabySettingUpdateRequest request) {
-    settingService.updateBabySetting(details.getProviderId(), request);
+    settingService.updateBabySetting(details.getMemberId(), request);
     return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
   }
 
   @GetMapping("/family")
   public ResponseEntity<BaseResponse<FamilySettingResponse>> getFamilySetting(@AuthenticationPrincipal CustomOAuth2User details) {
-    FamilySettingResponse settingData = settingService.getFamilySetting(details.getProviderId());
+    FamilySettingResponse settingData = settingService.getFamilySetting(details.getMemberId());
     return ResponseEntity.ok(new BaseResponse<>(settingData));
   }
 }
