@@ -10,6 +10,7 @@ import com.kuit.agarang.domain.memory.enums.Tempo;
 import com.kuit.agarang.global.common.model.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.List;
 
@@ -52,7 +53,8 @@ public class Memory extends BaseEntity {
   private Instrument instrument;
 
   @Setter
-  @OneToMany(mappedBy = "memory")
+  @OneToMany(mappedBy = "memory", cascade = CascadeType.ALL, orphanRemoval = true)
+  @BatchSize(size = 3)
   private List<Hashtag> hashtags;
 
   @Builder
