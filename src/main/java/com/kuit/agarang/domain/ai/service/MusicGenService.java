@@ -45,7 +45,7 @@ public class MusicGenService {
 
     Optional<Memory> optionalMemory = memoryRepository.findByMusicGenId(response.getId());
     if (optionalMemory.isEmpty()) {
-      log.info("music gen webhook error : not found member by musicgenId : {}", response.getId());
+      log.error("music gen webhook error : not found member by musicgenId : {}", response.getId());
       return;
     }
 
