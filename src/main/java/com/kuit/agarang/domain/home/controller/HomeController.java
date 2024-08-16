@@ -21,7 +21,7 @@ public class HomeController {
   @GetMapping
   public ResponseEntity<BaseResponse<HomeResponse>> getHome(@AuthenticationPrincipal CustomOAuth2User details) {
 
-    HomeResponse homeData = homeService.getHome(details.getProviderId());
+    HomeResponse homeData = homeService.getHome(details.getMemberId());
     return ResponseEntity.ok(new BaseResponse<>(homeData));
   }
 

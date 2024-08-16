@@ -22,15 +22,15 @@ public class CharacterController {
 
   @GetMapping
   public ResponseEntity<BaseResponse<List<CharacterSettingResponse>>> getCharactersByDate(@AuthenticationPrincipal CustomOAuth2User details) {
-    List<CharacterSettingResponse> charactersByDate = characterService.getCharactersByDate(details.getProviderId());
-    return ResponseEntity.ok(new BaseResponse(charactersByDate));
+    List<CharacterSettingResponse> charactersByDate = characterService.getCharactersByDate(details.getMemberId());
+    return ResponseEntity.ok(new BaseResponse<>(charactersByDate));
 
   }
 
-  @PutMapping
-  public ResponseEntity<BaseResponse> updateBabyCharacter(@AuthenticationPrincipal CustomOAuth2User details,
-                                                          @RequestBody CharacterChangeRequest request) {
-    characterService.updateCharacterSetting(details.getProviderId(), request.getCharacterId());
+  @PatchMapping
+  public ResponseEntity<BaseResponse<Void>> updateBabyCharacter(@AuthenticationPrincipal CustomOAuth2User details,
+                                                                @RequestBody CharacterChangeRequest request) {
+    characterService.updateCharacterSetting(details.getMemberId(), request.getCharacterId());
     return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
   }
 }
