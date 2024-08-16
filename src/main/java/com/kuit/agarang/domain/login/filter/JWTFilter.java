@@ -8,6 +8,7 @@ import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,7 +29,19 @@ public class JWTFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-    String accessToken = request.getHeader("Authorization");
+    if ("/reissue".equals(request.getRequestURI())) {
+      filterChain.doFilter(request, response);
+      return;
+    }
+
+    String accessToken = null;
+    Cookie[] cookies = request.getCookies();
+    for (Cookie cookie : cookies) {
+      if ("ACCESS".equals(cookie.getName())) {
+        accessToken = cookie.getValue();
+        break;
+      }
+    }
 
     if (accessToken == null) {
       filterChain.doFilter(request, response);
@@ -56,9 +68,9 @@ public class JWTFilter extends OncePerRequestFilter {
     Long memberId = jwtUtil.getMemberId(accessToken);
 
     CustomOAuth2User customOAuth2User = new CustomOAuth2User(MemberDTO.builder()
-        .memberId(memberId)
-        .providerId(providerId)
-        .role(role).build());
+      .memberId(memberId)
+      .providerId(providerId)
+      .role(role).build());
 
     //스프링 시큐리티 인증 토큰 생성
     Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
