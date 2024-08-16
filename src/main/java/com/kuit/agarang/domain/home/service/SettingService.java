@@ -8,9 +8,11 @@ import com.kuit.agarang.domain.home.model.dto.FamilySettingResponse;
 import com.kuit.agarang.domain.home.model.dto.GlobalSettingResponse;
 import com.kuit.agarang.domain.login.utils.AuthenticationUtil;
 import com.kuit.agarang.domain.member.model.dto.MemberDTO;
+import com.kuit.agarang.domain.member.repository.MemberRepository;
 import com.kuit.agarang.global.common.exception.exception.BusinessException;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,21 +27,16 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class SettingService {
 
-  private final AuthenticationUtil authenticationUtil;
   private final BabyRepository babyRepository;
 
-  public GlobalSettingResponse getGlobalSetting() {
+  public GlobalSettingResponse getGlobalSetting(Long memberId) {
 
-    // 아기 이름
-    String providerId = authenticationUtil.getProviderId();
-    Baby baby = babyRepository.findByProviderId(providerId)
+    Baby baby = babyRepository.findByMemberId(memberId)
         .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_BABY));
     String babyName = baby.getName();
 
-    // 예정일
     LocalDate dueDate = baby.getDueDate();
 
-    // 디데이
     LocalDate today = LocalDate.now();
     Integer dDay = (int) ChronoUnit.DAYS.between(today, dueDate);
 
@@ -49,18 +46,14 @@ public class SettingService {
         .dueDate(dueDate).build();
   }
 
-  public BabySettingResponse getBabySetting() {
+  public BabySettingResponse getBabySetting(Long memberId) {
 
-    // 아기 이름
-    String providerId = authenticationUtil.getProviderId();
-    Baby baby = babyRepository.findByProviderId(providerId)
+    Baby baby = babyRepository.findByMemberId(memberId)
         .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_BABY));
     String babyName = baby.getName();
 
-    // 예정일
     LocalDate dueDate = baby.getDueDate();
 
-    // 아기 체중
     Double weight = baby.getWeight();
 
     return BabySettingResponse.builder()
@@ -70,9 +63,8 @@ public class SettingService {
   }
 
   @Transactional
-  public void updateBabySetting(BabySettingUpdateRequest updateRequest) {
-    String providerId = authenticationUtil.getProviderId();
-    Baby baby = babyRepository.findByProviderId(providerId)
+  public void updateBabySetting(Long memberId, BabySettingUpdateRequest updateRequest) {
+    Baby baby = babyRepository.findByMemberId(memberId)
         .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_BABY));
 
     Optional.ofNullable(updateRequest.getBabyName())
@@ -87,17 +79,17 @@ public class SettingService {
     babyRepository.save(baby);
   }
 
-  public FamilySettingResponse getFamilySetting() {
+  public FamilySettingResponse getFamilySetting(Long memberId) {
 
     // 아기 코드
-    String providerId = authenticationUtil.getProviderId();
-    Baby baby = babyRepository.findByProviderId(providerId)
+    Baby baby = babyRepository.findByMemberId(memberId)
         .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_BABY));
     String babyName = baby.getBabyCode();
 
     // 가족
     List<MemberDTO> memberDTOs = baby.getMembers().stream()
         .map(member -> MemberDTO.builder()
+            .memberId(memberId)
             .name(member.getName())
             .role(member.getRole())
             .providerId(member.getProviderId())
