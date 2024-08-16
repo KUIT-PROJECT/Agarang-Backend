@@ -41,9 +41,6 @@ public class JWTFilter extends OncePerRequestFilter {
     try {
       jwtUtil.isExpired(accessToken);
     } catch (ExpiredJwtException e) {
-      log.info("Access token expired: {}", e.getMessage());
-      PrintWriter writer = response.getWriter();
-      writer.print("access token expired");
       throw new BusinessException(BaseResponseStatus.EXPIRED_ACCESS_TOKEN);
     }
 
@@ -51,8 +48,6 @@ public class JWTFilter extends OncePerRequestFilter {
     String category = jwtUtil.getCategory(accessToken);
 
     if (!category.equals("Authorization")) {
-      PrintWriter writer = response.getWriter();
-      writer.print("invalid access token");
       throw new BusinessException(BaseResponseStatus.INVALID_ACCESS_TOKEN);
     }
 
