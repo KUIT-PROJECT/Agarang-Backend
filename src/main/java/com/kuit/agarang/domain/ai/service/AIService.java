@@ -203,6 +203,7 @@ public class AIService {
   public String getCharacterBubble(Character character, String familyRole) {
     String prompt = promptUtil.createCharacterBubble(character, familyRole);
     GPTChat chat = gptChatService.chat(GPTSystemRole.ASSISTANT, prompt, 1L, false);
+    logChat(gptUtil.createHistoryMessage(chat));
     return gptUtil.getGPTAnswer(chat);
   }
 
