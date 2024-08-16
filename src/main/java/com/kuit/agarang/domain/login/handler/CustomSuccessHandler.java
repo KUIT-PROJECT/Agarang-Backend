@@ -57,6 +57,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     memberRepository.save(member);
 
     // 응답 설정
+    response.setHeader("Authorization", access);
     response.addCookie(cookieUtil.createCookie("Authorization", access));
     response.setStatus(HttpStatus.OK.value());
   }
