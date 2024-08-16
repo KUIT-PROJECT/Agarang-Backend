@@ -55,7 +55,7 @@ public class AIService {
   private final HashTagRepository hashTagRepository;
 
   public QuestionResponse getFirstQuestion(MultipartFile image) throws Exception {
-    S3File convertedImage = s3FileUtil.uploadTempFile(image);
+    S3File convertedImage = s3FileUtil.convert(image);
 
     // image -> gpt -> 노래제목, 해시태그 생성
     String prompt = promptUtil.createImageDescriptionPrompt();
