@@ -1,9 +1,11 @@
 package com.kuit.agarang.global.common.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kuit.agarang.domain.login.handler.CustomSuccessHandler;
 import com.kuit.agarang.domain.login.filter.JWTFilter;
 import com.kuit.agarang.domain.login.utils.JWTUtil;
 import com.kuit.agarang.domain.login.service.CustomOAuth2UserService;
+import com.kuit.agarang.global.common.exception.handler.FilterExceptionHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +24,11 @@ public class SecurityConfig {
   private final JWTUtil jwtUtil;
 
   @Bean
+  public JWTFilter jwtFilter() {
+    return new JWTFilter(jwtUtil);
+  }
+
+  @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
     http
@@ -31,7 +38,8 @@ public class SecurityConfig {
         .httpBasic((auth) -> auth.disable()); // HTTP 헤더 인증 방식 비활성화
 
     http
-        .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+        .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(new FilterExceptionHandler(new ObjectMapper()), JWTFilter.class);
 
     //oauth2
     http
