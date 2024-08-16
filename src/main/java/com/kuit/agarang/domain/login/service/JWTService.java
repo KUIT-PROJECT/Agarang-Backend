@@ -3,6 +3,7 @@ package com.kuit.agarang.domain.login.service;
 import com.kuit.agarang.domain.login.model.dto.ReissueDto;
 import com.kuit.agarang.domain.login.utils.JWTUtil;
 import com.kuit.agarang.domain.member.model.entity.Member;
+import com.kuit.agarang.domain.member.model.entity.RefreshToken;
 import com.kuit.agarang.domain.member.repository.MemberRepository;
 import com.kuit.agarang.domain.member.repository.RefreshRepository;
 import com.kuit.agarang.global.common.exception.exception.BusinessException;
@@ -22,14 +23,10 @@ public class JWTService {
   private final MemberRepository memberRepository;
   private final RefreshRepository refreshRepository;
 
-  public ReissueDto reissueTokens(Long memberId) {
-
-    Member member = memberRepository.findByIdWithRefreshToken(memberId)
-        .orElseThrow(() -> new BusinessException(NOT_FOUND_MEMBER));
-    String refresh = member.getRefreshToken().getValue();
+  public ReissueDto reissueTokens(String refresh) {
 
     // RefreshToken 유효성 검증
-    validateRefreshToken(refresh);
+    Member member = validateRefreshToken(refresh);
 
     // AccessToken 생성 및 Refresh Rotate
     String newAccess = jwtUtil.createAccessToken(member.getProviderId(), member.getRole(), member.getId());
@@ -46,15 +43,17 @@ public class JWTService {
         .build();
   }
 
-  private void validateRefreshToken(String refresh) {
+  private Member validateRefreshToken(String refresh) {
+    // not found or null
+    RefreshToken refreshToken = refreshRepository.findByValue(refresh)
+      .orElseThrow(() -> new BusinessException(NOT_FOUND_REFRESH_TOKEN));
 
-    if (refresh == null) {
-      throw new BusinessException(NOT_FOUND_REFRESH_TOKEN);
-    }
+    Member member = memberRepository.findByRefreshToken(refreshToken)
+      .orElseThrow(() -> {
+        deleteRefreshToken(refreshToken); // 탈취 가능성
+        return new BusinessException(NOT_FOUND_REFRESH_TOKEN);
+      });
 
-    /*
-       EXPIRED_REFRESH_TOKEN -> Login redirect
-     */
     try {
       jwtUtil.isExpired(refresh);
     } catch (ExpiredJwtException e) {
@@ -63,12 +62,14 @@ public class JWTService {
 
     String category = jwtUtil.getCategory(refresh);
     if (!category.equals("refresh")) {
-      throw new BusinessException(NOT_FOUND_REFRESH_TOKEN);
+      throw new BusinessException(INVALID_REFRESH_TOKEN);
     }
 
-    Boolean isExist = refreshRepository.existsByValue(refresh);
-    if (!isExist) {
-      throw new BusinessException(NOT_FOUND_REFRESH_TOKEN);
-    }
+    return member;
+  }
+
+  private void deleteRefreshToken(RefreshToken refreshToken) {
+    refreshRepository.delete(refreshToken);
+    memberRepository.deleteByRefreshToken(refreshToken);
   }
 }
