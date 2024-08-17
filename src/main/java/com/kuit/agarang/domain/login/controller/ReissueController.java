@@ -22,15 +22,14 @@ public class ReissueController {
   private final JWTService jwtService;
   private final CookieUtil cookieUtil;
 
-  private static final String BEARER = "Bearer ";
-
   @PostMapping("/reissue")
   public ResponseEntity<BaseResponse<ReissueDto>> reissue(@CookieValue(value = "REFRESH", required = false) String refresh,
                                                           HttpServletResponse response) {
     ReissueDto reissueDto = jwtService.reissueTokens(refresh);
 
-    response.addHeader("Authorization", BEARER + reissueDto.getNewAccessToken());
+    response.addCookie(cookieUtil.createCookie("Authorization", reissueDto.getNewAccessToken()));
     response.addCookie(cookieUtil.createCookie("REFRESH", reissueDto.getNewRefreshToken()));
+
     log.info("New Access Token = {}", reissueDto.getNewAccessToken());
     log.info("New Refresh Token = {}", reissueDto.getNewRefreshToken());
 
