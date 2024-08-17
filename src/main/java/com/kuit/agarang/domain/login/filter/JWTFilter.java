@@ -19,8 +19,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,16 +26,10 @@ public class JWTFilter extends OncePerRequestFilter {
 
   private final JWTUtil jwtUtil;
 
-  private static final List<String> EXCLUDED_URIS = Arrays.asList(
-    "/reissue",
-    "/api/ai/tts/webhook",
-    "/api/ai/music-gen/webhook"
-  );
-
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-    if (isExcludedURI(request.getRequestURI())) {
+    if ("/reissue".equals(request.getRequestURI())) {
       filterChain.doFilter(request, response);
       return;
     }
@@ -84,9 +76,5 @@ public class JWTFilter extends OncePerRequestFilter {
 
     log.info("JWT Filter Success");
     filterChain.doFilter(request, response);
-  }
-
-  private boolean isExcludedURI(String requestURI) {
-    return EXCLUDED_URIS.contains(requestURI);
   }
 }
