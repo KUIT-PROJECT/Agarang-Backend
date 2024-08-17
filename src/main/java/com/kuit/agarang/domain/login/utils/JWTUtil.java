@@ -18,7 +18,6 @@ public class JWTUtil {
   private Long ACCESS_EXPIRED_IN;
   @Value("${secret.jwt-refresh-expired-in}")
   private Long REFRESH_EXPIRED_IN;
-  private static final String BEARER = "Bearer ";
 
   public JWTUtil(@Value("${secret.jwt-secret-key}") String secret) {
     secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());

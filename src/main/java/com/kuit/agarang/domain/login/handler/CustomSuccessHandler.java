@@ -26,8 +26,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
   private final CookieUtil cookieUtil;
   private final RedisService redisService;
 
-  private final static String BEARER = "Bearer ";
-
   @Override
   @Transactional
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -46,8 +44,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     redisService.save(refresh, memberId);
 
     // 응답 설정
-    response.setHeader("Authorization", BEARER + access);
+    response.addCookie(cookieUtil.createCookie("Authorization", access));
     response.addCookie(cookieUtil.createCookie("REFRESH", refresh));
+
     response.setStatus(HttpStatus.OK.value());
   }
 }
