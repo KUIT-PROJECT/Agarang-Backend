@@ -37,14 +37,12 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     // 토큰 생성
     String access = jwtUtil.createAccessToken(providerId, role, memberId);
     String refresh = jwtUtil.createRefreshToken(providerId, role, memberId);
-    log.info("AccessToken = {}", access);
-    log.info("RefreshToken = {}", refresh);
 
     // Refresh 토큰 저장
     redisService.save(refresh, memberId);
 
     // 응답 설정
-    response.addCookie(cookieUtil.createCookie("Authorization", access));
+    response.addCookie(cookieUtil.createCookie("ACCESS", access));
     response.addCookie(cookieUtil.createCookie("REFRESH", refresh));
 
     response.setStatus(HttpStatus.OK.value());

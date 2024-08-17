@@ -30,7 +30,7 @@ public enum BaseResponseStatus {
   NOT_FOUND_REFRESH_TOKEN(false, HttpStatus.UNAUTHORIZED, 4015, "리프레시 토큰을 찾을 수 없습니다. 다시 로그인해주세요."),
   EXPIRED_REFRESH_TOKEN(false, HttpStatus.UNAUTHORIZED, 4016, "리프레시 토큰이 만료되었습니다. 다시 로그인해주세요."),
   FILE_DOWNLOAD_ERROR(false, HttpStatus.FORBIDDEN, 4017, "musicgen 파일 다운로드 중 오류가 발생했습니다."),
-  EXPIRED_ACCESS_TOKEN(false, HttpStatus.UNAUTHORIZED, 4018, "액세스 토큰이 만료되었습니다."),
+  EXPIRED_ACCESS_TOKEN(false, HttpStatus.UNAUTHORIZED, 4018, "액세스 토큰이 만료되었습니다. 토큰 재발급 요청이 필요합니다."),
   INVALID_ACCESS_TOKEN(false, HttpStatus.UNAUTHORIZED, 4019, "유효하지 않은 액세스 토큰입니다."),
   INVALID_REFRESH_TOKEN(false, HttpStatus.UNAUTHORIZED, 4019, "유효하지 않은 리프레시 토큰입니다."),
 
