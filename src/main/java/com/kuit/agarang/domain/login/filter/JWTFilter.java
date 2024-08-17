@@ -3,7 +3,7 @@ package com.kuit.agarang.domain.login.filter;
 import com.kuit.agarang.domain.login.model.dto.CustomOAuth2User;
 import com.kuit.agarang.domain.login.utils.JWTUtil;
 import com.kuit.agarang.domain.member.model.dto.MemberDTO;
-import com.kuit.agarang.global.common.exception.exception.BusinessException;
+import com.kuit.agarang.global.common.exception.exception.JWTException;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -18,37 +18,45 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 @Slf4j
 @RequiredArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
 
   private final JWTUtil jwtUtil;
+  private static final String BEARER = "Bearer ";
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
     String accessToken = request.getHeader("Authorization");
 
-    if (accessToken == null) {
+    if (accessToken == null || "/reissue".equals(request.getRequestURI())) {
       filterChain.doFilter(request, response);
       return;
     }
+
+    if (!accessToken.startsWith(BEARER)) {
+      throw new JWTException(BaseResponseStatus.INVALID_ACCESS_TOKEN);
+    }
+    accessToken = accessToken.split("Bearer ")[1];
+
     /*
       EXPIRED_ACCESS_TOKEN -> Reissue Controller redirect
      */
     try {
       jwtUtil.isExpired(accessToken);
     } catch (ExpiredJwtException e) {
-      throw new BusinessException(BaseResponseStatus.EXPIRED_ACCESS_TOKEN);
+      throw new JWTException(BaseResponseStatus.EXPIRED_ACCESS_TOKEN);
+    } catch (Exception e) {
+      throw new JWTException(BaseResponseStatus.INVALID_ACCESS_TOKEN);
     }
 
     // 토큰이 access인지 확인 (발급시 페이로드에 명시)
     String category = jwtUtil.getCategory(accessToken);
 
     if (!category.equals("Authorization")) {
-      throw new BusinessException(BaseResponseStatus.INVALID_ACCESS_TOKEN);
+      throw new JWTException(BaseResponseStatus.INVALID_ACCESS_TOKEN);
     }
 
     String providerId = jwtUtil.getProviderId(accessToken);

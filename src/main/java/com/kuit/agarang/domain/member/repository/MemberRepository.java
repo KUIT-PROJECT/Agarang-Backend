@@ -16,7 +16,4 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
   @Query("SELECT m FROM Member m JOIN FETCH Baby b ON m.baby = b WHERE m.id = :memberId")
   Optional<Member> findByIdFetchJoinBaby(@Param("memberId") Long memberId);
-
-  @Query("SELECT m FROM Member m JOIN FETCH m.refreshToken WHERE m.id = :memberId")
-  Optional<Member> findByIdWithRefreshToken(@Param("memberId") Long memberId);
 }
