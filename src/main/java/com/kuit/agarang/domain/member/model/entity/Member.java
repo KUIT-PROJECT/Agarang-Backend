@@ -21,10 +21,6 @@ public class Member extends BaseEntity {
   @JoinColumn(name = "baby_id")
   private Baby baby;
 
-  @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  @JoinColumn(name = "refresh_token_id")
-  private RefreshToken refreshToken;
-
   @Column(unique = true)
   private String providerId;
 
@@ -66,10 +62,6 @@ public class Member extends BaseEntity {
   public void addBaby(Baby baby) {
     this.baby = baby;
     baby.getMembers().add(this);
-  }
-
-  public void addRefreshToken(RefreshToken refreshToken) {
-    this.refreshToken = refreshToken;
   }
 
   public void setFamilyRole(String familyRole) {
