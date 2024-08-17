@@ -16,6 +16,11 @@ import com.kuit.agarang.domain.memory.model.entity.Hashtag;
 import com.kuit.agarang.domain.memory.model.entity.Memory;
 import com.kuit.agarang.domain.memory.repository.HashTagRepository;
 import com.kuit.agarang.domain.memory.repository.MemoryRepository;
+import com.kuit.agarang.domain.playlist.model.entity.MemoryPlaylist;
+import com.kuit.agarang.domain.playlist.model.entity.Playlist;
+import com.kuit.agarang.domain.playlist.repository.MemoryPlaylistRepository;
+import com.kuit.agarang.domain.playlist.repository.PlaylistRepository;
+import com.kuit.agarang.domain.playlist.util.MusicSaveUtil;
 import com.kuit.agarang.global.common.exception.exception.BusinessException;
 import com.kuit.agarang.global.common.exception.exception.OpenAPIException;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
@@ -51,8 +56,14 @@ public class AIService {
 
   private final MemoryRepository memoryRepository;
   private final MemberRepository memberRepository;
+
+
   private final MusicGenService musicGenService;
   private final HashTagRepository hashTagRepository;
+
+  private final MusicSaveUtil musicSaveUtil;
+  private final MemoryPlaylistRepository memoryPlaylistRepository;
+  private final PlaylistRepository playlistRepository;
 
   public QuestionResponse getFirstQuestion(MultipartFile image) throws Exception {
     S3File convertedImage = s3FileUtil.convert(image);
@@ -197,6 +208,17 @@ public class AIService {
     memoryRepository.save(memory);
 
     // TODO : playlist 구분 저장 구현 시 반영
+    List<Long> playlistIds = musicSaveUtil.getPlaylistIds(chatHistory.getMusicInfo().getGenre(),
+            chatHistory.getMusicInfo().getMood(),
+            chatHistory.getMusicInfo().getInstrument());
+
+    for (Long playlistId : playlistIds) {
+      Playlist playlist = playlistRepository.findById(playlistId)
+              .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_PLAYLIST_ID));
+
+      MemoryPlaylist memoryPlaylist = new MemoryPlaylist(memory, playlist);
+      memoryPlaylistRepository.save(memoryPlaylist);
+    }
   }
 
   public String getCharacterBubble(Character character, String familyRole) {
