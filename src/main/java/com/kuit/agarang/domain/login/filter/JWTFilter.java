@@ -36,10 +36,12 @@ public class JWTFilter extends OncePerRequestFilter {
 
     String accessToken = null;
     Cookie[] cookies = request.getCookies();
-    for (Cookie cookie : cookies) {
-      if ("ACCESS".equals(cookie.getName())) {
-        accessToken = cookie.getValue();
-        break;
+    if (cookies != null) {
+      for (Cookie cookie : cookies) {
+        if ("ACCESS".equals(cookie.getName())) {
+          accessToken = cookie.getValue();
+          break;
+        }
       }
     }
 
