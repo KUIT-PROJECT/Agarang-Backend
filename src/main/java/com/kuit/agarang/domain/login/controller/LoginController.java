@@ -32,8 +32,7 @@ public class LoginController {
   @PostMapping("/process-baby")
   public ResponseEntity<BaseResponse<Void>> processBabyAssignment(@AuthenticationPrincipal CustomOAuth2User details,
                                                                   @RequestBody ProcessBabyRequest request) {
-    memberService.processBabyAssignment(details.getMemberId(), request.getBabyName(),
-      request.getDueDate(), request.getFamilyRole());
+    memberService.processBabyAssignment(details.getMemberId(), request);
     return ResponseEntity.ok(new BaseResponse<>(SUCCESS));
   }
 
