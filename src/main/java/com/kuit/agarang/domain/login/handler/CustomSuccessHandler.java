@@ -29,12 +29,11 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
   @Value("${app.baseUrl}")
   private String baseUrl;
+  private static final String LOGIN_SUCCESS_URI = "/api/login/success";
 
   @Override
   @Transactional
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-
-
 
     String providerId = authenticationUtil.getProviderId();
     String role = authenticationUtil.getRole();
@@ -50,7 +49,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     // 응답 설정
     response.addCookie(cookieUtil.createCookie("ACCESS", access));
     response.addCookie(cookieUtil.createCookie("REFRESH", refresh));
-
-    response.setStatus(HttpStatus.OK.value());
+    response.sendRedirect(baseUrl + LOGIN_SUCCESS_URI);
   }
 }
