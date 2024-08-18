@@ -51,11 +51,10 @@ public class SecurityConfig {
     http
         .authorizeHttpRequests((auth) -> auth
             .requestMatchers(
-                "/", "/env", "/api-json/**", "/api-docs", "/swagger-ui/**",
-                "/oauth2/**")
-            .permitAll()
-            .requestMatchers("/reissue").permitAll()
-            .anyRequest().permitAll() // TODO : 인가 구현 후 수정
+                "/", "/env", "/api-json/**", "/api-docs", "/swagger-ui/**").permitAll()
+            .requestMatchers("/oauth2/**", "/login/**","/reissue").permitAll()
+            .requestMatchers("/api/ai/music-gen/webhook", "/api/ai/tts/webhook").permitAll()
+            .anyRequest().hasRole("USER")
         )
         .oauth2Login(oauth2 -> oauth2
             .userInfoEndpoint(endpoint -> endpoint.userService(customOAuth2UserService))
