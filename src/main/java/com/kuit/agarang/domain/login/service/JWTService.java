@@ -8,11 +8,13 @@ import com.kuit.agarang.global.common.exception.exception.JWTException;
 import com.kuit.agarang.global.common.service.RedisService;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.*;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -45,6 +47,7 @@ public class JWTService {
 
   private Member validateRefreshToken(String oldRefresh) {
     if (oldRefresh == null) {
+      log.info("reissue : refresh token is null (cookie null)");
       throw new JWTException(NOT_FOUND_REFRESH_TOKEN);
     }
 
