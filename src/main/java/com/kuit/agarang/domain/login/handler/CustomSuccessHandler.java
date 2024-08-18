@@ -44,7 +44,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     String refresh = jwtUtil.createRefreshToken(providerId, role, memberId);
 
     // Refresh 토큰 저장
-    redisService.save(refresh, memberId);
+    redisService.save(providerId, refresh);
 
     // 응답 설정
     response.addCookie(cookieUtil.createCookie("ACCESS", access));

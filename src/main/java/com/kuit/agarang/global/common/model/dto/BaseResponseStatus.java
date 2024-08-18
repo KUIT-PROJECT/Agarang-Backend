@@ -33,7 +33,7 @@ public enum BaseResponseStatus {
   FILE_DOWNLOAD_ERROR(false, HttpStatus.FORBIDDEN, 4017, "musicgen 파일 다운로드 중 오류가 발생했습니다."),
   EXPIRED_ACCESS_TOKEN(false, HttpStatus.UNAUTHORIZED, 4018, "액세스 토큰이 만료되었습니다. 토큰 재발급 요청이 필요합니다."),
   INVALID_ACCESS_TOKEN(false, HttpStatus.UNAUTHORIZED, 4019, "유효하지 않은 액세스 토큰입니다."),
-  INVALID_REFRESH_TOKEN(false, HttpStatus.UNAUTHORIZED, 4019, "유효하지 않은 리프레시 토큰입니다."),
+  INVALID_REFRESH_TOKEN(false, HttpStatus.UNAUTHORIZED, 4019, "유효하지 않은 리프레시 토큰입니다. 다시 로그인해주세요."),
 
   SERVER_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR, 5001, "알 수 없는 이유로 서버에 문제가 발생했습니다."),
   FAIL_REDIS_CONNECTION(false, HttpStatus.SERVICE_UNAVAILABLE, 5002, "레디스 서버에 연결 실패했습니다."),
