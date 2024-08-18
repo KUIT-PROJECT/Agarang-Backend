@@ -33,15 +33,13 @@ public class SettingService {
 
     Baby baby = babyRepository.findByMemberId(memberId)
         .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_BABY));
-    String babyName = baby.getName();
 
     LocalDate dueDate = baby.getDueDate();
-
-    LocalDate today = LocalDate.now();
-    Integer dDay = (int) ChronoUnit.DAYS.between(today, dueDate);
+    Integer dDay = (int) ChronoUnit.DAYS.between(LocalDate.now(), dueDate);
 
     return GlobalSettingResponse.builder()
-        .babyName(babyName)
+        .characterImageUrl(baby.getCharacter().getImageUrl())
+        .babyName(baby.getName())
         .dDay(dDay)
         .dueDate(dueDate).build();
   }

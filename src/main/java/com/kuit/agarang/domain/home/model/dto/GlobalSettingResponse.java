@@ -12,4 +12,5 @@ public class GlobalSettingResponse {
   private String babyName;
   private Integer dDay;
   private LocalDate dueDate;
+  private String characterImageUrl;
 }
