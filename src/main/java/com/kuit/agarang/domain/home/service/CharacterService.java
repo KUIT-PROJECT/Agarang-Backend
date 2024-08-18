@@ -20,24 +20,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class CharacterService {
-  
-  private final CharacterRepository characterRepository;
+
   private final BabyRepository babyRepository;
+  private final CharacterRepository characterRepository;
 
   public List<CharacterSettingResponse> getCharactersByDate(Long memberId) {
 
     Baby baby = babyRepository.findByMemberId(memberId)
         .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_BABY));
 
-    long dDay = ChronoUnit.DAYS.between(LocalDate.now(), baby.getDueDate());
-    Integer level = dDay <= 140 ? 2 : 1;
-
-    List<Character> charactersByLevel = characterRepository.findByLevel(level);
-
-    return charactersByLevel.stream()
-        .map(character -> new CharacterSettingResponse(character.getId(), character.getName(),
-            character.getDescription(), character.getImageUrl()))
-        .collect(Collectors.toList());
+    return characterRepository.findAll().stream()
+        .map(x -> CharacterSettingResponse.from(x, getCharacterImage(baby))).collect(Collectors.toList());
   }
 
   public void updateCharacterSetting(Long memberId, Long characterId) {
@@ -49,7 +42,17 @@ public class CharacterService {
         .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_CHARACTER));
 
     baby.setCharacter(character);
-
     babyRepository.save(baby);
+  }
+
+  public String getCharacterImage(Baby baby) {
+    int level = getCharacterLevel(baby);
+    Character character = baby.getCharacter();
+    return level == 1 ? character.getImageUrl() : character.getSecondImageUrl();
+  }
+
+  private int getCharacterLevel(Baby baby) {
+    long dDay = ChronoUnit.DAYS.between(LocalDate.now(), baby.getDueDate());
+    return dDay <= 140 ? 2 : 1;
   }
 }

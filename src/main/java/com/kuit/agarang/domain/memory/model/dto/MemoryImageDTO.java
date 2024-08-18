@@ -1,5 +1,6 @@
 package com.kuit.agarang.domain.memory.model.dto;
 
+import com.kuit.agarang.domain.memory.model.entity.Memory;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,5 +22,9 @@ public class MemoryImageDTO {
             .id(id)
             .imageUrl(imageUrl)
             .build();
+  }
+
+  public static MemoryImageDTO from(Memory memory) {
+    return MemoryImageDTO.of(memory.getId(), memory.getImageUrl());
   }
 }
