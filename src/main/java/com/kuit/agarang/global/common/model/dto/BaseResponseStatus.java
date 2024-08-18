@@ -22,7 +22,7 @@ public enum BaseResponseStatus {
   NOT_FOUND_HISTORY_CHAT(false, HttpStatus.NOT_FOUND, 4007, "카드 생성 중 이전 대화기록을 찾을 수 없습니다. id 값을 확인해주세요."),
   INVALID_MUSIC_CHOICE(false, HttpStatus.BAD_REQUEST, 4008, "음악 선택값이 올바른지 확인해주세요."),
   FAIL_FILE_READ(false, HttpStatus.FORBIDDEN, 4009, "파일 업로드에 실패했습니다. 다시 시도해주세요."),
-  INVALID_MEMBER_ID(false, HttpStatus.NOT_FOUND, 40010, "존재하지 않는 회원입니다."),
+  INVALID_MEMBER_ID(false, HttpStatus.NOT_FOUND, 4010, "존재하지 않는 회원입니다."),
   INVALID_PLAYLIST_ID(false, HttpStatus.NOT_FOUND, 4011, "존재하지 않는 플레이리스트입니다."),
   NOT_FOUND_BABY(false, HttpStatus.NOT_FOUND, 4012, "아기를 찾을 수 없습니다"),
   NOT_FOUND_CHARACTER(false, HttpStatus.NOT_FOUND, 4013, "캐릭터를 찾을 수 없습니다"),
