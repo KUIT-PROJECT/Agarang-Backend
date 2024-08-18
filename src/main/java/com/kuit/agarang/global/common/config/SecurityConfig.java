@@ -54,8 +54,7 @@ public class SecurityConfig {
                 "/", "/env", "/api-json/**", "/api-docs", "/swagger-ui/**").permitAll()
             .requestMatchers("/oauth2/**", "/login/**","/reissue").permitAll()
             .requestMatchers("/api/ai/music-gen/webhook", "/api/ai/tts/webhook").permitAll()
-            .anyRequest().permitAll()
-            // .anyRequest().hasRole("USER")
+            .anyRequest().hasRole("USER")
         )
         .oauth2Login(oauth2 -> oauth2
             .userInfoEndpoint(endpoint -> endpoint.userService(customOAuth2UserService))
