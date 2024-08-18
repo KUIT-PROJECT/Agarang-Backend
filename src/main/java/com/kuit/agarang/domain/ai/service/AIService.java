@@ -208,17 +208,9 @@ public class AIService {
     memoryRepository.save(memory);
 
     // TODO : playlist 구분 저장 구현 시 반영
-    List<Long> playlistIds = musicSaveUtil.getPlaylistIds(chatHistory.getMusicInfo().getGenre(),
-            chatHistory.getMusicInfo().getMood(),
-            chatHistory.getMusicInfo().getInstrument());
+    List<Playlist> playlists = musicSaveUtil.getPlaylistIds(memory.getGenre(), memory.getMood(), memory.getInstrument());
 
-    for (Long playlistId : playlistIds) {
-      Playlist playlist = playlistRepository.findById(playlistId)
-              .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_PLAYLIST_ID));
-
-      MemoryPlaylist memoryPlaylist = new MemoryPlaylist(memory, playlist);
-      memoryPlaylistRepository.save(memoryPlaylist);
-    }
+    playlists.forEach(x -> memoryPlaylistRepository.save(new MemoryPlaylist(memory, x)));
   }
 
   public String getCharacterBubble(Character character, String familyRole) {
