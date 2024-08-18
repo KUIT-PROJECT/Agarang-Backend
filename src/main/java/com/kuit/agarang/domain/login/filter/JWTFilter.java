@@ -38,7 +38,7 @@ public class JWTFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
     if (isPassUris(request.getRequestURI())) {
-      log.info("JWT Filter Pass : {}", request.getRequestURI());
+      log.info("JWT Filter Pass (pass uri) : {}", request.getRequestURI());
       filterChain.doFilter(request, response);
       return;
     }
@@ -55,6 +55,7 @@ public class JWTFilter extends OncePerRequestFilter {
     }
 
     if (accessToken == null) {
+      log.info("JWT Filter Pass (accessToken is null) : {}", request.getRequestURI());
       SecurityContextHolder.getContext().setAuthentication(null);
       filterChain.doFilter(request, response);
       return;
