@@ -19,6 +19,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,10 +28,16 @@ public class JWTFilter extends OncePerRequestFilter {
 
   private final JWTUtil jwtUtil;
 
+  public final static List<String> PASS_URIS = Arrays.asList(
+    "/reissue",
+    "/login",
+    "/api/login/success"
+  );
+
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-    if ("/reissue".equals(request.getRequestURI()) || "/login".equals(request.getRequestURI())) {
+    if (isPassUris(request.getRequestURI())) {
       filterChain.doFilter(request, response);
       return;
     }
@@ -76,5 +84,9 @@ public class JWTFilter extends OncePerRequestFilter {
 
     log.info("JWT Filter Success");
     filterChain.doFilter(request, response);
+  }
+
+  private boolean isPassUris(String uri) {
+    return PASS_URIS.contains(uri);
   }
 }

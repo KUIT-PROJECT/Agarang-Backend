@@ -34,7 +34,6 @@ public class JWTService {
     String newRefresh = jwtUtil.createRefreshToken(member.getProviderId(), member.getRole(), member.getId());
 
     // Refresh Token Update
-    redisService.delete(oldRefresh);
     redisService.save(member.getProviderId(), newRefresh);
 
     return ReissueDto.builder()
