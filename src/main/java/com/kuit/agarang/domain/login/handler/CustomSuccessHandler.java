@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -25,6 +26,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
   private final JWTUtil jwtUtil;
   private final CookieUtil cookieUtil;
   private final RedisService redisService;
+
+  @Value("${app.baseUrl}")
+  private String baseUrl;
 
   @Override
   @Transactional
@@ -44,6 +48,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     // 응답 설정
     response.addCookie(cookieUtil.createCookie("ACCESS", access));
     response.addCookie(cookieUtil.createCookie("REFRESH", refresh));
+    response.sendRedirect(baseUrl + "/api/home");
 
     response.setStatus(HttpStatus.OK.value());
   }
