@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.LOGIN_SUCCESS;
+import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.AUTHORIZATION_SUCCESS;
 import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.SUCCESS;
 
 @Slf4j
@@ -39,6 +39,6 @@ public class LoginController {
 
   @GetMapping("/success")
   public ResponseEntity<BaseResponse<Void>> loginSuccess() {
-    return ResponseEntity.ok(new BaseResponse<>(LOGIN_SUCCESS));
+    return ResponseEntity.ok(new BaseResponse<>(AUTHORIZATION_SUCCESS));
   }
 }
