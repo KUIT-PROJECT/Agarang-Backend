@@ -52,7 +52,7 @@ public class SecurityConfig {
         .authorizeHttpRequests((auth) -> auth
             .requestMatchers(
                 "/", "/env", "/api-json/**", "/api-docs", "/swagger-ui/**").permitAll()
-            .requestMatchers("/oauth2/**", "/reissue").permitAll()
+            .requestMatchers("/oauth2/**", "/login/**","/reissue").permitAll()
             .requestMatchers("/api/ai/music-gen/webhook", "/api/ai/tts/webhook").permitAll()
             .anyRequest().hasRole("USER")
         )
