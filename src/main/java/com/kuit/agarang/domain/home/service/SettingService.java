@@ -6,13 +6,10 @@ import com.kuit.agarang.domain.home.model.dto.BabySettingResponse;
 import com.kuit.agarang.domain.home.model.dto.BabySettingUpdateRequest;
 import com.kuit.agarang.domain.home.model.dto.FamilySettingResponse;
 import com.kuit.agarang.domain.home.model.dto.GlobalSettingResponse;
-import com.kuit.agarang.domain.login.utils.AuthenticationUtil;
 import com.kuit.agarang.domain.member.model.dto.MemberDTO;
-import com.kuit.agarang.domain.member.repository.MemberRepository;
 import com.kuit.agarang.global.common.exception.exception.BusinessException;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,16 +45,11 @@ public class SettingService {
 
     Baby baby = babyRepository.findByMemberId(memberId)
         .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_BABY));
-    String babyName = baby.getName();
-
-    LocalDate dueDate = baby.getDueDate();
-
-    Double weight = baby.getWeight();
 
     return BabySettingResponse.builder()
-        .babyName(babyName)
-        .dueDate(dueDate)
-        .weight(weight).build();
+        .babyName(baby.getName())
+        .dueDate(baby.getDueDate())
+        .weight(baby.getWeight()).build();
   }
 
   @Transactional
@@ -82,7 +74,6 @@ public class SettingService {
     // 아기 코드
     Baby baby = babyRepository.findByMemberId(memberId)
         .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_BABY));
-    String babyName = baby.getBabyCode();
 
     // 가족
     List<MemberDTO> memberDTOs = baby.getMembers().stream()
@@ -95,7 +86,7 @@ public class SettingService {
         .collect(Collectors.toList());
 
     return FamilySettingResponse.builder()
-        .babyCode(babyName)
+        .babyCode(baby.getName())
         .members(memberDTOs).build();
   }
 

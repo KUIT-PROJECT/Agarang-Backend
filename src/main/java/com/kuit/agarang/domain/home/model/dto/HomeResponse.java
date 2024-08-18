@@ -1,5 +1,6 @@
 package com.kuit.agarang.domain.home.model.dto;
 
+import com.kuit.agarang.domain.memory.model.dto.MemoryImageDTO;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,5 +16,5 @@ public class HomeResponse {
   private Integer dDay;
   private String characterUrl;
   private String speechBubble;
-  private List<Long> memoryIds;
+  private List<MemoryImageDTO> memories;
 }

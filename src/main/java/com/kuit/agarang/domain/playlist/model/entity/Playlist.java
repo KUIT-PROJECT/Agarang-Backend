@@ -10,6 +10,7 @@ import lombok.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Playlist extends BaseEntity {
 
   @Id
@@ -18,10 +19,4 @@ public class Playlist extends BaseEntity {
 
   private String name;
   private String imageUrl;
-
-  @Builder
-  public Playlist(String name, String imageUrl) {
-    this.name = name;
-    this.imageUrl = imageUrl;
-  }
 }
