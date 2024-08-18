@@ -34,6 +34,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
   @Transactional
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
 
+
+
     String providerId = authenticationUtil.getProviderId();
     String role = authenticationUtil.getRole();
     Long memberId = authenticationUtil.getMemberId();
@@ -48,7 +50,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     // 응답 설정
     response.addCookie(cookieUtil.createCookie("ACCESS", access));
     response.addCookie(cookieUtil.createCookie("REFRESH", refresh));
-    response.sendRedirect(baseUrl + "/");
 
     response.setStatus(HttpStatus.OK.value());
   }
