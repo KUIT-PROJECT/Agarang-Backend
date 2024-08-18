@@ -9,11 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.AUTHORIZATION_SUCCESS;
 import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.SUCCESS;
 
 @Slf4j
@@ -35,8 +33,12 @@ public class LoginController {
   public ResponseEntity<BaseResponse<Void>> processBabyAssignment(@AuthenticationPrincipal CustomOAuth2User details,
                                                                   @RequestBody ProcessBabyRequest request) {
     memberService.processBabyAssignment(details.getMemberId(), request.getBabyName(),
-        request.getDueDate(), request.getFamilyRole());
+      request.getDueDate(), request.getFamilyRole());
     return ResponseEntity.ok(new BaseResponse<>(SUCCESS));
   }
 
+  @GetMapping("/success")
+  public ResponseEntity<BaseResponse<Void>> loginSuccess() {
+    return ResponseEntity.ok(new BaseResponse<>(AUTHORIZATION_SUCCESS));
+  }
 }
