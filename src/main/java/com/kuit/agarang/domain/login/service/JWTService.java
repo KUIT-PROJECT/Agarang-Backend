@@ -35,7 +35,7 @@ public class JWTService {
 
     // Refresh Token Update
     redisService.delete(oldRefresh);
-    redisService.save(newRefresh, member.getId());
+    redisService.save(member.getProviderId(), newRefresh);
 
     return ReissueDto.builder()
       .newAccessToken(newAccess)
@@ -51,21 +51,27 @@ public class JWTService {
       throw new JWTException(NOT_FOUND_REFRESH_TOKEN);
     }
 
-    Long memberId = redisService.get(oldRefresh, Long.class)
-      .orElseThrow(() -> new JWTException(NOT_FOUND_REFRESH_TOKEN));
-
     try {
       jwtUtil.isExpired(oldRefresh);
     } catch (ExpiredJwtException e) {
       throw new JWTException(EXPIRED_REFRESH_TOKEN);
     }
 
+    String providerId = jwtUtil.getProviderId(oldRefresh);
+    String savedRefresh = redisService.get(providerId, String.class)
+      .orElseThrow(() -> new JWTException(NOT_FOUND_REFRESH_TOKEN));
+
+    if (!oldRefresh.equals(savedRefresh)) {
+      throw new JWTException(INVALID_REFRESH_TOKEN);
+    }
+
+
     String category = jwtUtil.getCategory(oldRefresh);
     if (!category.equals("refresh")) {
       throw new JWTException(INVALID_REFRESH_TOKEN);
     }
 
-    return memberRepository.findById(memberId)
+    return memberRepository.findById(jwtUtil.getMemberId(oldRefresh))
       .orElseThrow(() -> new JWTException(NOT_FOUND_MEMBER));
   }
 }
