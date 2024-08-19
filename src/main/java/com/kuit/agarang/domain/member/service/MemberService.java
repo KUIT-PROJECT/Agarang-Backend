@@ -47,7 +47,7 @@ public class MemberService {
           .name(request.getBabyName())
           .dueDate(request.getDueDate())
           .weight(1.0) // Default Value
-          .babyCode(CodeUtil.generateUniqueCode())
+          .code(CodeUtil.generateUniqueCode())
           .build();
 
       // Default Value
