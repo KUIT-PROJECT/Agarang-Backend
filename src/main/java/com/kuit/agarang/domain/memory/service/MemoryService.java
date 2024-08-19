@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -52,8 +53,6 @@ public class MemoryService {
   }
 
   private List<MemoryDTO> getMemoriesByDateAndBaby(Member member, LocalDate selectedDate) {
-
-
     List<MemoryBookmarkedDTO> memoriesByDateAndBaby = memoryRepository.findByDateAndBabyForMemoryCard(selectedDate, member.getBaby());
     return memoriesByDateAndBaby.stream()
             .map(result -> MemoryDTO.of(result.getMemory(), result.isBookmarked()))
@@ -164,5 +163,17 @@ public class MemoryService {
     Optional<MemoryBookmark> memoryBookmark = memoryBookmarkRepository.findByMemoryAndMemberId(memory, 1L);
     boolean isBookmarked = memoryBookmark.isPresent();
     return MemoryDTO.of(memory, isBookmarked);
+  }
+
+  public GetMonthlyMemories findMonthlyMemories(Long memberId, String yearMonth) {
+    Member member = memberRepository.findByIdFetchJoinBaby(memberId)
+            .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMBER));
+    YearMonth ym = DateUtil.convertStringToYearMonth(yearMonth);
+    LocalDate startOfMonth = DateUtil.getStartOfMonth(ym);
+    LocalDate endOfMonth = DateUtil.getEndOfMonth(ym);
+    List<MemoryDTO> memories = memoryRepository.findMonthlyMemories(startOfMonth, endOfMonth, member.getBaby()).stream()
+            .map(result -> MemoryDTO.of(result.getMemory(), result.isBookmarked()))
+            .toList();
+    return new GetMonthlyMemories(memories);
   }
 }
