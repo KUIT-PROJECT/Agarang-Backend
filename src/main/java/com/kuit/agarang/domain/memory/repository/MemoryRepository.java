@@ -33,7 +33,7 @@ public interface MemoryRepository extends JpaRepository<Memory,Long> {
           "WHERE Date(m.createdAt) >= :startDate AND Date(m.createdAt) <= :endDate")
   List<Memory> findMemoriesInDates(LocalDate startDate, LocalDate endDate);
 
-  List<Memory> findByBabyOrderByCreatedAtDesc(Baby baby);
+  List<Memory> findByBabyOrderByCreatedAtAsc(Baby baby);
   List<Memory> findByBaby(Baby baby);
   List<Memory> findTop3ByBabyOrderByCreatedAtDesc(Baby baby); // 3개 이하 시 조회된 갯수 만큼만 반환
   Optional<Memory> findByIdAndMemberId(Long memoryId, Long memberId);
