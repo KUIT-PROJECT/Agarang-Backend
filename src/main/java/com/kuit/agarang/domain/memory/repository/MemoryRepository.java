@@ -25,7 +25,7 @@ public interface MemoryRepository extends JpaRepository<Memory,Long> {
           "FROM Memory mm " +
           "LEFT JOIN MemoryBookmark mbm ON mm.id = mbm.memory.id " +
           "WHERE Date(mm.createdAt) >= :startDate AND Date(mm.createdAt) <= :endDate AND mm.baby = :baby " +
-          "ORDER BY mm.createdAt DESC")
+          "ORDER BY mm.createdAt ASC ")
   List<MemoryBookmarkedDTO> findMonthlyMemories(LocalDate startDate, LocalDate endDate, Baby baby);
 
   @Query("SELECT m " +
