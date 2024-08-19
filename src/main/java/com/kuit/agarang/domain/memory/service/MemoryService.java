@@ -82,7 +82,7 @@ public class MemoryService {
     Member member = memberRepository.findByIdFetchJoinBaby(memberId)
             .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMBER));
 
-    List<Memory> memories = memoryRepository.findByBabyOrderByCreatedAtDesc(member.getBaby());
+    List<Memory> memories = memoryRepository.findByBabyOrderByCreatedAtAsc(member.getBaby());
     List<DailyMemoryDTO> dailyMemoryDTOS = memories.stream()
             .map(memory -> DailyMemoryDTO.from(memory))
             .toList();
