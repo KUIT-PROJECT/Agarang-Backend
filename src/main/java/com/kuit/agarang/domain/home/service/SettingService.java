@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 public class SettingService {
 
   private final BabyRepository babyRepository;
+  private final CharacterService characterService;
 
   public GlobalSettingResponse getGlobalSetting(Long memberId) {
 
@@ -35,7 +36,7 @@ public class SettingService {
     Integer dDay = (int) ChronoUnit.DAYS.between(LocalDate.now(), dueDate);
 
     return GlobalSettingResponse.builder()
-        .characterImageUrl(baby.getCharacter().getImageUrl())
+        .characterImageUrl(characterService.getCharacterImage(baby))
         .babyName(baby.getName())
         .dDay(dDay)
         .dueDate(dueDate).build();

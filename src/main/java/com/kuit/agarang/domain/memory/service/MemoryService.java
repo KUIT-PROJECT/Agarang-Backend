@@ -1,7 +1,5 @@
 package com.kuit.agarang.domain.memory.service;
 
-import com.kuit.agarang.domain.baby.model.entity.Baby;
-import com.kuit.agarang.domain.baby.repository.BabyRepository;
 import com.kuit.agarang.domain.member.model.entity.Member;
 import com.kuit.agarang.domain.member.repository.MemberRepository;
 import com.kuit.agarang.domain.memory.model.dto.*;
@@ -107,7 +105,7 @@ public class MemoryService {
               .max(Comparator.comparing(Memory::getCreatedAt))
               .orElse(null);
       if (latestMemory != null) {
-        monthlyMemories.add(MonthlyMemoryDTO.of(month, latestMemory.getImageUrl()));
+        monthlyMemories.add(MonthlyMemoryDTO.of(month, latestMemory));
       }
     });
 
