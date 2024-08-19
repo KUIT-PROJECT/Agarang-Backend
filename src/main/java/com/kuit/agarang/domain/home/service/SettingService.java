@@ -86,7 +86,7 @@ public class SettingService {
         .collect(Collectors.toList());
 
     return FamilySettingResponse.builder()
-        .babyCode(baby.getBabyCode())
+        .babyCode(baby.getCode())
         .members(memberDTOs).build();
   }
 
