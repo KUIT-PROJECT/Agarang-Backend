@@ -20,7 +20,17 @@ public interface MemoryRepository extends JpaRepository<Memory,Long> {
           "ORDER BY mm.createdAt DESC")
   List<MemoryBookmarkedDTO> findByDateAndBabyForMemoryCard(LocalDate date, Baby baby);
 
-  @Query("SELECT m FROM Memory m WHERE Date(m.createdAt) >= :startDate AND Date(m.createdAt) <= :endDate")
+  @Query("SELECT new com.kuit.agarang.domain.memory.model.dto.MemoryBookmarkedDTO(mm, " +
+          "CASE WHEN mbm.id IS NOT NULL THEN true ELSE false END) " +
+          "FROM Memory mm " +
+          "LEFT JOIN MemoryBookmark mbm ON mm.id = mbm.memory.id " +
+          "WHERE Date(mm.createdAt) >= :startDate AND Date(mm.createdAt) <= :endDate AND mm.baby = :baby " +
+          "ORDER BY mm.createdAt DESC")
+  List<MemoryBookmarkedDTO> findMonthlyMemories(LocalDate startDate, LocalDate endDate, Baby baby);
+
+  @Query("SELECT m " +
+          "FROM Memory m " +
+          "WHERE Date(m.createdAt) >= :startDate AND Date(m.createdAt) <= :endDate")
   List<Memory> findMemoriesInDates(LocalDate startDate, LocalDate endDate);
 
   List<Memory> findByBabyOrderByCreatedAtDesc(Baby baby);

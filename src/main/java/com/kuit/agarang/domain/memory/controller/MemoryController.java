@@ -85,4 +85,10 @@ public class MemoryController {
     MemoryDTO memoryDTO = memoryService.findMemoryById(customOAuth2User.getMemberId(), memoryId);
     return ResponseEntity.ok(new BaseResponse(memoryDTO));
   }
+
+  @GetMapping("/monthly")
+  public ResponseEntity<BaseResponse> getMonthlyMemories(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestParam("month") String month) {
+    GetMonthlyMemories monthlyMemories = memoryService.findMonthlyMemories(customOAuth2User.getMemberId(), month);
+    return ResponseEntity.ok(new BaseResponse(monthlyMemories));
   }
+}
