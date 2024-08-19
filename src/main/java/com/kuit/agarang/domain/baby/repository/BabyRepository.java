@@ -7,11 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 public interface BabyRepository extends JpaRepository<Baby, Long> {
-  Optional<Baby> findByBabyCode(String code);
+  Optional<Baby> findByCode(String code);
 
   @Query("SELECT b FROM Baby b JOIN b.members m WHERE m.id = :memberId")
   Optional<Baby> findByMemberId(Long memberId);
-
-  boolean existsByBabyCode(String code);
 }
 

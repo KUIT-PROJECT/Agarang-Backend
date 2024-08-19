@@ -27,7 +27,7 @@ public class MemberService {
 
   public void verifyBabyCode(Long id, String babyCode) {
 
-    Baby baby = babyRepository.findByBabyCode(babyCode)
+    Baby baby = babyRepository.findByCode(babyCode)
         .orElseThrow(() -> new BusinessException(NOT_FOUND_BABY));
 
     Member member = memberRepository.findById(id)
