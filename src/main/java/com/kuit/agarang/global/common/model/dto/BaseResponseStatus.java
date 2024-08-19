@@ -14,7 +14,7 @@ public enum BaseResponseStatus {
   FORBIDDEN(false, HttpStatus.FORBIDDEN, 403, "권한이 없습니다."),
   NOT_FOUND(false, HttpStatus.NOT_FOUND, 404, "대상을 찾을 수 없습니다."),
 
-  INVALID_MEMORY_ID(false, HttpStatus.NOT_FOUND, 4001, "존재하지 않는 추억입니다."),
+  NOT_FOUND_MEMORY(false, HttpStatus.NOT_FOUND, 4001, "존재하지 않는 추억입니다."),
   FILE_TOO_LARGE(false, HttpStatus.PAYLOAD_TOO_LARGE, 4002, "최대 파일 사이즈(1MB)를 초과했습니다."),
   INVALID_FILE_EXTENSION(false, HttpStatus.BAD_REQUEST, 4003, "지원하지 않는 파일확장자입니다."),
   NOT_FOUND_RESOURCE(false, HttpStatus.NOT_FOUND, 4004, "존재하지 않는 페이지입니다."),

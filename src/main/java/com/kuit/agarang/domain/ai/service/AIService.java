@@ -207,9 +207,7 @@ public class AIService {
     memory.setHashtags(hashtags);
     memoryRepository.save(memory);
 
-    // TODO : playlist 구분 저장 구현 시 반영
     List<Playlist> playlists = musicSaveUtil.getPlaylistIds(memory.getGenre(), memory.getMood(), memory.getInstrument());
-
     playlists.forEach(x -> memoryPlaylistRepository.save(new MemoryPlaylist(memory, x)));
   }
 
