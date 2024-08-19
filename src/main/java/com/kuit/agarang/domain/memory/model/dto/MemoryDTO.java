@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class MemoryDTO {
+  private long id;
   private String writer;
   private String date;
   private String content;
@@ -21,7 +22,8 @@ public class MemoryDTO {
   private boolean isBookmarked;
 
   @Builder
-  public MemoryDTO(String writer, String date, String content, String musicUrl, String imageUrl, List<String> hashTags, boolean isBookmarked) {
+  public MemoryDTO(long id, String writer, String date, String content, String musicUrl, String imageUrl, List<String> hashTags, boolean isBookmarked) {
+    this.id = id;
     this.writer = writer;
     this.date = date;
     this.content = content;
@@ -33,6 +35,7 @@ public class MemoryDTO {
 
   public static MemoryDTO of(Memory memory, boolean isBookmarked) {
     return MemoryDTO.builder()
+            .id(memory.getId())
             .writer(memory.getMember().getRole())
             .date(DateUtil.formatLocalDateTime(memory.getCreatedAt(), "yyyy. MM. dd"))
             .content(memory.getText())
