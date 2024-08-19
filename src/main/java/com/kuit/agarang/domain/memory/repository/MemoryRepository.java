@@ -17,7 +17,7 @@ public interface MemoryRepository extends JpaRepository<Memory,Long> {
           "FROM Memory mm " +
           "LEFT JOIN MemoryBookmark mbm ON mm.id = mbm.memory.id " +
           "WHERE DATE(mm.createdAt) = :date AND mm.baby = :baby " +
-          "ORDER BY mm.createdAt DESC")
+          "ORDER BY mm.createdAt ASC ")
   List<MemoryBookmarkedDTO> findByDateAndBabyForMemoryCard(LocalDate date, Baby baby);
 
   @Query("SELECT new com.kuit.agarang.domain.memory.model.dto.MemoryBookmarkedDTO(mm, " +
