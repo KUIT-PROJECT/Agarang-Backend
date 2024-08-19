@@ -125,7 +125,7 @@ public class MemoryService {
     Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMBER));
     Memory memory = memoryRepository.findById(bookmarkRequest.getMemoryId())
-            .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_MEMORY_ID));
+            .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMORY));
 
     Optional<MemoryBookmark> memoryBookmark = memoryBookmarkRepository.findByMemoryAndMemberId(memory, 1L);
 
@@ -137,16 +137,18 @@ public class MemoryService {
   }
 
   @Transactional
-  public void modifyMemory(ModifyMemoryRequest modifyMemoryRequest) {
-    Memory memory = memoryRepository.findById(modifyMemoryRequest.getMemoryId())
-            .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_MEMORY_ID));
+  public void modifyMemory(Long memberId, ModifyMemoryRequest modifyMemoryRequest) {
+    System.out.println("memberId : " + memberId);
+    System.out.println("memoryId : " + modifyMemoryRequest.getMemoryId());
+    Memory memory = memoryRepository.findByIdAndMemberId(modifyMemoryRequest.getMemoryId(), memberId)
+            .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMORY));
     memory.updateMemory(modifyMemoryRequest.getText());
   }
 
   @Transactional
-  public void removeMemory(DeleteMemoryRequest deleteMemoryRequest) {
-    Memory memory = memoryRepository.findById(deleteMemoryRequest.getMemoryId())
-            .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_MEMORY_ID));
+  public void removeMemory(Long memberId, DeleteMemoryRequest deleteMemoryRequest) {
+    Memory memory = memoryRepository.findByIdAndMemberId(deleteMemoryRequest.getMemoryId(), memberId)
+            .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMORY));
 
     memoryBookmarkRepository.deleteByMemory(memory);
     musicBookmarkRepository.deleteByMemory(memory);
@@ -157,8 +159,8 @@ public class MemoryService {
 
   public MemoryDTO findMemoryById(Long memberId, Long memoryId) {
     Memory memory = memoryRepository.findByIdAndMemberId(memoryId, memberId)
-            .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_MEMORY_ID));
-    Optional<MemoryBookmark> memoryBookmark = memoryBookmarkRepository.findByMemoryAndMemberId(memory, 1L);
+            .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMORY));
+    Optional<MemoryBookmark> memoryBookmark = memoryBookmarkRepository.findByMemoryAndMemberId(memory, memberId);
     boolean isBookmarked = memoryBookmark.isPresent();
     return MemoryDTO.of(memory, isBookmarked);
   }

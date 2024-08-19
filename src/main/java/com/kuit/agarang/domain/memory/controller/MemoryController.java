@@ -69,14 +69,14 @@ public class MemoryController {
   }
 
   @PutMapping
-  public ResponseEntity<BaseResponse> modifyMemory(@RequestBody ModifyMemoryRequest modifyMemoryRequest) {
-    memoryService.modifyMemory(modifyMemoryRequest);
+  public ResponseEntity<BaseResponse> modifyMemory(@AuthenticationPrincipal CustomOAuth2User details, @RequestBody ModifyMemoryRequest modifyMemoryRequest) {
+    memoryService.modifyMemory(details.getMemberId(), modifyMemoryRequest);
     return ResponseEntity.ok(new BaseResponse());
   }
 
   @DeleteMapping
-  public ResponseEntity<BaseResponse> deleteMemory(@RequestBody DeleteMemoryRequest deleteMemoryRequest) {
-    memoryService.removeMemory(deleteMemoryRequest);
+  public ResponseEntity<BaseResponse> deleteMemory(@AuthenticationPrincipal CustomOAuth2User details, @RequestBody DeleteMemoryRequest deleteMemoryRequest) {
+    memoryService.removeMemory(details.getMemberId(), deleteMemoryRequest);
     return ResponseEntity.ok(new BaseResponse());
   }
 
