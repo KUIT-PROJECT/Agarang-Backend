@@ -77,7 +77,7 @@ public class PlaylistService {
     @Transactional
     public void updateMusicBookmark(MusicBookmarkRequest musicBookmarkRequest, Long memberId) {
         Memory memory = memoryRepository.findById(musicBookmarkRequest.getMemoryId())
-                .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_MEMORY_ID));
+                .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMORY));
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_MEMBER_ID));
@@ -101,7 +101,7 @@ public class PlaylistService {
     @Transactional
     public void deleteMusic(DeleteMusicRequest deleteMusicRequest) {
         Memory memory = memoryRepository.findById(deleteMusicRequest.getMemoryId())
-                .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_MEMORY_ID));
+                .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMORY));
 
         Playlist playlist = playlistRepository.findById(deleteMusicRequest.getPlaylistId())
                 .orElseThrow(() -> new BusinessException(BaseResponseStatus.INVALID_PLAYLIST_ID));
