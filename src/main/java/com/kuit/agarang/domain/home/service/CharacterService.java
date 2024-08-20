@@ -30,7 +30,7 @@ public class CharacterService {
         .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_BABY));
 
     return characterRepository.findAll().stream()
-        .map(x -> CharacterSettingResponse.from(x, getCharacterImage(baby))).collect(Collectors.toList());
+        .map(x -> CharacterSettingResponse.from(x, getCharacterLevel(baby))).collect(Collectors.toList());
   }
 
   public void updateCharacterSetting(Long memberId, Long characterId) {
@@ -51,7 +51,7 @@ public class CharacterService {
     return level == 1 ? character.getImageUrl() : character.getSecondImageUrl();
   }
 
-  private int getCharacterLevel(Baby baby) {
+  public int getCharacterLevel(Baby baby) {
     long dDay = ChronoUnit.DAYS.between(LocalDate.now(), baby.getDueDate());
     return dDay <= 140 ? 2 : 1;
   }
