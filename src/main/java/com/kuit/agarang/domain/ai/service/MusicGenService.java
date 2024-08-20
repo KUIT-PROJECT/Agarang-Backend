@@ -30,7 +30,7 @@ public class MusicGenService {
   private final MemoryRepository memoryRepository;
 
   private static final String WEBHOOK_URI = "/api/ai/music-gen/webhook";
-  private static final Integer MUSIC_DURATION = 5;
+  private static final Integer MUSIC_DURATION = 40;
 
   public String getMusic(String prompt) {
     MusicGenResponse response
