@@ -22,12 +22,12 @@ public class CharacterSettingResponse {
     this.imageUrl = imageUrl;
   }
 
-  public static CharacterSettingResponse from(Character character, String imageUrl) {
+  public static CharacterSettingResponse from(Character character, int level) {
     return CharacterSettingResponse.builder()
       .characterId(character.getId())
       .name(character.getName())
       .description(character.getDescription())
-      .imageUrl(imageUrl)
+      .imageUrl(level == 1 ? character.getImageUrl() : character.getSecondImageUrl())
       .build();
   }
 }
