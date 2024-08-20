@@ -39,7 +39,7 @@ public class MemoryDTO {
   public static MemoryDTO of(Memory memory, boolean isBookmarked) {
     return MemoryDTO.builder()
         .id(memory.getId())
-        .writer(memory.getMember().getRole())
+        .writer(memory.getMember().getFamilyRole())
         .date(DateUtil.formatLocalDateTime(memory.getCreatedAt(), "yyyy. MM. dd"))
         .content(memory.getText())
         .musicUrl(memory.getMusicUrl())
