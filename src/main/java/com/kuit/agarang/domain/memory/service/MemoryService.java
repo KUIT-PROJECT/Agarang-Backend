@@ -127,7 +127,7 @@ public class MemoryService {
     Memory memory = memoryRepository.findById(bookmarkRequest.getMemoryId())
             .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMORY));
 
-    Optional<MemoryBookmark> memoryBookmark = memoryBookmarkRepository.findByMemoryAndMemberId(memory, 1L);
+    Optional<MemoryBookmark> memoryBookmark = memoryBookmarkRepository.findByMemoryAndMemberId(memory, memberId);
 
     if(memoryBookmark.isPresent()) {
       memoryBookmarkRepository.delete(memoryBookmark.get());
