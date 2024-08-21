@@ -21,10 +21,6 @@ public class Member extends BaseEntity {
   @JoinColumn(name = "baby_id")
   private Baby baby;
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "refresh_token_id")
-  private RefreshToken refreshToken;
-
   @Column(unique = true)
   private String providerId;
 
@@ -53,7 +49,7 @@ public class Member extends BaseEntity {
     this.name = name;
     this.email = email;
   }
-
+  
   public static Member of(String providerId, String name, String email, String role) {
     return Member.builder()
         .providerId(providerId)

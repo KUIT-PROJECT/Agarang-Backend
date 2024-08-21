@@ -50,7 +50,7 @@ public class TypecastRequest {
       .xapiHd(true)
       .maxSeconds(60)
       .modelVersion("latest")
-      .xapiAudioFormat("wav")
+      .xapiAudioFormat("mp3")
       .build();
   }
 }

@@ -46,7 +46,7 @@ public class JWTUtil {
   public String createAccessToken(String providerId, String role, Long memberId) {
 
     return Jwts.builder()
-        .claim("category", "Authorization")
+        .claim("category", "access")
         .claim("providerId", providerId)
         .claim("role", role)
         .claim("memberId", memberId)

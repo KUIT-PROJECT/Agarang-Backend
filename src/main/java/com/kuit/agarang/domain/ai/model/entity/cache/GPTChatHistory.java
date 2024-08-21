@@ -19,12 +19,15 @@ public class GPTChatHistory {
   private List<GPTMessage> historyMessages;
   @Setter
   private MusicInfo musicInfo;
+  @Setter
+  private String memoryText;
 
   @Builder
-  public GPTChatHistory(S3File image, GPTImageDescription imageDescription, List<GPTMessage> historyMessages, MusicInfo musicInfo) {
+  public GPTChatHistory(S3File image, GPTImageDescription imageDescription, List<GPTMessage> historyMessages, MusicInfo musicInfo, String memoryText) {
     this.image = image;
     this.imageDescription = imageDescription;
     this.historyMessages = historyMessages;
     this.musicInfo = musicInfo;
+    this.memoryText = memoryText;
   }
 }

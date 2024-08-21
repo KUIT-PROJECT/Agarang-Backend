@@ -1,6 +1,8 @@
 package com.kuit.agarang.domain.login.utils;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
@@ -14,7 +16,7 @@ public class CookieUtil {
 
     Cookie cookie = new Cookie(key, value);
     cookie.setMaxAge(24 * 60 * 60);
-//    cookie.setSecure(true); https 환경에서만 쿠키 전송
+    cookie.setSecure(true); 
     cookie.setPath("/");
     cookie.setHttpOnly(true);
 

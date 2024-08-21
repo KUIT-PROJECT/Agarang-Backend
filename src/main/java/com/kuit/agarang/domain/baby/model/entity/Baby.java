@@ -26,23 +26,23 @@ public class Baby extends BaseEntity {
   private List<Member> members = new ArrayList<>();
 
   @Column(nullable = false, unique = true)
-  private String babyCode;
+  private String code;
 
   private String name;
   private LocalDate dueDate;
   private Double weight;
 
   @Builder
-  public Baby(String babyCode, String name, LocalDate dueDate, Double weight) {
-    this.babyCode = babyCode;
+  public Baby(String code, String name, LocalDate dueDate, Double weight) {
+    this.code = code;
     this.name = name;
     this.dueDate = dueDate;
     this.weight = weight;
   }
 
-  public Baby(Long id, String babyCode, String name, LocalDate dueDate, Double weight) {
+  public Baby(Long id, String code, String name, LocalDate dueDate, Double weight) {
     this.id = id;
-    this.babyCode = babyCode;
+    this.code = code;
     this.name = name;
     this.dueDate = dueDate;
     this.weight = weight;

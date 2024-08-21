@@ -10,12 +10,25 @@ import com.kuit.agarang.domain.ai.model.enums.GPTSystemRole;
 import com.kuit.agarang.domain.ai.utils.GPTPromptUtil;
 import com.kuit.agarang.domain.ai.utils.GPTUtil;
 import com.kuit.agarang.domain.baby.model.entity.Character;
+import com.kuit.agarang.domain.member.model.entity.Member;
+import com.kuit.agarang.domain.member.repository.MemberRepository;
+import com.kuit.agarang.domain.memory.model.entity.Hashtag;
+import com.kuit.agarang.domain.memory.model.entity.Memory;
+import com.kuit.agarang.domain.memory.repository.HashTagRepository;
+import com.kuit.agarang.domain.memory.repository.MemoryRepository;
+import com.kuit.agarang.domain.playlist.model.entity.MemoryPlaylist;
+import com.kuit.agarang.domain.playlist.model.entity.Playlist;
+import com.kuit.agarang.domain.playlist.repository.MemoryPlaylistRepository;
+import com.kuit.agarang.domain.playlist.repository.PlaylistRepository;
+import com.kuit.agarang.domain.playlist.util.MusicSaveUtil;
+import com.kuit.agarang.global.common.exception.exception.BusinessException;
 import com.kuit.agarang.global.common.exception.exception.OpenAPIException;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import com.kuit.agarang.global.common.service.RedisService;
 import com.kuit.agarang.global.s3.model.dto.S3File;
 import com.kuit.agarang.global.s3.utils.S3FileUtil;
 import com.kuit.agarang.global.s3.utils.S3Util;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
@@ -34,15 +47,21 @@ public class AIService {
   private final GPTPromptUtil promptUtil;
   private final GPTChatService gptChatService;
   private final TypecastService typecastService;
+  private final MusicGenService musicGenService;
 
   private final S3Util s3Util;
   private final S3FileUtil s3FileUtil;
+  private final MusicSaveUtil musicSaveUtil;
 
   private final RedisService redisService;
   private final ObjectMapper objectMapper;
 
+  private final MemoryRepository memoryRepository;
+  private final MemberRepository memberRepository;
+  private final MemoryPlaylistRepository memoryPlaylistRepository;
+
   public QuestionResponse getFirstQuestion(MultipartFile image) throws Exception {
-    S3File convertedImage = s3FileUtil.uploadTempFile(image);
+    S3File convertedImage = s3FileUtil.convert(image);
 
     // image -> gpt -> 노래제목, 해시태그 생성
     String prompt = promptUtil.createImageDescriptionPrompt();
@@ -62,7 +81,7 @@ public class AIService {
     List<GPTMessage> historyMessage = gptUtil.createHistoryMessage(questionChat);
     redisService.save(redisKey,
       GPTChatHistory.builder()
-        .image(convertedImage.cleanBytes())
+        .image(convertedImage)
         .imageDescription(imageDescription)
         .historyMessages(historyMessage)
         .build());
@@ -115,16 +134,28 @@ public class AIService {
   }
 
   @Async
-  public void createMemoryText(String gptChatHistoryId) {
+  public void createMemoryText(Long memberId, String gptChatHistoryId) {
     GPTChatHistory chatHistory = redisService.get(gptChatHistoryId, GPTChatHistory.class)
       .orElseThrow(() -> new OpenAPIException(BaseResponseStatus.NOT_FOUND_HISTORY_CHAT));
 
-    // TODO : memberId 로 필드 조회
-    String prompt = promptUtil.createMemoryTextPrompt("뿌둥", "아빠");
+    MemoryTextInfo memoryTextInfo = getMemoryTextInfo(memberId);
+
+    String prompt = promptUtil.createMemoryTextPrompt(memoryTextInfo);
     GPTChat chat = gptChatService.chatWithHistory(chatHistory.getHistoryMessages(), prompt, 0L);
 
+    chatHistory.setMemoryText(gptUtil.getGPTAnswer(chat));
     logChat(gptUtil.createHistoryMessage(chat));
     redisService.save(gptChatHistoryId, chatHistory);
+  }
+
+  @Transactional
+  public MemoryTextInfo getMemoryTextInfo(Long memberId) {
+    Member member = memberRepository.findByIdWithBaby(memberId)
+      .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMBER));
+    return MemoryTextInfo.builder()
+      .familyRole(member.getFamilyRole())
+      .babyName(member.getBaby().getName())
+      .build();
   }
 
   public GPTChatHistory setMusicChoice(MusicAnswer answer) {
@@ -136,26 +167,55 @@ public class AIService {
   }
 
   @Async
-  public void createMusicGenPrompt(GPTChatHistory chatHistory) {
+  @Transactional
+  public void createMusicGenPrompt(Long memberId, GPTChatHistory chatHistory) {
     String prompt = promptUtil.createMusicGenPrompt(chatHistory.getImageDescription(), chatHistory.getMusicInfo());
     GPTChat chat = gptChatService.chat(GPTSystemRole.MUSIC_PROMPT_ENGINEER, prompt, 1L, true);
     String musicGenPrompt = gptUtil.parseJson(chat, "prompt");
-    log.info(musicGenPrompt);
+    logChat(gptUtil.createHistoryMessage(chat));
+    log.info("musicGenPrompt {}", musicGenPrompt);
 
     prompt = promptUtil.createMusicTitlePrompt(musicGenPrompt, chatHistory.getMusicInfo());
     chat = gptChatService.chat(GPTSystemRole.MUSIC_TITLE_WRITER, prompt, 1L, true);
     String musicTitle = gptUtil.parseJson(chat, "music_name");
+    logChat(gptUtil.createHistoryMessage(chat));
     log.info(musicTitle);
 
-    // TODO : 음악 생성
+    String musicGenId = musicGenService.getMusic(musicGenPrompt);
+    S3File image = s3Util.upload(chatHistory.getImage());
 
-    // TODO : DB 저장
+    Member member = getMember(memberId);
+    Memory memory = Memory.builder()
+      .member(member)
+      .baby(member.getBaby())
+      .imageUrl(image.getObjectUrl())
+      .musicTitle(musicTitle)
+      .musicGenId(musicGenId)
+      .text(chatHistory.getMemoryText())
+      .genre(chatHistory.getMusicInfo().getGenre())
+      .mood(chatHistory.getMusicInfo().getMood())
+      .tempo(chatHistory.getMusicInfo().getTempo())
+      .instrument(chatHistory.getMusicInfo().getInstrument())
+      .build();
+
+    List<Hashtag> hashtags = chatHistory.getImageDescription().convertNoun(memory);
+    memory.setHashtags(hashtags);
+    memoryRepository.save(memory);
+
+    List<Playlist> playlists = musicSaveUtil.getPlaylistIds(memory.getGenre(), memory.getMood(), memory.getInstrument());
+    playlists.forEach(x -> memoryPlaylistRepository.save(new MemoryPlaylist(memory, x)));
   }
 
   public String getCharacterBubble(Character character, String familyRole) {
     String prompt = promptUtil.createCharacterBubble(character, familyRole);
     GPTChat chat = gptChatService.chat(GPTSystemRole.ASSISTANT, prompt, 1L, false);
+    logChat(gptUtil.createHistoryMessage(chat));
     return gptUtil.getGPTAnswer(chat);
+  }
+
+  private Member getMember(Long memberId) {
+    return memberRepository.findById(memberId)
+      .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMBER));
   }
 
   // TODO : redis 트리거 전환
@@ -179,7 +239,7 @@ public class AIService {
     try {
       log.info(objectMapper.writeValueAsString(historyMessage));
     } catch (Exception e) {
-      log.info("채팅 로길 실패");
+      log.info("채팅 로깅 실패");
     }
   }
 }

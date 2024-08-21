@@ -2,6 +2,7 @@ package com.kuit.agarang.global.common.utils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
@@ -25,4 +26,15 @@ public class DateUtil {
     return localDateTime.format(formatter);
   }
 
+  public static LocalDate getStartOfMonth(YearMonth yearMonth) {
+    return yearMonth.atDay(1);
+  }
+
+  public static LocalDate getEndOfMonth(YearMonth yearMonth) {
+    return yearMonth.atEndOfMonth();
+  }
+  public static YearMonth convertStringToYearMonth(String dateStr) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMM");
+    return YearMonth.parse(dateStr, formatter);
+  }
 }

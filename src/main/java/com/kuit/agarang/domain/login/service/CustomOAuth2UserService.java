@@ -27,8 +27,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     OAuth2User oAuth2User = super.loadUser(userRequest);
 
     String registrationId = userRequest.getClientRegistration().getRegistrationId();
-    OAuth2Response oAuth2Response = null;
-
+    OAuth2Response oAuth2Response;
+    log.info("oAuth2User.getAttributes() = {}", oAuth2User.getAttributes());
     switch (registrationId) {
       case "naver" -> oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
       case "kakao" -> oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
@@ -41,22 +41,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     String providerId = oAuth2Response.getProvider() + "_" + oAuth2Response.getProviderId();
     Optional<Member> optionalMember = memberRepository.findByProviderId(providerId);
 
+    Member member;
     if (optionalMember.isEmpty()) {
-
-      Member member = Member.of(providerId, oAuth2Response.getName(), oAuth2Response.getEmail(), "ROLE_USER");
+      member = Member.of(providerId, oAuth2Response.getName(), oAuth2Response.getEmail(), "ROLE_USER");
       memberRepository.save(member);
-
-      MemberDTO memberDTO = MemberDTO.of(providerId, oAuth2Response.getName(), "ROLE_USER");
-      return new CustomOAuth2User(memberDTO);
-
     } else {
-
-      Member existData = optionalMember.get();
-      existData.changeInfo(oAuth2Response.getName(), oAuth2Response.getEmail());
-
-      MemberDTO memberDTO = MemberDTO.of(existData.getProviderId(), oAuth2Response.getName(), existData.getRole());
-      return new CustomOAuth2User(memberDTO);
+      member = optionalMember.get();
+      member.changeInfo(oAuth2Response.getName(), oAuth2Response.getEmail());
     }
+    return new CustomOAuth2User(MemberDTO.from(member));
   }
-
 }

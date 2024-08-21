@@ -2,7 +2,10 @@ package com.kuit.agarang.domain.memory.model.entity;
 
 import com.kuit.agarang.global.common.model.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -20,7 +23,9 @@ public class Hashtag extends BaseEntity {
   private String name; // 해시태그 명
 
   @Builder
-  public Hashtag(String name) {
+  public Hashtag(Long id, Memory memory, String name) {
+    this.id = id;
+    this.memory = memory;
     this.name = name;
   }
 }
