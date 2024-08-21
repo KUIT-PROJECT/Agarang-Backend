@@ -2,89 +2,75 @@ package com.kuit.agarang.domain.login.service;
 
 import com.kuit.agarang.domain.login.model.dto.ReissueDto;
 import com.kuit.agarang.domain.login.utils.JWTUtil;
-import com.kuit.agarang.domain.member.model.entity.RefreshToken;
-import com.kuit.agarang.domain.member.repository.RefreshRepository;
-import com.kuit.agarang.global.common.exception.exception.BusinessException;
+import com.kuit.agarang.domain.member.model.entity.Member;
+import com.kuit.agarang.domain.member.repository.MemberRepository;
+import com.kuit.agarang.global.common.exception.exception.JWTException;
+import com.kuit.agarang.global.common.service.RedisService;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
+import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.*;
 
-import static com.kuit.agarang.global.common.model.dto.BaseResponseStatus.BAD_REQUEST;
-
+@Slf4j
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class JWTService {
 
   private final JWTUtil jwtUtil;
-  private final RefreshRepository refreshRepository;
+  private final RedisService redisService;
+  private final MemberRepository memberRepository;
 
-  @Value("${secret.jwt-refresh-expired-in}")
-  private Long REFRESH_EXPIRED_IN;
+  public ReissueDto reissueTokens(String oldRefresh) {
 
-  // TODO : Exception 추가
-  public ReissueDto reissueTokens(String refresh) {
-
-    validateRefreshToken(refresh);
-
-    String providerId = jwtUtil.getProviderId(refresh);
-    String role = jwtUtil.getRole(refresh);
-    Long memberId = jwtUtil.getMemberId(refresh);
+    // RefreshToken 유효성 검증
+    Member member = validateRefreshToken(oldRefresh);
 
     // AccessToken 생성 및 Refresh Rotate
-    String newAccess = jwtUtil.createAccessToken(providerId, role, memberId);
-    String newRefresh = jwtUtil.createRefreshToken(providerId, role, memberId);
+    String newAccess = jwtUtil.createAccessToken(member.getProviderId(), member.getRole(), member.getId());
+    String newRefresh = jwtUtil.createRefreshToken(member.getProviderId(), member.getRole(), member.getId());
 
-    // 기존 토큰 삭제 후 새로운 Refresh Token 저장
-    refreshRepository.deleteByValue(refresh);
-    addRefreshEntity(providerId, newRefresh);
+    // Refresh Token Update
+    redisService.save(member.getProviderId(), newRefresh);
 
     return ReissueDto.builder()
-        .newAccessToken(newAccess)
-        .newRefreshToken(newRefresh)
-        .providerId(providerId)
-        .role(role)
-        .build();
+      .newAccessToken(newAccess)
+      .newRefreshToken(newRefresh)
+      .providerId(member.getProviderId())
+      .role(member.getRole())
+      .build();
   }
 
-  public void addRefreshEntity(String providerId, String value) {
-    Date date = new Date(System.currentTimeMillis() + REFRESH_EXPIRED_IN);
-
-    RefreshToken refreshToken = RefreshToken.builder()
-        .providerId(providerId)
-        .value(value)
-        .expiration(date.toString()).build();
-
-    refreshRepository.save(refreshToken);
-  }
-
-  private void validateRefreshToken(String refresh) {
-
-    if (refresh == null) {
-      throw new BusinessException(BAD_REQUEST);
+  private Member validateRefreshToken(String oldRefresh) {
+    if (oldRefresh == null) {
+      log.info("reissue : refresh token is null (cookie null)");
+      throw new JWTException(NOT_FOUND_REFRESH_TOKEN);
     }
 
-    // 만료 여부 체크
     try {
-      jwtUtil.isExpired(refresh);
+      jwtUtil.isExpired(oldRefresh);
     } catch (ExpiredJwtException e) {
-      throw new BusinessException(BAD_REQUEST);
+      throw new JWTException(EXPIRED_REFRESH_TOKEN);
     }
 
-    // 토큰이 refresh인지 확인 (발급시 페이로드에 명시)
-    String category = jwtUtil.getCategory(refresh);
+    String providerId = jwtUtil.getProviderId(oldRefresh);
+    String savedRefresh = redisService.get(providerId, String.class)
+      .orElseThrow(() -> new JWTException(NOT_FOUND_REFRESH_TOKEN));
+
+    if (!oldRefresh.equals(savedRefresh)) {
+      throw new JWTException(INVALID_REFRESH_TOKEN);
+    }
+
+
+    String category = jwtUtil.getCategory(oldRefresh);
     if (!category.equals("refresh")) {
-      throw new BusinessException(BAD_REQUEST);
+      throw new JWTException(INVALID_REFRESH_TOKEN);
     }
 
-    // DB에 저장되어 있는지 확인
-    Boolean isExist = refreshRepository.existsByValue(refresh);
-    if (!isExist) {
-      throw new BusinessException(BAD_REQUEST);
-    }
+    return memberRepository.findById(jwtUtil.getMemberId(oldRefresh))
+      .orElseThrow(() -> new JWTException(NOT_FOUND_MEMBER));
   }
 }

@@ -3,9 +3,12 @@ package com.kuit.agarang.domain.login.filter;
 import com.kuit.agarang.domain.login.model.dto.CustomOAuth2User;
 import com.kuit.agarang.domain.login.utils.JWTUtil;
 import com.kuit.agarang.domain.member.model.dto.MemberDTO;
+import com.kuit.agarang.global.common.exception.exception.JWTException;
+import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +19,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -24,45 +28,55 @@ public class JWTFilter extends OncePerRequestFilter {
 
   private final JWTUtil jwtUtil;
 
+  public final static List<String> PASS_URIS = Arrays.asList(
+    "/reissue",
+    "/login",
+    "/api/login/success"
+  );
+
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-    String accessToken = request.getHeader("Authorization");
-
-    if (accessToken == null) {
+    if (isPassUris(request.getRequestURI())) {
+      log.info("JWT Filter Pass (pass uri) : {}", request.getRequestURI());
       filterChain.doFilter(request, response);
       return;
     }
 
-    // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
+    String accessToken = null;
+    Cookie[] cookies = request.getCookies();
+    if (cookies != null) {
+      for (Cookie cookie : cookies) {
+        if ("ACCESS".equals(cookie.getName())) {
+          accessToken = cookie.getValue();
+          break;
+        }
+      }
+    }
+
+    if (accessToken == null) {
+      log.info("JWT Filter Pass (accessToken is null) : {}", request.getRequestURI());
+      SecurityContextHolder.getContext().setAuthentication(null);
+      filterChain.doFilter(request, response);
+      return;
+    }
+
     try {
       jwtUtil.isExpired(accessToken);
     } catch (ExpiredJwtException e) {
-      PrintWriter writer = response.getWriter();
-      writer.print("access token expired");
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      return;
+      throw new JWTException(BaseResponseStatus.EXPIRED_ACCESS_TOKEN);
+    } catch (Exception e) {
+      throw new JWTException(BaseResponseStatus.INVALID_ACCESS_TOKEN);
     }
 
-    // 토큰이 access인지 확인 (발급시 페이로드에 명시)
-    String category = jwtUtil.getCategory(accessToken);
-
-    if (!category.equals("Authorization")) {
-      PrintWriter writer = response.getWriter();
-      writer.print("invalid access token");
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      return;
+    if (!"access".equals(jwtUtil.getCategory(accessToken))) {
+      throw new JWTException(BaseResponseStatus.INVALID_ACCESS_TOKEN);
     }
-
-    // providerId, role 값을 획득
-    String providerId = jwtUtil.getProviderId(accessToken);
-    String role = jwtUtil.getRole(accessToken);
-    Long memberId = jwtUtil.getMemberId(accessToken);
 
     CustomOAuth2User customOAuth2User = new CustomOAuth2User(MemberDTO.builder()
-        .memberId(memberId)
-        .providerId(providerId)
-        .role(role).build());
+      .memberId(jwtUtil.getMemberId(accessToken))
+      .providerId(jwtUtil.getProviderId(accessToken))
+      .role(jwtUtil.getRole(accessToken)).build());
 
     //스프링 시큐리티 인증 토큰 생성
     Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
@@ -70,7 +84,11 @@ public class JWTFilter extends OncePerRequestFilter {
     //세션에 사용자 등록
     SecurityContextHolder.getContext().setAuthentication(authToken);
 
-    filterChain.doFilter(request, response);
     log.info("JWT Filter Success");
+    filterChain.doFilter(request, response);
+  }
+
+  private boolean isPassUris(String uri) {
+    return PASS_URIS.contains(uri);
   }
 }

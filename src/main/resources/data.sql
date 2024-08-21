@@ -2,17 +2,34 @@
 DELETE FROM memory_playlist;
 DELETE FROM memory_bookmark;
 DELETE FROM music_bookmark;
-DELETE FROM hashtag;
 
 DELETE FROM playlist;
+DELETE FROM hashtag;
 DELETE FROM memory;
 DELETE FROM member;
 DELETE FROM baby;
 
+-- Delete existing records (if any)
+DELETE FROM `character`;
+
+-- Insert new character records
+INSERT INTO `character` (created_at, status, updated_at, description, image_url, level, name)
+VALUES
+    (CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, 'A cheerful bunny.', 'https://example.com/images/bunny.jpg', 1, 'Bunny'),
+    (CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, 'A clever fox.', 'https://example.com/images/fox.jpg', 1, 'Fox'),
+    (CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, 'A wise owl.', 'https://example.com/images/owl.jpg', 2, 'Owl'),
+    (CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, 'A brave lion.', 'https://example.com/images/lion.jpg', 2, 'Lion'),
+    (CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, 'A friendly dog.', 'https://example.com/images/dog.jpg', 1, 'Dog'),
+    (CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, 'A curious cat.', 'https://example.com/images/cat.jpg', 1, 'Cat'),
+    (CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, 'A strong bear.', 'https://example.com/images/bear.jpg', 2, 'Bear'),
+    (CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, 'A playful monkey.', 'https://example.com/images/monkey.jpg', 1, 'Monkey'),
+    (CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, 'A graceful deer.', 'https://example.com/images/deer.jpg', 2, 'Deer'),
+    (CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, 'A swift cheetah.', 'https://example.com/images/cheetah.jpg', 2, 'Cheetah');
+
 
 -- Insert new baby record
-INSERT INTO baby (id, character_id, code, name, due_date, weight, created_at, updated_at)
-VALUES (1, NULL, 'DXW1234', '아가', '2025-01-01', 1.8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO baby (id, character_id, baby_code, name, due_date, weight, created_at, updated_at)
+VALUES (1, NULL, 'DXW123', '아가', '2025-01-01', 1.8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Insert new member record
 INSERT INTO member (id, baby_id, refresh_token_id, role, created_at, updated_at)
@@ -58,12 +75,12 @@ VALUES
 -- Insert new hashtag records
 INSERT INTO hashtag (id, created_at, updated_at, status, name, memory_id)
 VALUES
-    (1, '2024-07-01 00:00:00', '2024-07-01 00:00:00', 'ACTIVE', 'HAPPY', 1),
-    (2, '2024-07-01 00:00:00', '2024-07-01 00:00:00', 'ACTIVE', 'BEAUTIFUL', 2),
-    (3, '2024-07-01 00:00:00', '2024-07-01 00:00:00', 'ACTIVE', 'LOVELY', 3);
+    (1, '2024-07-01 00:00:00', '2024-07-01 00:00:00', 'ACTIVE', '여름', 1),
+    (2, '2024-07-01 00:00:00', '2024-07-01 00:00:00', 'ACTIVE', '바다', 1),
+    (3, '2024-07-01 00:00:00', '2024-07-01 00:00:00', 'ACTIVE', '파도', 1);
 
 -- Insert new memoryplaylist records
-INSERT INTO memory_playlist (id, created_at, updated_at, status, memory_id,playlist_id)
+INSERT INTO memory_playlist (id, created_at, updated_at, status, memory_id, playlist_id)
 VALUES
     (1, '2024-07-01 00:00:00', '2024-07-01 00:00:00', 'ACTIVE', 1, 1),
     (2, '2024-07-01 00:00:00', '2024-07-01 00:00:00', 'ACTIVE', 1, 5),

@@ -9,6 +9,14 @@
         </encoder>
     </appender>
 
+    <!--Hibernate SQL 로깅 설정 추가-->
+    <logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
+        <appender-ref ref="Console"/>
+    </logger>
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" additivity="false">
+        <appender-ref ref="Console"/>
+    </logger>
+
     <!--Local : 콘솔O 디스코드 알림X-->
     <springProfile name="local">
         <include resource="console-appender.xml"/>

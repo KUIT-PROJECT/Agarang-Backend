@@ -27,13 +27,17 @@ public class S3Util {
   @Value("${aws.s3.bucket}")
   private String bucket;
 
-  public S3File upload(MultipartFile file) throws Exception {
+  public S3File upload(MultipartFile file) {
     log.info("S3 파일 업로드가 시작되었습니다. [{} of {}]", file.getOriginalFilename(), file.getContentType());
-    S3File s3File = s3FileUtil.uploadTempFile(file);
+    return upload(s3FileUtil.convert(file));
+  }
+
+  public S3File downloadAudioAndUpload(String url) {
+    S3File s3File = s3FileUtil.downloadAudioUrl(url);
     return upload(s3File);
   }
 
-  private S3File upload(S3File s3File) {
+  public S3File upload(S3File s3File) {
     try {
       PutObjectRequest request = PutObjectRequest.builder()
         .bucket(bucket)
@@ -48,8 +52,6 @@ public class S3Util {
     } catch (Exception e) {
       e.printStackTrace();
       throw new FileException(BaseResponseStatus.FAIL_S3_UPLOAD);
-    } finally {
-      s3FileUtil.deleteTempFile(s3File);
     }
   }
 
