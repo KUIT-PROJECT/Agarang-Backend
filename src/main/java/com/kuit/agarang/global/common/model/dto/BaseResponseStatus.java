@@ -39,8 +39,8 @@ public enum BaseResponseStatus {
   FAIL_REDIS_CONNECTION(false, HttpStatus.SERVICE_UNAVAILABLE, 5002, "레디스 서버에 연결 실패했습니다."),
   FAIL_S3_UPLOAD(false, HttpStatus.SERVICE_UNAVAILABLE, 5003, "S3 파일 서버 업로드에 실패했습니다."),
   INVALID_GPT_RESPONSE(false, HttpStatus.INTERNAL_SERVER_ERROR, 5004, "GPT 응답이 유효하지 않습니다."),
-  FAIL_CREATE_MUSIC(false, HttpStatus.INTERNAL_SERVER_ERROR, 5005, "music gen 음악 생성에 실패했습니다.");
-
+  FAIL_CREATE_MUSIC(false, HttpStatus.INTERNAL_SERVER_ERROR, 5005, "music gen 음악 생성에 실패했습니다."),
+  FAIL_CREATE_EMITTER(false, HttpStatus.INTERNAL_SERVER_ERROR, 5006, "SseEmitter 생성에 실패했습니다.");
 
   private final boolean isSuccess;
   @JsonIgnore
