@@ -22,27 +22,32 @@ public class SseService {
   public SseEmitter connect(Long memberId) {
 
     SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-    emitters.put(memberId, emitter);
 
     try {
       emitter.send(SseEmitter.event()
           .name("connect")
-          .data("connected!")); // 503에러 방지를 위한 더미데이터
+          .data("connected!")); // 503에러 방지를 위한 더미
     } catch (IOException e) {
       emitter.completeWithError(e);
       throw new BusinessException(BaseResponseStatus.FAIL_CREATE_EMITTER);
     }
 
+    emitter.onError(e -> {
+      log.error("Error on SSE connection for memberId: {}", memberId, e);
+      emitters.remove(memberId);
+    });
+
     emitter.onCompletion(() -> {
-      log.info("onCompletion callback");
+      log.info("onCompletion callback for memberId: {}", memberId);
       emitters.remove(memberId);
     });
 
     emitter.onTimeout(() -> {
-      log.info("onTimeout callback");
-      emitters.remove(memberId);
+      log.info("onTimeout callback for memberId: {}", memberId);
+      emitter.complete();
     });
 
+    emitters.put(memberId, emitter);
     return emitter;
   }
 
