@@ -5,7 +5,7 @@ import com.kuit.agarang.domain.ai.model.dto.musicGen.MusicGenResponse;
 import com.kuit.agarang.domain.ai.utils.MusicGenClientUtil;
 import com.kuit.agarang.domain.memory.model.entity.Memory;
 import com.kuit.agarang.domain.memory.repository.MemoryRepository;
-import com.kuit.agarang.domain.notification.model.SseEmitters;
+import com.kuit.agarang.domain.notification.service.SseService;
 import com.kuit.agarang.global.common.exception.exception.OpenAPIException;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import com.kuit.agarang.global.s3.model.dto.S3File;
@@ -29,7 +29,7 @@ public class MusicGenService {
   private final MusicGenClientUtil musicGenClientUtil;
   private final S3Util s3Util;
   private final MemoryRepository memoryRepository;
-  private final SseEmitters sseEmitters;
+  private final SseService sseService;
 
   private static final String WEBHOOK_URI = "/api/ai/music-gen/webhook";
   private static final Integer MUSIC_DURATION = 40;
@@ -56,8 +56,8 @@ public class MusicGenService {
     memory.setMusicUrl(s3File.getObjectUrl());
     memoryRepository.save(memory);
 
-    String message = "음악 생성이 완료되었습니다";
-    sseEmitters.sendNotification(message);
+    String message = "음악 생성 완료!";
+    sseService.sendOneNotification(memory.getMember().getId(), message);
   }
 
   private static void checkStatus(MusicGenResponse response) {
