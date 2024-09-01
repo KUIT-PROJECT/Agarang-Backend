@@ -121,3 +121,4 @@ jobs:
             sudo docker network connect my-network ${{env.TARGET_UPSTREAM}}
             sudo docker stop ${{env.CURRENT_UPSTREAM}}
             sudo docker rm ${{env.CURRENT_UPSTREAM}}
+            sudo docker image prune -a --force --filter "until=24h"

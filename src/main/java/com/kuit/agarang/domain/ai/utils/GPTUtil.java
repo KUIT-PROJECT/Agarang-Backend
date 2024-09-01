@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTChat;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTContent;
 import com.kuit.agarang.domain.ai.model.dto.gpt.GPTMessage;
+import com.kuit.agarang.domain.ai.model.entity.cache.GPTChatHistory;
 import com.kuit.agarang.domain.ai.model.enums.GPTRole;
 import com.kuit.agarang.domain.ai.model.enums.GPTSystemRole;
 import com.kuit.agarang.global.common.exception.exception.OpenAPIException;
@@ -48,6 +49,10 @@ public class GPTUtil {
     return historyMessage;
   }
 
+  public void addHistoryMessage(GPTChatHistory chatHistory, GPTMessage responseMessage) {
+    chatHistory.getHistoryMessages().add(responseMessage);
+  }
+
   public String getGPTAnswer(GPTChat gptChat) {
     try {
       return (String) getResponseMessage(gptChat).getContent();
@@ -56,7 +61,7 @@ public class GPTUtil {
     }
   }
 
-  private GPTMessage getResponseMessage(GPTChat gptChat) {
+  public GPTMessage getResponseMessage(GPTChat gptChat) {
     try {
       return gptChat.getGptResponse().getChoices().get(0).getMessage();
     } catch (NullPointerException e) {
