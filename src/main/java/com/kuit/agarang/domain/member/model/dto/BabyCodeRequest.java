@@ -6,5 +6,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class BabyCodeRequest {
+  private String familyRole;
   private String babyCode;
 }

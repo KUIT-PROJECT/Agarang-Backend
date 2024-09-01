@@ -25,7 +25,7 @@ public class LoginController {
   @PostMapping("/baby-code")
   public ResponseEntity<BaseResponse<Void>> verifyBabyCode(@AuthenticationPrincipal CustomOAuth2User details,
                                                            @RequestBody BabyCodeRequest request) {
-    memberService.verifyBabyCode(details.getMemberId(), request.getBabyCode());
+    memberService.verifyBabyCode(details.getMemberId(), request);
     return ResponseEntity.ok(new BaseResponse<>(SUCCESS));
   }
 
