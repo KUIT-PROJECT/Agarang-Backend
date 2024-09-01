@@ -5,6 +5,7 @@ import com.kuit.agarang.domain.ai.model.dto.musicGen.MusicGenResponse;
 import com.kuit.agarang.domain.ai.utils.MusicGenClientUtil;
 import com.kuit.agarang.domain.memory.model.entity.Memory;
 import com.kuit.agarang.domain.memory.repository.MemoryRepository;
+import com.kuit.agarang.domain.notification.service.SseService;
 import com.kuit.agarang.global.common.exception.exception.OpenAPIException;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
 import com.kuit.agarang.global.s3.model.dto.S3File;
@@ -28,14 +29,15 @@ public class MusicGenService {
   private final MusicGenClientUtil musicGenClientUtil;
   private final S3Util s3Util;
   private final MemoryRepository memoryRepository;
+  private final SseService sseService;
 
   private static final String WEBHOOK_URI = "/api/ai/music-gen/webhook";
   private static final Integer MUSIC_DURATION = 40;
 
   public String getMusic(String prompt) {
     MusicGenResponse response
-      = musicGenClientUtil.post(
-      new MusicGenRequest(version, baseUrl + WEBHOOK_URI, prompt, MUSIC_DURATION), MusicGenResponse.class);
+        = musicGenClientUtil.post(
+        new MusicGenRequest(version, baseUrl + WEBHOOK_URI, prompt, MUSIC_DURATION), MusicGenResponse.class);
     log.info("created musicgen id : {}", response.getId());
     return response.getId();
   }
@@ -53,6 +55,9 @@ public class MusicGenService {
     Memory memory = optionalMemory.get();
     memory.setMusicUrl(s3File.getObjectUrl());
     memoryRepository.save(memory);
+
+    String message = "MusicGen Complete!";
+    sseService.sendNotification(memory.getMember().getId(), message);
   }
 
   private static void checkStatus(MusicGenResponse response) {
