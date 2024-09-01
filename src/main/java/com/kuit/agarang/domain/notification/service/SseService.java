@@ -3,7 +3,6 @@ package com.kuit.agarang.domain.notification.service;
 
 import com.kuit.agarang.global.common.exception.exception.BusinessException;
 import com.kuit.agarang.global.common.model.dto.BaseResponseStatus;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class SseService {
 
   private final ConcurrentHashMap<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
@@ -51,7 +49,7 @@ public class SseService {
     return emitter;
   }
 
-  public void sendOneNotification(Long memberId, String message) {
+  public void sendNotification(Long memberId, String message) {
     SseEmitter emitter = emitters.get(memberId);
     log.info("memberId : {} , sendNotification", memberId);
     if (emitter != null) {
@@ -60,8 +58,7 @@ public class SseService {
             .name("notification")
             .data(message, MediaType.TEXT_PLAIN));
       } catch (IOException e) {
-        emitters.remove(memberId);
-      } finally {
+        log.error("Error on send notification for memberId: {}", memberId, e);
         emitters.remove(memberId);
       }
     }

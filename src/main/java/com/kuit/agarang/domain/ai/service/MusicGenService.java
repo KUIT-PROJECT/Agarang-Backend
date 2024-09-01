@@ -56,8 +56,8 @@ public class MusicGenService {
     memory.setMusicUrl(s3File.getObjectUrl());
     memoryRepository.save(memory);
 
-    String message = "음악 생성 완료!";
-    sseService.sendOneNotification(memory.getMember().getId(), message);
+    String message = "MusicGen Complete!";
+    sseService.sendNotification(memory.getMember().getId(), message);
   }
 
   private static void checkStatus(MusicGenResponse response) {
