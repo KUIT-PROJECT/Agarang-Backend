@@ -51,12 +51,12 @@ public class SseService {
 
   public void sendNotification(Long memberId, String message) {
     SseEmitter emitter = emitters.get(memberId);
-    log.info("memberId : {} , sendNotification", memberId);
     if (emitter != null) {
       try {
         emitter.send(SseEmitter.event()
             .name("notification")
             .data(message, MediaType.TEXT_PLAIN));
+        log.info("memberId : {} , sendNotification", memberId);
       } catch (IOException e) {
         log.error("Error on send notification for memberId: {}", memberId, e);
         emitters.remove(memberId);
@@ -65,7 +65,7 @@ public class SseService {
   }
 
   public void disconnect(Long memberId) {
-    log.info("memberId : {} , disconnect", memberId);
     emitters.remove(memberId);
+    log.info("memberId : {} , disconnect", memberId);
   }
 }
