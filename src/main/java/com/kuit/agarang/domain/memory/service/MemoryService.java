@@ -113,7 +113,10 @@ public class MemoryService {
   }
 
   public FavoriteMemoriesResponse findFavoriteMemories(Long memberId) {
-    List<Memory> favoriteMemoriesByMember = memoryBookmarkRepository.findMemoryBookmarksByMember(memberId);
+    Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMBER));
+    List<Memory> favoriteMemoriesByMember = memoryBookmarkRepository.findMemoryBookmarksByMember(member.getBaby());
+    System.out.println("favoriteMemoriesByMember = " + favoriteMemoriesByMember);
     List<MemoryImageDTO> memoryImageDTOS = favoriteMemoriesByMember.stream()
             .map(memory -> MemoryImageDTO.of(memory.getId(), memory.getImageUrl()))
             .toList();

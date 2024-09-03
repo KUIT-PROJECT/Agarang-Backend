@@ -1,5 +1,6 @@
 package com.kuit.agarang.domain.memory.repository;
 
+import com.kuit.agarang.domain.baby.model.entity.Baby;
 import com.kuit.agarang.domain.member.model.entity.Member;
 import com.kuit.agarang.domain.memory.model.entity.Memory;
 import com.kuit.agarang.domain.memory.model.entity.MemoryBookmark;
@@ -11,8 +12,8 @@ import java.util.Optional;
 
 public interface MemoryBookmarkRepository extends JpaRepository<MemoryBookmark, Long> {
 
-  @Query("SELECT m FROM MemoryBookmark mb join Memory m on m.id = mb.memory.id WHERE m.member.id = :memberId")
-  List<Memory> findMemoryBookmarksByMember(Long memberId);
+  @Query("SELECT m FROM MemoryBookmark mb join Memory m on m.id = mb.memory.id WHERE m.baby = :baby")
+  List<Memory> findMemoryBookmarksByMember(Baby baby);
 
   Optional<MemoryBookmark> findByMemoryAndMemberId(Memory memory, Long memberId);
 
