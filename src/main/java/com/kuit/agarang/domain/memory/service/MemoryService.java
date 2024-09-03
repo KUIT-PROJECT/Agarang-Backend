@@ -161,7 +161,9 @@ public class MemoryService {
   }
 
   public MemoryDTO findMemoryById(Long memberId, Long memoryId) {
-    Memory memory = memoryRepository.findByIdAndMemberId(memoryId, memberId)
+    Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMBER));
+    Memory memory = memoryRepository.findById(memoryId)
             .orElseThrow(() -> new BusinessException(BaseResponseStatus.NOT_FOUND_MEMORY));
     Optional<MemoryBookmark> memoryBookmark = memoryBookmarkRepository.findByMemoryAndMemberId(memory, memberId);
     boolean isBookmarked = memoryBookmark.isPresent();
